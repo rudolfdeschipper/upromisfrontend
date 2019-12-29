@@ -5,24 +5,9 @@ import "react-table/react-table.css";
 import {Utils} from '../Utils';
 import { Link } from 'react-router-dom';
 import {IContractData, IPayment} from './ContractTypes';
+import {IListState, ILoadResult} from '../GeneralTypes';
 
-interface IState {
-    data: IContractData[],
-    loading: boolean,
-    pages: number,
-    currentSort: any,
-    currentFilter: any,
-    pageSize: number
-}
-
-interface ILoadResult
-{
-    data: IContractData[],
-    pages: number
-}
-
-
-class Contract extends Component<{}, IState> {
+class Contract extends Component<{}, IListState<IContractData>> {
     static displayName = Contract.name;
 
     // normalised structure:
@@ -175,7 +160,7 @@ class Contract extends Component<{}, IState> {
                             })
                         })
                             .then(response => {
-                                return response.json() as Promise<ILoadResult>;
+                                return response.json() as Promise<ILoadResult<IContractData>>;
                             })
                             .then(res => {
                                 // Update react-table
