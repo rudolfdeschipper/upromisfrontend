@@ -1,5 +1,5 @@
 {
-  "name": "upromisefrontend",
+  "name": "upromisfrontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,11 +9,30 @@
     "@types/jest": "^24.0.23",
     "@types/node": "^12.12.20",
     "@types/react": "^16.9.16",
+    "@types/react-bootstrap": "0.32.9",
+    "@types/react-bootstrap-date-picker": "4.0.5",
     "@types/react-dom": "^16.9.4",
+    "@types/react-router": "4.0.24",
+    "@types/react-router-dom": "4.2.6",
+    "@types/reactstrap": "^8.2.0",
+    "@types/yup": "^0.26.26",
+    "bootstrap": "4.4.1",
+    "font-awesome": "^4.7.0",
+    "formik": "^2.0.3",
     "react": "^16.12.0",
+    "react-aria-menubutton": "^6.2.0",
+    "react-bootstrap": "^1.0.0-beta.16",
+    "react-datepicker": "^2.10.1",
     "react-dom": "^16.12.0",
-    "react-scripts": "3.3.0",
-    "typescript": "^3.7.3"
+    "react-formik-ui": "^4.0.3",
+    "react-modal": "^3.10.1",
+    "react-router-bootstrap": "^0.24.4",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "3.3.0-next.62",
+    "react-table": "^6.1.0",
+    "reactstrap": "^6.3.0",
+    "typescript": "^3.7.3",
+    "yup": "^0.27.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -35,5 +54,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-react": "^4.1.0"
   }
 }

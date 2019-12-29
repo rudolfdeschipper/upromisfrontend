@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, Suspense } from 'react';
+import { Route, Switch } from 'react-router';
+import { Layout } from './components/Layout';
+import { Home } from './components/Home';
+import { Counter } from './components/Counter';
+import nfp from './components/NotFoundPage';
 
-const App: React.FC = () => {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+    static displayName = App.name;
+
+    render() {
+        const contract = React.lazy(() => import("./components/Contract/Contract"));
+        const contractdetails = React.lazy(() => import("./components/Contract/ContractDetails"));
+        return (
+            <Layout>
+                <Suspense fallback={<div className="page-container">Loading...</div>}>
+                    <Switch>
+                        <Route exact path='/' component={Home} />
+                        <Route path='/home' component={Home} />
+                        <Route path='/counter' component={Counter} />
+                        <Route path='/contract' component={contract} />
+                        <Route path='/contractdetails/:id' component={contractdetails} />
+                        <Route component={nfp} />
+                    </Switch>
+                </Suspense>
+            </Layout>
+        );
+    }
 }
+
 
 export default App;
