@@ -28,7 +28,8 @@ class Contract extends Component<{}, IListState<IContractData>> {
             pages: -1,
             currentSort: null,
             currentFilter: null,
-            pageSize: 10
+            pageSize: 10,
+            message: ""
         };
 
     }
@@ -167,12 +168,13 @@ class Contract extends Component<{}, IListState<IContractData>> {
                                 this.setState({
                                     data: res.data,
                                     pages: res.pages,
-                                    loading: false,
                                     currentFilter: state.filtered,
-                                    currentSort: state.sorted
+                                    currentSort: state.sorted,
+                                    message: res.message ? res.message : this.state.message
                                 })
                             })
                             .catch(e => console.error(e))
+                            .finally( () => this.setState({ loading: false }))
                     }}
                     columns={columns}
                 />

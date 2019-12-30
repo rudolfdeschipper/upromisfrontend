@@ -7,6 +7,7 @@ import ContractPayment from './ContractPayment';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import {IContractData, IPayment} from './ContractTypes';
+import { IAPIResult } from '../GeneralTypes';
 
 
 interface IState {
@@ -50,13 +51,13 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id: string }
             })
         })
             .then(response => {
-                return response.json() as Promise<IContractData>;
+                return response.json() as Promise<IAPIResult<IContractData>>;
             })
             .then((res) => {
                 // Update form values
                 console.log(res);
                 this.setState({
-                    currentData: res,
+                    currentData: res.dataSubject,
                 });
                 console.log(this.state.currentData);
             })

@@ -5,12 +5,28 @@ export interface IListState<T> {
     pages: number,
     currentSort: any,
     currentFilter: any,
-    pageSize: number
+    pageSize: number,
+    message: string
 }
 
 export interface ILoadResult<T>
 {
     data: T[],
     pages: number
+    message: string;
 }
 
+export interface ISaveMessage<T> {
+    id: number,
+    dataSubject: T,
+    action: string,
+    subaction: string,
+    additionalData: object[]
+}
+
+export interface IAPIResult<T> {
+    id: number;
+    dataSubject: T;
+    success: boolean;
+    message: string;
+}
