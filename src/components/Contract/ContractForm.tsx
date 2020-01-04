@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Formik, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Form, Datepicker, SubmitBtn } from 'react-formik-ui'
+import { Form, Datepicker, SubmitBtn, Input, Textarea } from 'react-formik-ui'
 import { Link } from 'react-router-dom';
 import { IContractData, IPayment } from './ContractTypes';
 
@@ -9,11 +9,15 @@ interface IProps {
     currentData: IContractData;
 }
 
-class ContractForm extends React.Component<IProps> {
+interface IState {
+    isSubmitting: boolean;
+}
+
+class ContractForm extends React.Component<IProps, IState> {
 
     constructor(props: Readonly<IProps>) {
         super(props);
-
+        this.state = { isSubmitting: false};
     }
 
     render() {
@@ -45,34 +49,22 @@ class ContractForm extends React.Component<IProps> {
 
                 }}
             >
-                <Form className="w3-container">
-                    <label id="lID"  >ID: </label>
-                    <Field name="id" type="number" className="w3-input w3-border" disabled />
-                    <label id="lCode"  >Code: </label>
-                    <Field name="code" type="text" className="w3-input w3-border" />
-                    <ErrorMessage name="code" render={msg => <div className="w3-container w3-red">{msg}</div>} />
-                    <label id="lTitle"  >Title: </label>
-                    <Field name="title" type="text" className="w3-input w3-border" />
-                    <ErrorMessage name="title" render={msg => <div className="w3-container w3-red">{msg}</div>} />
-                    <label id="lDescription"  >Description: </label>
-                    <Field name="description" type="text" className="w3-input w3-border" />
-                    <ErrorMessage name="description" render={msg => <div className="w3-container w3-red">{msg}</div>} />
-                    <label id="lStartdate" >Start/End date: </label>
+                <Form mode="themed">
+                    <Input name="id" label="ID" disabled/>
+                    <Input name="code" label="Code" />
+                    <Input name="title" label="Title" />
+                    <Textarea name="description" label="Description" />
                     <div className="w3-cell-row">
                         <div className="w3-cell">
-                            <Datepicker name="startdate" className="w3-input w3-border" />
-                            <ErrorMessage name="startdate" render={msg => <div className="w3-container w3-red">{msg}</div>} />
+                            <Datepicker name="startdate" label="Start/End date" />
                         </div>
                         <div className="w3-cell">
-                            <Datepicker name="enddate" className="w3-input w3-border" />
-                            <ErrorMessage name="enddate" render={msg => <div className="w3-container w3-red">{msg}</div>} />
+                            <Datepicker name="enddate" />
                         </div>
                     </div>
-                    <label id="lValue"  >Value: </label>
-                    <Field name="value" type="number" className="w3-input w3-border" step="0.01" />
-                    <ErrorMessage name="value" render={msg => <div className="w3-container w3-red">{msg}</div>} />
+                    <Input name="value" type="number" label="Value" step="0.01" />
                     <hr />
-                    <SubmitBtn className="w3-button w3-light-grey w3-round" title="Saves this record" >
+                    <SubmitBtn className="w3-button w3-light-grey w3-round" title="Saves this record" disabled={this.state.isSubmitting}>
                         <i className="fa fa-save" ></i>&nbsp;Save
                     </SubmitBtn>
                 </Form>

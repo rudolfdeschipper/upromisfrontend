@@ -33,7 +33,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id: string }
         this.state =
         {
             id: parseInt(this.props.match.params.id, 10),
-            currentData: { id: 0, code: "", description: "xxx", title: "", startdate: new Date(), enddate: new Date(), value: 0.0, paymentInfo: [] }
+            currentData: { id: 0, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), value: 0.0, paymentInfo: [] }
         }
             ;
     }
@@ -59,10 +59,28 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id: string }
                 this.setState({
                     currentData: res.dataSubject,
                 });
-                console.log(this.state.currentData);
             })
             .catch(e => console.error(e))
 
+    }
+
+    private updatePaymentline = (values: IPayment, isAdding: boolean) => {
+        if( isAdding) {
+            let newData = this.state.currentData;
+            const newLen = newData.paymentInfo?.push(values);
+
+            this.setState( {currentData: newData } );
+        } else {
+            let updateRow = this.state.currentData.paymentInfo?.findIndex(r => r.id == values.id);
+            if(updateRow && updateRow != undefined && this.state.currentData.paymentInfo) {
+                let newData = this.state.currentData;
+                if(newData.paymentInfo) {
+                    newData.paymentInfo[updateRow] = values;
+                    this.setState( {currentData: newData } );
+                }
+            }
+        }
+        alert((isAdding ? "Added " : "Updated ") + JSON.stringify(values, null, 2));
     }
 
     render() {
@@ -76,7 +94,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id: string }
                         <ContractForm currentData={this.state.currentData} />
                     </Tab>
                     <Tab eventKey="payments" title="Payments">
-                        <ContractPayment currentData={this.state.currentData} />
+                        <ContractPayment currentData={this.state.currentData} updatePaymentline={this.updatePaymentline}/>
                     </Tab>
                 </Tabs>
             </React.Fragment>

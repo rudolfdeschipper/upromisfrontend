@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import { Formik, Field } from 'formik';
-//import * as Yup from 'yup';
-import { Form, Datepicker } from 'react-formik-ui'
 import { Utils } from '../Utils';
 import ReactTable from 'react-table';
-import {IContractData, IPayment} from './ContractTypes';
+import { IContractData, IPayment } from './ContractTypes';
+import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import ContractPaymentForm from './ContractPaymentForm';
 
 
 interface IProps {
     currentData: IContractData;
+    updatePaymentline: (values: IPayment, isAdding: boolean) => void;
 }
 
 interface IState {
@@ -30,7 +30,6 @@ class ContractPayment extends React.Component<IProps, IState> {
         };
 
         this.openEditModal = this.openEditModal.bind(this);
-        this.closeEditModal = this.closeEditModal.bind(this);
         this.closeEditModalNoSave = this.closeEditModalNoSave.bind(this);
 
         this.openAddModal = this.openAddModal.bind(this);
@@ -45,7 +44,10 @@ class ContractPayment extends React.Component<IProps, IState> {
     }
 
     openAddModal() {
-        this.setState({ modalAddIsOpen: true });
+        this.setState({
+            modalAddIsOpen: true,
+            currentPaymentRecord: { id: -1, description: "", plannedinvoicedate: new Date(), actualinvoicedate: new Date(), amount: 0.0 }
+        });
     }
 
     afterOpenAddModal() {
@@ -56,57 +58,52 @@ class ContractPayment extends React.Component<IProps, IState> {
         this.setState({ modalAddIsOpen: false });
     }
 
+    closeAddModalNoSave() {
+        this.setState({
+            modalAddIsOpen: false,
+            currentPaymentRecord: null
+        });
+    }
+
+
     openEditModal(row: { row: { id: any; }; }) {
-        fetch('https://localhost:5001/api/home/getonecontractpaymentdata', {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                ID: row.row.id
-            })
-        })
-            .then(response => response.json())
-            .then((res) => {
-                // Update form values
-                // currentData: { ...res, startdate: this.formatDateForEdit(res.startdate), enddate: this.formatDateForEdit(res.enddate) },
-                this.setState({
-                    currentPaymentRecord: { ...res },
-                    modalEditIsOpen: true,
-                })
-            })
-            .catch(e => console.error(e))
-    }
 
-    closeEditModal(e: Event) {
-        // update the record
-        fetch('https://localhost:5001/api/home/putonecontractpaymentdata', {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(
-                { ...this.state.currentPaymentRecord })
+        var currentRow = this.props.currentData.paymentInfo?.filter(r => r.id == row.row.id);
+
+        if (currentRow && currentRow.length != 0) {
+            this.setState({
+                currentPaymentRecord: currentRow[0] as IPayment,
+                modalEditIsOpen: true,
+            })
         }
-        )
-            .then(response => response.json())
-            .then((res) => {
-                alert(res.statusCode.toString());
-                e.preventDefault();
-            })
-            .catch(e => console.error(e))
-
-        this.setState({ 
-            modalEditIsOpen: false, 
-            currentPaymentRecord: null });
     }
+
+    private updatePaymentLine = (values: IPayment) => {
+        // update the record
+        this.props.updatePaymentline(values, false);
+
+        this.setState({
+            modalEditIsOpen: false,
+            currentPaymentRecord: null
+        });
+    }
+
+    private addPaymentLine = (values: IPayment) => {
+        // add the record
+        this.props.updatePaymentline(values, true);
+
+        this.setState({
+            modalAddIsOpen: false,
+            currentPaymentRecord: null
+        });
+    }
+
 
     closeEditModalNoSave() {
-        this.setState({ 
-            modalEditIsOpen: false, 
-            currentPaymentRecord: null });
+        this.setState({
+            modalEditIsOpen: false,
+            currentPaymentRecord: null
+        });
     }
 
     openDeleteModal(row: { row: { id: any; }; }) {
@@ -186,21 +183,33 @@ class ContractPayment extends React.Component<IProps, IState> {
         ];
 
         const tabledata = this.props.currentData.paymentInfo as IPayment[];
-        
+
         return (
             <div>
-            <button className="w3-button w3-light-grey w3-round" onClick={this.openAddModal} title="Add new record">
-                <i className="fa fa-plus-circle" ></i>&nbsp;Add new
-            </button>
-            {this.props.currentData && (
-                <ReactTable className="-striped"
-                    data={tabledata}
-                    minRows={1}
-                    columns={paymentcolumns}
-                />)
-            }
-        </div>
-                );
+                <button className="w3-button w3-light-grey w3-round" onClick={this.openAddModal} title="Add new record">
+                    <i className="fa fa-plus-circle" ></i>&nbsp;Add new
+                </button>
+                {this.props.currentData && (
+                    <ReactTable className="-striped"
+                        data={tabledata}
+                        minRows={1}
+                        columns={paymentcolumns}
+                    />)
+                }
+                <Modal isOpen={this.state.modalEditIsOpen} >
+                    <ModalHeader toggle={this.closeEditModalNoSave} charCode="&times;" >Edit Payment</ModalHeader>
+                    <ModalBody>
+                        <ContractPaymentForm currentData={this.state.currentPaymentRecord as IPayment} updateValues={this.updatePaymentLine} />
+                    </ModalBody>
+                </Modal>
+                <Modal isOpen={this.state.modalAddIsOpen} >
+                    <ModalHeader toggle={this.closeAddModalNoSave} charCode="&times;" >Add Payment</ModalHeader>
+                    <ModalBody>
+                        <ContractPaymentForm currentData={this.state.currentPaymentRecord as IPayment} updateValues={this.addPaymentLine} />
+                    </ModalBody>
+                </Modal>
+            </div>
+        );
     }
 };
 
