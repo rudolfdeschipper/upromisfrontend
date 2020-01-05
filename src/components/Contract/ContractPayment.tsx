@@ -8,14 +8,15 @@ import ContractPaymentForm from './ContractPaymentForm';
 
 interface IProps {
     currentData: IContractData;
-    updatePaymentline: (values: IPayment, isAdding: boolean) => void;
+    updatePaymentline: (values: IPayment, isAdding: boolean, currentIndex? : number) => void;
 }
 
 interface IState {
     modalAddIsOpen: boolean,
     modalEditIsOpen: boolean,
     modalDeleteIsOpen: boolean,
-    currentPaymentRecord: IPayment | null
+    currentPaymentRecord: IPayment | null,
+    currentIndex?: number
 }
 
 class ContractPayment extends React.Component<IProps, IState> {
@@ -26,7 +27,7 @@ class ContractPayment extends React.Component<IProps, IState> {
             modalAddIsOpen: false,
             modalEditIsOpen: false,
             modalDeleteIsOpen: false,
-            currentPaymentRecord: null
+            currentPaymentRecord: null,
         };
 
         this.openEditModal = this.openEditModal.bind(this);
@@ -66,21 +67,20 @@ class ContractPayment extends React.Component<IProps, IState> {
     }
 
 
-    openEditModal(row: { row: { id: any; }; }) {
-
-        var currentRow = this.props.currentData.paymentInfo?.filter(r => r.id == row.row.id);
-
-        if (currentRow && currentRow.length != 0) {
+    openEditModal(row: { row: { _index: number; }; }) {
+        alert(JSON.stringify(row))
+            if (this.props.currentData.paymentInfo) {
             this.setState({
-                currentPaymentRecord: currentRow[0] as IPayment,
+                currentPaymentRecord: ((this.props.currentData.paymentInfo[row.row._index]) as IPayment),
                 modalEditIsOpen: true,
+                currentIndex: row.row._index
             })
         }
     }
 
     private updatePaymentLine = (values: IPayment) => {
         // update the record
-        this.props.updatePaymentline(values, false);
+        this.props.updatePaymentline(values, false, this.state.currentIndex);
 
         this.setState({
             modalEditIsOpen: false,
@@ -90,7 +90,7 @@ class ContractPayment extends React.Component<IProps, IState> {
 
     private addPaymentLine = (values: IPayment) => {
         // add the record
-        this.props.updatePaymentline(values, true);
+        this.props.updatePaymentline(values, true, this.state.currentIndex);
 
         this.setState({
             modalAddIsOpen: false,
@@ -106,7 +106,7 @@ class ContractPayment extends React.Component<IProps, IState> {
         });
     }
 
-    openDeleteModal(row: { row: { id: any; }; }) {
+    openDeleteModal(row: { row: { _index: number; }; }) {
         this.setState({ modalDeleteIsOpen: true });
     }
 
@@ -129,7 +129,7 @@ class ContractPayment extends React.Component<IProps, IState> {
         const paymentcolumns = [
             {
                 Header: 'Actions',
-                Cell: (row: { row: { id: any; }; }) => (
+                Cell: (row: { row: { _index: number; }; }) => (
                     <div className="w3-bar">
                         <button className="w3-bar-item w3-button" title="Details" >
                             <i className="fa fa-file-text-o" ></i>
