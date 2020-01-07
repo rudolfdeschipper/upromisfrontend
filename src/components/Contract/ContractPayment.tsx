@@ -8,7 +8,7 @@ import ContractPaymentForm from './ContractPaymentForm';
 
 interface IProps {
     currentData: IContractData;
-    updatePaymentline: (values: IPayment, isAdding: boolean) => void;
+    updatePaymentline: (values: IPayment, isAdded: boolean) => void;
 }
 
 interface IState {
@@ -46,7 +46,7 @@ class ContractPayment extends React.Component<IProps, IState> {
     openAddModal() {
         this.setState({
             modalAddIsOpen: true,
-            currentPaymentRecord: { id: -1, description: "", plannedinvoicedate: new Date(), actualinvoicedate: new Date(), amount: 0.0 }
+            currentPaymentRecord: { id: -1, description: "", plannedinvoicedate: new Date(), actualinvoicedate: new Date(), amount: 0.0, modifier: "Unchanged" }
         });
     }
 
@@ -80,6 +80,9 @@ class ContractPayment extends React.Component<IProps, IState> {
 
     private updatePaymentLine = (values: IPayment) => {
         // update the record
+        if(values.modifier != "Added") {
+            values.modifier = "Modified";
+        }
         this.props.updatePaymentline(values, false);
 
         this.setState({
@@ -90,6 +93,7 @@ class ContractPayment extends React.Component<IProps, IState> {
 
     private addPaymentLine = (values: IPayment) => {
         // add the record
+        values.modifier = "Added";
         this.props.updatePaymentline(values, true);
 
         this.setState({
@@ -131,9 +135,6 @@ class ContractPayment extends React.Component<IProps, IState> {
                 Header: 'Actions',
                 Cell: (row: { row: { id: any; }; }) => (
                     <div className="w3-bar">
-                        <button className="w3-bar-item w3-button" title="Details" >
-                            <i className="fa fa-file-text-o" ></i>
-                        </button>
                         <button className="w3-bar-item w3-button" title="Edit" onClick={() => { this.openEditModal(row); }}>
                             <i className="fa fa-pencil" ></i>
                         </button>

@@ -7,7 +7,9 @@ export interface IContractData {
     startdate: Date,
     enddate: Date,
     value: number,
-    paymentInfo: IPayment[] | null
+    paymentInfo: IPayment[] | null,
+
+    modifier: "Unchanged" | "Added" | "Modified" | "Deleted"
 }
 
 export interface IPayment {
@@ -15,6 +17,8 @@ export interface IPayment {
     description: string,
     plannedinvoicedate: Date,
     actualinvoicedate: Date,
-    amount: number
+    amount: number,
+
+    modifier: "Unchanged" | "Added" | "Modified" | "Deleted"
 }
 

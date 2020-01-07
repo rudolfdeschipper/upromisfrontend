@@ -43,6 +43,7 @@ class ContractForm extends React.Component<IProps, IState> {
                 })}
                 onSubmit={(values, { setSubmitting }) => {
                     setTimeout(() => {
+                        values.modifier = "Modified";
                         alert(JSON.stringify(values, null, 2));
                         setSubmitting(false);
                     }, 400);

@@ -33,7 +33,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id: string }
         this.state =
         {
             id: parseInt(this.props.match.params.id, 10),
-            currentData: { id: 0, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), value: 0.0, paymentInfo: [] }
+            currentData: { id: 0, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), value: 0.0, paymentInfo: [], modifier: "Unchanged" }
         }
             ;
     }
@@ -64,8 +64,8 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id: string }
 
     }
 
-    private updatePaymentline = (values: IPayment, isAdding: boolean) => {
-        if( isAdding) {
+    private updatePaymentline = (values: IPayment, isAdded: boolean) => {
+        if( isAdded) {
             let newData = this.state.currentData;
             const newLen = newData.paymentInfo?.push(values);
 
@@ -80,7 +80,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id: string }
                 }
             }
         }
-        alert((isAdding ? "Added " : "Updated ") + JSON.stringify(values, null, 2));
+        alert((isAdded ? "Added" : "Modified") + " " + JSON.stringify(values, null, 2));
     }
 
     render() {

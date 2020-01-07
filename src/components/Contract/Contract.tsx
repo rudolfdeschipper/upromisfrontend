@@ -34,6 +34,10 @@ class Contract extends Component<{}, IListState<IContractData>> {
 
     }
 
+private const openDeleteModal = (row : { row: { id: number}}) => {
+    alert("Deleting row " + row.row.id)
+}
+
     downloadToExcel = () => {
         fetch('https://localhost:5001/api/home/getcontractdataexport', {
             method: 'post',
@@ -70,15 +74,12 @@ class Contract extends Component<{}, IListState<IContractData>> {
                 Header: 'Actions',
                 Cell: (row: { row: { id: any; }; }) => (
                     <div className="w3-bar">
-                        <button className="w3-bar-item w3-button" title="Details" >
-                            <i className="fa fa-file-text-o" ></i>
-                        </button>
                         <Link to={"/contractdetails/" + row.row.id }  className="w3-bar-item w3-button" title="Edit">
                             <i className="fa fa-pencil" ></i>
                         </Link>
-                        <Link to={"/contractdetails/" + row.row.id } className="w3-bar-item w3-button" title="Delete" >
+                        <button onClick={() => { this.openDeleteModal(row); }} className="w3-bar-item w3-button" title="Delete" >
                             <i className="fa fa-trash-o" ></i>
-                        </Link>
+                        </button>
                         <div className="w3-dropdown-hover">
                             <button className="w3-button" title="More actions...">...</button>
                             <div className="w3-dropdown-content w3-bar-block w3-card-4">
@@ -132,7 +133,7 @@ class Contract extends Component<{}, IListState<IContractData>> {
 
         return (
             <div className="upromisContent">
-                <button className="w3-button w3-light-grey w3-round" title="Add new record">
+                <button className="w3-button w3-light-grey w3-round" title="Add new record" onClick={() => { this.openEditModal(row); }>
                     <i className="fa fa-plus-circle" ></i>&nbsp;Add new
                 </button>
                 <ReactTable className="-striped"
