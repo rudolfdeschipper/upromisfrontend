@@ -44,7 +44,7 @@ class ContractForm extends React.Component<IProps, IState> {
                 })}
                 onSubmit={(values, { setSubmitting }) => {
                     setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2));
+                        alert(this.props.buttonText + " " + JSON.stringify(values, null, 2));
                         setSubmitting(false);
                     }, 400);
 
