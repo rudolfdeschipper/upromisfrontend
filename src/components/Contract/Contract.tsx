@@ -159,7 +159,8 @@ class Contract extends Component<{}, IListState<IContractData>> {
                             </div>
                         </div>
                     </div>
-                )
+                ),
+                sortable: false
             },
             {
                 Header: 'ID',

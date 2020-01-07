@@ -136,7 +136,8 @@ class ContractPayment extends React.Component<IProps, IState> {
                             </div>
                         </div>
                     </div>
-                )
+                ),
+                sortable: false
             },
             {
                 Header: 'ID',
