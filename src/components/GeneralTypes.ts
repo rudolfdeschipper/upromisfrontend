@@ -6,7 +6,10 @@ export interface IListState<T> {
     currentSort: any,
     currentFilter: any,
     pageSize: number,
-    message: string
+    message: string,
+    modalAddIsOpen: boolean,
+    modalDeleteIsOpen: boolean,
+    currentRecord: T | null
 }
 
 export interface ILoadResult<T>

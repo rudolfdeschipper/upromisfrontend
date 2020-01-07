@@ -7,6 +7,7 @@ import { IContractData, IPayment } from './ContractTypes';
 
 interface IProps {
     currentData: IContractData,
+    buttonText: string
 }
 
 interface IState {
@@ -65,8 +66,8 @@ class ContractForm extends React.Component<IProps, IState> {
                     </div>
                     <Input name="value" type="number" label="Value" step="0.01" />
                     <hr />
-                    <SubmitBtn className="w3-button w3-light-grey w3-round" title="Saves this record" disabled={this.state.isSubmitting}>
-                        <i className="fa fa-save" ></i>&nbsp;Save
+                    <SubmitBtn className="w3-button w3-light-grey w3-round" title={this.props.buttonText + "s this record"} disabled={this.state.isSubmitting}>
+                        <i className="fa fa-save" ></i>&nbsp;{this.props.buttonText}
                     </SubmitBtn>
                 </Form>
             </Formik>

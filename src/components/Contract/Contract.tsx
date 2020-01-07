@@ -4,6 +4,8 @@ import ReactTable from 'react-table';
 import "react-table/react-table.css";
 import {Utils} from '../Utils';
 import { Link } from 'react-router-dom';
+import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import ContractForm from './ContractForm';
 import {IContractData, IPayment} from './ContractTypes';
 import {IListState, ILoadResult} from '../GeneralTypes';
 
@@ -29,17 +31,46 @@ class Contract extends Component<{}, IListState<IContractData>> {
             currentSort: null,
             currentFilter: null,
             pageSize: 10,
-            message: ""
+            message: "",
+            modalAddIsOpen: false,
+            modalDeleteIsOpen: false,
+            currentRecord: null
         };
 
     }
 
-    private openDeleteModal = (row : { row: { id: number}}) => {
-        alert("Deleting row " + row.row.id)
+    private openAddModal = () => {
+        this.setState(
+            {
+                modalAddIsOpen: true,
+                currentRecord: { id: -1, code: "", title: "", description: "", startdate: new Date(), enddate: new Date(), value: 0.0, paymentInfo: [], modifier: "Added" }
+            });
     }
 
-    private openAddModal = () => {
-        alert("Adding row" )
+    private closeAddModalNoSave = () => {
+        this.setState(
+            {
+                modalAddIsOpen: false,
+                currentRecord: null
+            }
+        )
+    }
+
+    private openDeleteModal = (row : { row: { _index: number}}) => {
+        this.setState(
+            {
+                modalDeleteIsOpen: true,
+                currentRecord: this.state.data[row.row._index]
+            });
+    }
+
+    private closeDeleteModalNoSave = () => {
+        this.setState(
+            {
+                modalDeleteIsOpen: false,
+                currentRecord: null
+            }
+        )
     }
 
     downloadToExcel = () => {
@@ -76,7 +107,7 @@ class Contract extends Component<{}, IListState<IContractData>> {
         const columns = [
             {
                 Header: 'Actions',
-                Cell: (row: { row: { id: any; }; }) => (
+                Cell: (row: { row: { id: any, _index: number; }; }) => (
                     <div className="w3-bar">
                         <Link to={"/contractdetails/" + row.row.id }  className="w3-bar-item w3-button" title="Edit">
                             <i className="fa fa-pencil" ></i>
@@ -187,7 +218,18 @@ class Contract extends Component<{}, IListState<IContractData>> {
                 <button className="w3-button w3-light-grey w3-round" onClick={this.downloadToExcel} title="Export to Excel" >
                     <i className="fa fa-file-excel-o" ></i>&nbsp;Export
                 </button>
-
+                <Modal isOpen={this.state.modalAddIsOpen} >
+                    <ModalHeader toggle={this.closeAddModalNoSave} charCode="&times;" >Add Contract</ModalHeader>
+                    <ModalBody>
+                        <ContractForm buttonText="Add" currentData={this.state.currentRecord as IContractData}  />
+                    </ModalBody>
+                </Modal>
+                <Modal isOpen={this.state.modalDeleteIsOpen} >
+                    <ModalHeader toggle={this.closeDeleteModalNoSave} charCode="&times;" >Delete Contract</ModalHeader>
+                    <ModalBody>
+                        <ContractForm buttonText="Delete" currentData={this.state.currentRecord as IContractData} />
+                    </ModalBody>
+                </Modal>
             </div>
         );
     }

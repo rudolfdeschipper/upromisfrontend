@@ -95,7 +95,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id: string }
                 </Link> <hr />
                 <Tabs defaultActiveKey='details' id='detailstab'>
                     <Tab eventKey='details' title='Details'>
-                        <ContractForm currentData={this.state.currentData} />
+                        <ContractForm buttonText="Save" currentData={this.state.currentData} />
                     </Tab>
                     <Tab eventKey="payments" title="Payments">
                         <ContractPayment currentData={this.state.currentData} updatePaymentline={this.updatePaymentline} />
