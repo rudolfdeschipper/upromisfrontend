@@ -34,9 +34,13 @@ class Contract extends Component<{}, IListState<IContractData>> {
 
     }
 
-private const openDeleteModal = (row : { row: { id: number}}) => {
-    alert("Deleting row " + row.row.id)
-}
+    private openDeleteModal = (row : { row: { id: number}}) => {
+        alert("Deleting row " + row.row.id)
+    }
+
+    private openAddModal = () => {
+        alert("Adding row" )
+    }
 
     downloadToExcel = () => {
         fetch('https://localhost:5001/api/home/getcontractdataexport', {
@@ -133,7 +137,7 @@ private const openDeleteModal = (row : { row: { id: number}}) => {
 
         return (
             <div className="upromisContent">
-                <button className="w3-button w3-light-grey w3-round" title="Add new record" onClick={() => { this.openEditModal(row); }>
+                <button className="w3-button w3-light-grey w3-round" title="Add new record" onClick={() => { this.openAddModal(); }}>
                     <i className="fa fa-plus-circle" ></i>&nbsp;Add new
                 </button>
                 <ReactTable className="-striped"
