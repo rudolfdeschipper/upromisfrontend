@@ -74,12 +74,17 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id: string }
             if (currentIndex && this.state.currentData.paymentInfo) {
                 let newData = this.state.currentData;
                 if (newData.paymentInfo) {
-                    newData.paymentInfo[currentIndex] = values;
+                    // if we deleted a newly added element, just remove it from the list
+                    if (values.modifier === "Deleted" && values.id === -1) {
+                        newData.paymentInfo.splice(currentIndex, 1);
+                    } else {
+                        newData.paymentInfo[currentIndex] = values;
+                    }
                     this.setState({ currentData: newData });
                 }
             }
         }
-        alert((isAdding ? "Added" : "Modified") + " " + JSON.stringify(values, null, 2));
+        alert((isAdding ? "Added" : values.modifier) + " " + JSON.stringify(values, null, 2));
     }
 
     render() {

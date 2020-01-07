@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { IContractData, IPayment } from './ContractTypes';
 
 interface IProps {
-    currentData: IContractData;
+    currentData: IContractData,
 }
 
 interface IState {
@@ -17,7 +17,7 @@ class ContractForm extends React.Component<IProps, IState> {
 
     constructor(props: Readonly<IProps>) {
         super(props);
-        this.state = { isSubmitting: false};
+        this.state = { isSubmitting: false };
     }
 
     render() {
@@ -51,7 +51,7 @@ class ContractForm extends React.Component<IProps, IState> {
                 }}
             >
                 <Form mode="themed">
-                    <Input name="id" label="ID" disabled/>
+                    <Input name="id" label="ID" disabled />
                     <Input name="code" label="Code" />
                     <Input name="title" label="Title" />
                     <Textarea name="description" label="Description" />

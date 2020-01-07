@@ -8,7 +8,7 @@ import ContractPaymentForm from './ContractPaymentForm';
 
 interface IProps {
     currentData: IContractData;
-    updatePaymentline: (values: IPayment, isAdding: boolean, currentIndex? : number) => void;
+    updatePaymentline: (values: IPayment, isAdding: boolean, currentIndex?: number) => void;
 }
 
 interface IState {
@@ -30,46 +30,24 @@ class ContractPayment extends React.Component<IProps, IState> {
             currentPaymentRecord: null,
         };
 
-        this.openEditModal = this.openEditModal.bind(this);
-        this.closeEditModalNoSave = this.closeEditModalNoSave.bind(this);
-
-        this.openAddModal = this.openAddModal.bind(this);
-        this.afterOpenAddModal = this.afterOpenAddModal.bind(this);
-        this.closeAddModal = this.closeAddModal.bind(this);
-
-        this.openDeleteModal = this.openDeleteModal.bind(this);
-        this.afterOpenDeleteModal = this.afterOpenDeleteModal.bind(this);
-        this.closeDeleteModal = this.closeDeleteModal.bind(this);
-
-        this.setValue = this.setValue.bind(this);
     }
 
-    openAddModal() {
+    private openAddModal = () => {
         this.setState({
             modalAddIsOpen: true,
             currentPaymentRecord: { id: -1, description: "", plannedinvoicedate: new Date(), actualinvoicedate: new Date(), amount: 0.0, modifier: "Unchanged" }
         });
     }
 
-    afterOpenAddModal() {
-        // references are now sync'd and can be accessed.
-    }
-
-    closeAddModal() {
-        this.setState({ modalAddIsOpen: false });
-    }
-
-    closeAddModalNoSave() {
+    private closeAddModalNoSave = () => {
         this.setState({
             modalAddIsOpen: false,
             currentPaymentRecord: null
         });
     }
 
-
-    openEditModal(row: { row: { _index: number; }; }) {
-        alert(JSON.stringify(row))
-            if (this.props.currentData.paymentInfo) {
+    private openEditModal = (row: { row: { _index: number; }; }) => {
+        if (this.props.currentData.paymentInfo) {
             this.setState({
                 currentPaymentRecord: ((this.props.currentData.paymentInfo[row.row._index]) as IPayment),
                 modalEditIsOpen: true,
@@ -78,9 +56,33 @@ class ContractPayment extends React.Component<IProps, IState> {
         }
     }
 
+    private closeEditModalNoSave = () => {
+        this.setState({
+            modalEditIsOpen: false,
+            currentPaymentRecord: null
+        });
+    }
+
+    private openDeleteModal = (row: { row: { _index: number; }; }) => {
+        if (this.props.currentData.paymentInfo) {
+            this.setState({
+                currentPaymentRecord: ((this.props.currentData.paymentInfo[row.row._index]) as IPayment),
+                modalDeleteIsOpen: true,
+                currentIndex: row.row._index
+            })
+        }
+    }
+
+    private closeDeleteModalNoSave = () => {
+        this.setState({
+            modalDeleteIsOpen: false,
+            currentPaymentRecord: null
+        });
+    }
+
     private updatePaymentLine = (values: IPayment) => {
         // update the record
-        if(values.modifier != "Added") {
+        if (values.modifier != "Added") {
             values.modifier = "Modified";
         }
         this.props.updatePaymentline(values, false, this.state.currentIndex);
@@ -102,31 +104,15 @@ class ContractPayment extends React.Component<IProps, IState> {
         });
     }
 
+    private deletePaymentLine = (values: IPayment) => {
+        // add the record
+        values.modifier = "Deleted";
+        this.props.updatePaymentline(values, false, this.state.currentIndex);
 
-    closeEditModalNoSave() {
         this.setState({
-            modalEditIsOpen: false,
+            modalDeleteIsOpen: false,
             currentPaymentRecord: null
         });
-    }
-
-    openDeleteModal(row: { row: { _index: number; }; }) {
-        this.setState({ modalDeleteIsOpen: true });
-    }
-
-    afterOpenDeleteModal() {
-        // references are now sync'd and can be accessed.
-    }
-
-    closeDeleteModal() {
-        this.setState({ modalDeleteIsOpen: false });
-    }
-
-    setValue(property: string, value: any) {
-        let cd = this.state.currentPaymentRecord as any;
-        cd[property] = value;
-
-        this.setState({ currentPaymentRecord: cd });
     }
 
     render() {
@@ -183,7 +169,7 @@ class ContractPayment extends React.Component<IProps, IState> {
             }
         ];
 
-        const tabledata = this.props.currentData.paymentInfo as IPayment[];
+        const tabledata = (this.props.currentData.paymentInfo as IPayment[]).filter(r => r.modifier != "Deleted");
 
         return (
             <div>
@@ -200,13 +186,19 @@ class ContractPayment extends React.Component<IProps, IState> {
                 <Modal isOpen={this.state.modalEditIsOpen} >
                     <ModalHeader toggle={this.closeEditModalNoSave} charCode="&times;" >Edit Payment</ModalHeader>
                     <ModalBody>
-                        <ContractPaymentForm currentData={this.state.currentPaymentRecord as IPayment} updateValues={this.updatePaymentLine} />
+                        <ContractPaymentForm buttonText="Save" currentData={this.state.currentPaymentRecord as IPayment} updateValues={this.updatePaymentLine} />
                     </ModalBody>
                 </Modal>
                 <Modal isOpen={this.state.modalAddIsOpen} >
                     <ModalHeader toggle={this.closeAddModalNoSave} charCode="&times;" >Add Payment</ModalHeader>
                     <ModalBody>
-                        <ContractPaymentForm currentData={this.state.currentPaymentRecord as IPayment} updateValues={this.addPaymentLine} />
+                        <ContractPaymentForm buttonText="Add" currentData={this.state.currentPaymentRecord as IPayment} updateValues={this.addPaymentLine} />
+                    </ModalBody>
+                </Modal>
+                <Modal isOpen={this.state.modalDeleteIsOpen} >
+                    <ModalHeader toggle={this.closeDeleteModalNoSave} charCode="&times;" >Delete Payment</ModalHeader>
+                    <ModalBody>
+                        <ContractPaymentForm buttonText="Delete" currentData={this.state.currentPaymentRecord as IPayment} updateValues={this.deletePaymentLine} />
                     </ModalBody>
                 </Modal>
             </div>
