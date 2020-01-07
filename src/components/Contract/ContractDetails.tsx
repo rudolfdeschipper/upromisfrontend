@@ -57,7 +57,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id: string }
                 // Update form values
                 console.log(res);
                 this.setState({
-                    currentData: res.dataSubject,
+                    currentData: {...res.dataSubject, modifier: "Modified" }
                 });
             })
             .catch(e => console.error(e))

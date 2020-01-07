@@ -60,7 +60,7 @@ class Contract extends Component<{}, IListState<IContractData>> {
         this.setState(
             {
                 modalDeleteIsOpen: true,
-                currentRecord: this.state.data[row.row._index]
+                currentRecord: {...this.state.data[row.row._index], modifier: "Deleted" }
             });
     }
 
