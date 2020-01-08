@@ -20,6 +20,7 @@ class App extends Component {
                         <Route path='/counter' component={Counter} />
                         <Route path='/contract' component={contract} />
                         <Route path='/contractdetails/:id' component={contractdetails} />
+                        <Route path='/contractdetails/add' component={contractdetails} />
                         <Route component={nfp} />
                     </Switch>
                 </Suspense>

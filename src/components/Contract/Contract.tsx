@@ -32,28 +32,10 @@ class Contract extends Component<{}, IListState<IContractData>> {
             currentFilter: null,
             pageSize: 10,
             message: "",
-            modalAddIsOpen: false,
             modalDeleteIsOpen: false,
             currentRecord: null
         };
 
-    }
-
-    private openAddModal = () => {
-        this.setState(
-            {
-                modalAddIsOpen: true,
-                currentRecord: { id: -1, code: "", title: "", description: "", startdate: new Date(), enddate: new Date(), value: 0.0, paymentInfo: [], modifier: "Added" }
-            });
-    }
-
-    private closeAddModalNoSave = () => {
-        this.setState(
-            {
-                modalAddIsOpen: false,
-                currentRecord: null
-            }
-        )
     }
 
     private openDeleteModal = (row: { row: { _index: number } }) => {
@@ -204,9 +186,9 @@ class Contract extends Component<{}, IListState<IContractData>> {
 
         return (
             <div className="upromisContent">
-                <button className="w3-button w3-light-grey w3-round" title="Add new record" onClick={() => { this.openAddModal(); }}>
+                <Link className="w3-button w3-light-grey w3-round" title="Add new record" to="/contractdetails/add" >
                     <i className="fa fa-plus-circle" ></i>&nbsp;Add new
-                </button>
+                </Link>
                 <ReactTable className="-striped"
                     data={this.state.data}
                     pages={this.state.pages}
@@ -221,12 +203,6 @@ class Contract extends Component<{}, IListState<IContractData>> {
                 <button className="w3-button w3-light-grey w3-round" onClick={this.downloadToExcel} title="Export to Excel" >
                     <i className="fa fa-file-excel-o" ></i>&nbsp;Export
                 </button>
-                <Modal isOpen={this.state.modalAddIsOpen} >
-                    <ModalHeader toggle={this.closeAddModalNoSave} charCode="&times;" >Add Contract</ModalHeader>
-                    <ModalBody>
-                        <ContractForm buttonText="Add" currentData={this.state.currentRecord as IContractData} />
-                    </ModalBody>
-                </Modal>
                 <Modal isOpen={this.state.modalDeleteIsOpen} >
                     <ModalHeader toggle={this.closeDeleteModalNoSave} charCode="&times;" >Delete Contract</ModalHeader>
                     <ModalBody>

@@ -15,7 +15,7 @@ interface IState {
     id: number;
 }
 
-class ContractDetails extends React.Component<RouteComponentProps<{ id: string }>, IState> {
+class ContractDetails extends React.Component<RouteComponentProps<{ id?: string }>, IState> {
     static displayName = ContractDetails.name;
 
     // normalised structure:
@@ -28,40 +28,50 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id: string }
     // (as in previous version)
 
 
-    constructor(props: Readonly<RouteComponentProps<{ id: string }>>) {
+    constructor(props: Readonly<RouteComponentProps<{ id?: string }>>) {
         super(props);
-        this.state =
-        {
-            id: parseInt(this.props.match.params.id, 10),
-            currentData: { id: 0, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), value: 0.0, paymentInfo: [], modifier: "Unchanged" }
+        if (this.props.match.params.id && this.props.match.params.id != "add") {
+            this.state =
+            {
+                id: parseInt(this.props.match.params.id, 10),
+                currentData: { id: 0, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), value: 0.0, paymentInfo: [], modifier: "Unchanged" }
+            };
+        } else {
+            // adding
+            this.state =
+            {
+                id: -1,
+                currentData: { id: -1, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), value: 0.0, paymentInfo: [], modifier: "Added" }
+            };
+
         }
-            ;
     }
 
     componentDidMount() {
         // fetch the record
-        fetch('https://localhost:5001/api/home/getonecontractdata', {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                ID: this.state.id
+        if (this.state.id != -1) {
+            fetch('https://localhost:5001/api/home/getonecontractdata', {
+                method: 'post',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ID: this.state.id
+                })
             })
-        })
-            .then(response => {
-                return response.json() as Promise<IAPIResult<IContractData>>;
-            })
-            .then((res) => {
-                // Update form values
-                console.log(res);
-                this.setState({
-                    currentData: {...res.dataSubject, modifier: "Modified" }
-                });
-            })
-            .catch(e => console.error(e))
-
+                .then(response => {
+                    return response.json() as Promise<IAPIResult<IContractData>>;
+                })
+                .then((res) => {
+                    // Update form values
+                    console.log(res);
+                    this.setState({
+                        currentData: { ...res.dataSubject, modifier: "Modified" }
+                    });
+                })
+                .catch(e => console.error(e))
+        }
     }
 
     private updatePaymentline = (values: IPayment, isAdding: boolean, currentIndex?: number) => {
@@ -84,7 +94,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id: string }
                 }
             }
         }
-        alert((isAdding ? "Added" : values.modifier) + " " + JSON.stringify(values, null, 2));
+        alert("updatePaymentline " + (isAdding ? "Added" : values.modifier) + " " + JSON.stringify(this.state.currentData, null, 2));
     }
 
     render() {

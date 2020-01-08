@@ -7,7 +7,6 @@ export interface IListState<T> {
     currentFilter: any,
     pageSize: number,
     message: string,
-    modalAddIsOpen: boolean,
     modalDeleteIsOpen: boolean,
     currentRecord: T | null
 }
