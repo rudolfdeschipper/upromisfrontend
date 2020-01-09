@@ -74,6 +74,11 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
         }
     }
 
+    private saveOneRecord = (record: IContractData) => {
+        alert("Saving " + JSON.stringify(record) );
+
+    }
+
     private updatePaymentline = (values: IPayment, isAdding: boolean, currentIndex?: number) => {
         if (isAdding) {
             let newData = this.state.currentData;
@@ -105,7 +110,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                 </Link> <hr />
                 <Tabs defaultActiveKey='details' id='detailstab'>
                     <Tab eventKey='details' title='Details'>
-                        <ContractForm buttonText="Save" currentData={this.state.currentData} />
+                        <ContractForm buttonText="Save" currentData={this.state.currentData} saveAction={this.saveOneRecord}/>
                     </Tab>
                     <Tab eventKey="payments" title="Payments">
                         <ContractPayment currentData={this.state.currentData} updatePaymentline={this.updatePaymentline} />

@@ -55,6 +55,11 @@ class Contract extends Component<{}, IListState<IContractData>> {
         )
     }
 
+    private saveOneRecord = (record: IContractData) => {
+        alert("Saving " + JSON.stringify(record) );
+
+    }
+
     private loadData = (state: any, instance: any) => {
         // show the loading overlay
         this.setState({ loading: true })
@@ -135,7 +140,7 @@ class Contract extends Component<{}, IListState<IContractData>> {
                         <div className="w3-dropdown-hover">
                             <button className="w3-button" title="More actions...">...</button>
                             <div className="w3-dropdown-content w3-bar-block w3-card-4">
-                                <a href="#" className="w3-bar-item w3-button" >Link 1</a>
+                                <a onClick={() => { this.performAction1(row); }} className="w3-bar-item w3-button" >Action 1</a>
                                 <a href="#" className="w3-bar-item w3-button">Link 2</a>
                                 <a href="#" className="w3-bar-item w3-button">Link 3</a>
                             </div>
@@ -206,11 +211,16 @@ class Contract extends Component<{}, IListState<IContractData>> {
                 <Modal isOpen={this.state.modalDeleteIsOpen} >
                     <ModalHeader toggle={this.closeDeleteModalNoSave} charCode="&times;" >Delete Contract</ModalHeader>
                     <ModalBody>
-                        <ContractForm buttonText="Delete" currentData={this.state.currentRecord as IContractData} />
+                        <ContractForm buttonText="Delete" currentData={this.state.currentRecord as IContractData} saveAction={this.saveOneRecord} />
                     </ModalBody>
                 </Modal>
             </div>
         );
+    }
+
+    performAction1 = (row: { row: { id: any; _index: number; }; }) => {
+        alert("perform Action 1: on " + JSON.stringify(this.state.data[row.row._index]));
+        this.saveOneRecord(this.state.data[row.row._index]);
     }
 }
 

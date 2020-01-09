@@ -7,7 +7,8 @@ import { IContractData, IPayment } from './ContractTypes';
 
 interface IProps {
     currentData: IContractData,
-    buttonText: string
+    buttonText: string;
+    saveAction: (record: IContractData) => void
 }
 
 interface IState {
@@ -45,6 +46,7 @@ class ContractForm extends React.Component<IProps, IState> {
                 onSubmit={(values, { setSubmitting }) => {
                     setTimeout(() => {
                         alert("onSubmit: " + this.props.buttonText + " " + JSON.stringify(values, null, 2));
+                        this.props.saveAction(values);
                         setSubmitting(false);
                     }, 400);
 
