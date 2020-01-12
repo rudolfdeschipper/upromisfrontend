@@ -32,3 +32,11 @@ export interface IAPIResult<T> {
     success: boolean;
     message: string;
 }
+
+export interface IListInfo {
+    page: number,
+    pageSize: number,
+    sorted: any,
+    filtered: any
+
+}

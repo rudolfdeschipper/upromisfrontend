@@ -7,7 +7,8 @@ import ContractPayment from './ContractPayment';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { IContractData, IPayment } from './ContractTypes';
-import { IAPIResult } from '../GeneralTypes';
+import { IAPIResult, ISaveMessage } from '../GeneralTypes';
+import { ContractAPI } from './ContractAPI';
 
 
 interface IState {
@@ -75,8 +76,19 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
     }
 
     private saveOneRecord = (record: IContractData) => {
-        alert("Saving " + JSON.stringify(record) );
+        const toSave: ISaveMessage<IContractData> = { id: record.id, action: "POST", dataSubject: { ...record }, subaction: "", additionalData: [] };
 
+        ContractAPI.saveRecord(toSave)
+            .then(result => {
+                if (result.success) {
+                    this.setState({ ...this.state, currentData: result.dataSubject })
+                    //alert(result.message)
+                } else {
+                    //alert("Save failed")
+                }
+            }
+            )
+            .catch(e => alert(e))
     }
 
     private updatePaymentline = (values: IPayment, isAdding: boolean, currentIndex?: number) => {

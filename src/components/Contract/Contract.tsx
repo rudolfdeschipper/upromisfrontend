@@ -7,7 +7,8 @@ import { Link } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import ContractForm from './ContractForm';
 import { IContractData, IPayment } from './ContractTypes';
-import { IListState, ILoadResult } from '../GeneralTypes';
+import { IListState, ILoadResult, IListInfo, ISaveMessage } from '../GeneralTypes';
+import { ContractAPI } from './ContractAPI';
 
 class Contract extends Component<{}, IListState<IContractData>> {
     static displayName = Contract.name;
@@ -56,31 +57,30 @@ class Contract extends Component<{}, IListState<IContractData>> {
     }
 
     private saveOneRecord = (record: IContractData) => {
-        alert("Saving " + JSON.stringify(record) );
+        const toSave: ISaveMessage<IContractData> = { id: record.id, action: "POST", dataSubject: { ...record }, subaction: "", additionalData: [] };
 
-    }
+        alert("saveOneRecord " + JSON.stringify(toSave));
+
+        ContractAPI.saveRecord(toSave)
+            .then(result => {
+                alert("back");
+                if (result.success) {
+                    this.setState({ ...this.state, currentRecord: result.dataSubject })
+                    alert(result.message)
+                } else {
+                    alert("Save failed")
+                }
+            }
+            )
+            .catch(e => alert(e))
+        }
 
     private loadData = (state: any, instance: any) => {
         // show the loading overlay
         this.setState({ loading: true })
         // fetch your data
 
-        fetch('https://localhost:5001/api/home/getcontractdata', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json;charset=UTF-8'
-            },
-            body: JSON.stringify({
-                page: state.page,
-                pageSize: state.pageSize,
-                sorted: state.sorted,
-                filtered: state.filtered
-            })
-        })
-            .then(response => {
-                return response.json() as Promise<ILoadResult<IContractData>>;
-            })
+        ContractAPI.loadList({ page: state.page, pageSize: state.pageSize, sorted: state.sorted, filtered: state.filtered })
             .then(res => {
                 // Update react-table
                 this.setState({
@@ -96,30 +96,8 @@ class Contract extends Component<{}, IListState<IContractData>> {
     }
 
     downloadToExcel = () => {
-        fetch('https://localhost:5001/api/home/getcontractdataexport', {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                page: 1,
-                pageSize: this.state.pageSize,
-                sorted: this.state.currentSort,
-                filtered: this.state.currentFilter
-            })
-        })
-            .then(response => {
-                response.blob().then(blob => {
-                    let url = window.URL.createObjectURL(blob);
-                    let a = document.createElement('a');
-                    let filename = "Contractdata - " + Utils.formatDate(Date.now()).replace(/\//g, "-") + ".xlsx";
-                    a.href = url;
-                    a.download = filename;
-                    a.click();
-                    a.remove();
-                });
-            });
+        ContractAPI.loadListForExport("Contract data", { page: 1, pageSize: this.state.pageSize, sorted: this.state.currentSort, filtered: this.state.currentFilter })
+            ;
     }
 
     //

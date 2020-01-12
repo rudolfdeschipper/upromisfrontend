@@ -44,12 +44,8 @@ class ContractForm extends React.Component<IProps, IState> {
                         .required('Required')
                 })}
                 onSubmit={(values, { setSubmitting }) => {
-                    setTimeout(() => {
-                        alert("onSubmit: " + this.props.buttonText + " " + JSON.stringify(values, null, 2));
-                        this.props.saveAction(values);
-                        setSubmitting(false);
-                    }, 400);
-
+                    this.props.saveAction(values);
+                    setSubmitting(false);
                 }}
             >
                 <Form mode="themed">
