@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import ContractForm from './ContractForm';
 import { IContractData, IPayment } from './ContractTypes';
-import { IListState, ILoadResult, IListInfo, ISaveMessage } from '../GeneralTypes';
+import { IListState, ILoadResult, IListInfo, ISaveMessage, IAPIResult } from '../GeneralTypes';
 import { ContractAPI } from './ContractAPI';
 
 class Contract extends Component<{}, IListState<IContractData>> {
@@ -56,14 +56,27 @@ class Contract extends Component<{}, IListState<IContractData>> {
         )
     }
 
-    private saveOneRecord = (record: IContractData) => {
-        const toSave: ISaveMessage<IContractData> = { id: record.id, action: "POST", dataSubject: { ...record }, subaction: "", additionalData: [] };
+    private closeDeleteModalWithSave = (subaction: string, record: IContractData) => {
+        this.saveOneRecord(subaction, record)
+            .then(result =>
+                this.setState(
+                    {
+                        modalDeleteIsOpen: false,
+                        currentRecord: null
+                    }
+                )
+            )
+            .catch(e => alert(e))
+    }
 
-        alert("saveOneRecord " + JSON.stringify(toSave));
+    private saveOneRecord = (subaction: string, record: IContractData): Promise<IAPIResult<IContractData>> => {
+        const action = (record.modifier === "Added") ? "POST" : (record.modifier === "Deleted") ? "DELETE" : "PUT";
+        const toSave: ISaveMessage<IContractData> = { id: record.id, action: action, dataSubject: { ...record }, subaction: subaction, additionalData: [] };
 
-        ContractAPI.saveRecord(toSave)
+        // alert("saveOneRecord " + JSON.stringify(toSave));
+
+        const res = (ContractAPI.saveRecord(toSave)
             .then(result => {
-                alert("back");
                 if (result.success) {
                     this.setState({ ...this.state, currentRecord: result.dataSubject })
                     alert(result.message)
@@ -72,8 +85,9 @@ class Contract extends Component<{}, IListState<IContractData>> {
                 }
             }
             )
-            .catch(e => alert(e))
-        }
+        ) as Promise<IAPIResult<IContractData>>;
+        return res;
+    }
 
     private loadData = (state: any, instance: any) => {
         // show the loading overlay
@@ -189,7 +203,7 @@ class Contract extends Component<{}, IListState<IContractData>> {
                 <Modal isOpen={this.state.modalDeleteIsOpen} >
                     <ModalHeader toggle={this.closeDeleteModalNoSave} charCode="&times;" >Delete Contract</ModalHeader>
                     <ModalBody>
-                        <ContractForm buttonText="Delete" currentData={this.state.currentRecord as IContractData} saveAction={this.saveOneRecord} />
+                        <ContractForm buttonText="Delete" currentData={this.state.currentRecord as IContractData} saveAction={this.closeDeleteModalWithSave} />
                     </ModalBody>
                 </Modal>
             </div>
@@ -197,8 +211,8 @@ class Contract extends Component<{}, IListState<IContractData>> {
     }
 
     performAction1 = (row: { row: { id: any; _index: number; }; }) => {
-        alert("perform Action 1: on " + JSON.stringify(this.state.data[row.row._index]));
-        this.saveOneRecord(this.state.data[row.row._index]);
+        // alert("perform Action 1: on " + JSON.stringify(this.state.data[row.row._index]));
+        this.saveOneRecord("Action 1", this.state.data[row.row._index]);
     }
 }
 

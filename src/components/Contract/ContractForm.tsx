@@ -8,7 +8,7 @@ import { IContractData, IPayment } from './ContractTypes';
 interface IProps {
     currentData: IContractData,
     buttonText: string;
-    saveAction: (record: IContractData) => void
+    saveAction: (subaction: string, record: IContractData) => void
 }
 
 interface IState {
@@ -44,7 +44,7 @@ class ContractForm extends React.Component<IProps, IState> {
                         .required('Required')
                 })}
                 onSubmit={(values, { setSubmitting }) => {
-                    this.props.saveAction(values);
+                    this.props.saveAction("Delete", values);
                     setSubmitting(false);
                 }}
             >

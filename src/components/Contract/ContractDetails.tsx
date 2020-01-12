@@ -75,16 +75,17 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
         }
     }
 
-    private saveOneRecord = (record: IContractData) => {
-        const toSave: ISaveMessage<IContractData> = { id: record.id, action: "POST", dataSubject: { ...record }, subaction: "", additionalData: [] };
+    private saveOneRecord = (subaction: string, record: IContractData) => {
+        const action = (record.modifier === "Added") ? "POST" : (record.modifier === "Deleted") ? "DELETE" : "PUT";
+        const toSave: ISaveMessage<IContractData> = { id: record.id, action: action, dataSubject: { ...record }, subaction: subaction, additionalData: [] };
 
         ContractAPI.saveRecord(toSave)
             .then(result => {
                 if (result.success) {
                     this.setState({ ...this.state, currentData: result.dataSubject })
-                    //alert(result.message)
+                    alert(result.message)
                 } else {
-                    //alert("Save failed")
+                    alert("Save failed " + result.message)
                 }
             }
             )
