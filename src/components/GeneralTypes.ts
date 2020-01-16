@@ -40,3 +40,14 @@ export interface IListInfo {
     filtered: any
 
 }
+
+export interface ISelectValue {
+    label: string,
+    value: string | number
+}
+
+export interface ISelectValueList {
+    valueType: string,
+    data: ISelectValue[],
+}
+

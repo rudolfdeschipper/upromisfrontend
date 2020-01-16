@@ -6,6 +6,7 @@ export interface IContractData {
     description: string,
     startdate: Date,
     enddate: Date,
+    status: string,
     value: number,
     paymentInfo: IPayment[] | null,
 

@@ -1,13 +1,11 @@
 import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { Form, Datepicker, SubmitBtn, Input, Textarea, Select } from 'react-formik-ui'
+import { Form, SubmitBtn, Input, Textarea, Datepicker } from 'react-formik-ui'
 import { IContractData } from './ContractTypes';
-import { ISelectValue } from '../GeneralTypes';
 
 interface IProps {
     currentData: IContractData,
-    statusvalues: ISelectValue[],
     buttonText: string;
     saveAction: (subaction: string, record: IContractData) => void
 }
@@ -16,7 +14,7 @@ interface IState {
     isSubmitting: boolean;
 }
 
-class ContractForm extends React.Component<IProps, IState> {
+class ContractDeleteForm extends React.Component<IProps, IState> {
 
     constructor(props: Readonly<IProps>) {
         super(props);
@@ -54,19 +52,19 @@ class ContractForm extends React.Component<IProps, IState> {
             >
                 <Form mode="themed">
                     <Input name="id" label="ID" disabled />
-                    <Input name="code" label="Code" />
-                    <Input name="title" label="Title" />
-                    <Textarea name="description" label="Description" />
+                    <Input name="code" label="Code" disabled/>
+                    <Input name="title" label="Title" disabled/>
+                    <Textarea name="description" label="Description" disabled />
                     <div className="w3-cell-row">
                         <div className="w3-cell">
-                            <Datepicker name="startdate" label="Start/End date" />
+                            <Datepicker name="startdate" label="Start/End date" disabled />
                         </div>
                         <div className="w3-cell">
-                            <Datepicker name="enddate" />
+                            <Datepicker name="enddate"  disabled/>
                         </div>
                     </div>
-                    <Select name='status' label='Status' options={this.props.statusvalues} />
-                    <Input name="value" type="number" label="Value" step="0.01" />
+                    <Input name='status' label='Status' disabled />
+                    <Input name="value" type="number" label="Value" step="0.01" disabled />
                     <hr />
                     <SubmitBtn className="w3-button w3-light-grey w3-round" title={this.props.buttonText + "s this record"} disabled={this.state.isSubmitting}>
                         <i className="fa fa-save" ></i>&nbsp;{this.props.buttonText}
@@ -76,4 +74,4 @@ class ContractForm extends React.Component<IProps, IState> {
         );
     }
 };
-export default ContractForm;
+export default ContractDeleteForm;

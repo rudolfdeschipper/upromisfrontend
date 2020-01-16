@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Utils } from '../Utils';
 import ReactTable from 'react-table';
 import { IContractData, IPayment } from './ContractTypes';
@@ -82,7 +82,7 @@ class ContractPayment extends React.Component<IProps, IState> {
 
     private updatePaymentLine = (values: IPayment) => {
         // update the record
-        if (values.modifier != "Added") {
+        if (values.modifier !== "Added") {
             values.modifier = "Modified";
         }
         this.props.updatePaymentline(values, false, this.state.currentIndex);

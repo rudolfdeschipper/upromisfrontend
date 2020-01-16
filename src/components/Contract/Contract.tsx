@@ -5,9 +5,9 @@ import "react-table/react-table.css";
 import { Utils } from '../Utils';
 import { Link } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
-import ContractForm from './ContractForm';
-import { IContractData, IPayment } from './ContractTypes';
-import { IListState, ILoadResult, IListInfo, ISaveMessage, IAPIResult } from '../GeneralTypes';
+import ContractDeleteForm from './ContractDeleteForm';
+import { IContractData } from './ContractTypes';
+import { IListState, ISaveMessage, IAPIResult } from '../GeneralTypes';
 import { ContractAPI } from './ContractAPI';
 
 class Contract extends Component<{}, IListState<IContractData>> {
@@ -58,7 +58,7 @@ class Contract extends Component<{}, IListState<IContractData>> {
 
     private closeDeleteModalWithSave = (subaction: string, record: IContractData) => {
         this.saveOneRecord(subaction, record)
-            .then(result =>
+            .then(() =>
                 this.setState(
                     {
                         modalDeleteIsOpen: false,
@@ -89,7 +89,7 @@ class Contract extends Component<{}, IListState<IContractData>> {
         return res;
     }
 
-    private loadData = (state: any, instance: any) => {
+    private loadData = (state: any) => {
         // show the loading overlay
         this.setState({ loading: true })
         // fetch your data
@@ -155,6 +155,10 @@ class Contract extends Component<{}, IListState<IContractData>> {
                 accessor: 'title'
             },
             {
+                Header: 'Status',
+                accessor: 'status'
+            },
+            {
                 Header: 'Description',
                 accessor: 'description'
             },
@@ -203,7 +207,7 @@ class Contract extends Component<{}, IListState<IContractData>> {
                 <Modal isOpen={this.state.modalDeleteIsOpen} >
                     <ModalHeader toggle={this.closeDeleteModalNoSave} charCode="&times;" >Delete Contract</ModalHeader>
                     <ModalBody>
-                        <ContractForm buttonText="Delete" currentData={this.state.currentRecord as IContractData} saveAction={this.closeDeleteModalWithSave} />
+                        <ContractDeleteForm buttonText="Delete" currentData={this.state.currentRecord as IContractData}  saveAction={this.closeDeleteModalWithSave} />
                     </ModalBody>
                 </Modal>
             </div>

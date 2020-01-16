@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { Formik, Field } from 'formik';
+import React from 'react';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Form, Datepicker, Input, SubmitBtn } from 'react-formik-ui'
-import { IContractData, IPayment } from './ContractTypes';
+import { IPayment } from './ContractTypes';
 
 
 interface IProps {

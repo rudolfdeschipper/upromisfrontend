@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import "react-table/react-table.css";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
@@ -7,12 +7,13 @@ import ContractPayment from './ContractPayment';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { IContractData, IPayment } from './ContractTypes';
-import { IAPIResult, ISaveMessage } from '../GeneralTypes';
+import { ISaveMessage, ISelectValue } from '../GeneralTypes';
 import { ContractAPI } from './ContractAPI';
 
 
 interface IState {
     currentData: IContractData;
+    statusvalues: ISelectValue[],
     id: number;
 }
 
@@ -31,18 +32,20 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
 
     constructor(props: Readonly<RouteComponentProps<{ id?: string }>>) {
         super(props);
-        if (this.props.match.params.id && this.props.match.params.id != "add") {
+        if (this.props.match.params.id && this.props.match.params.id !== "add") {
             this.state =
             {
                 id: parseInt(this.props.match.params.id, 10),
-                currentData: { id: 0, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), value: 0.0, paymentInfo: [], modifier: "Unchanged" }
+                currentData: { id: 0, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), status: "", value: 0.0, paymentInfo: [], modifier: "Unchanged" },
+                statusvalues: []
             };
         } else {
             // adding
             this.state =
             {
                 id: -1,
-                currentData: { id: -1, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), value: 0.0, paymentInfo: [], modifier: "Added" }
+                currentData: { id: -1, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), status: "", value: 0.0, paymentInfo: [], modifier: "Added" },
+                statusvalues: []
             };
 
         }
@@ -50,20 +53,8 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
 
     componentDidMount() {
         // fetch the record
-        if (this.state.id != -1) {
-            fetch('https://localhost:5001/api/home/getonecontractdata', {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    ID: this.state.id
-                })
-            })
-                .then(response => {
-                    return response.json() as Promise<IAPIResult<IContractData>>;
-                })
+        if (this.state.id !== -1) {
+            ContractAPI.loadOneRecord(this.state.id)
                 .then((res) => {
                     // Update form values
                     console.log(res);
@@ -71,8 +62,14 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                         currentData: { ...res.dataSubject, modifier: "Modified" }
                     });
                 })
-                .catch(e => console.error(e))
+                .catch(e => console.error(e));
+
         }
+        ContractAPI.loadDropdownValues("ContractStatus")
+            .then(res => {
+                this.setState({ statusvalues: res.data });
+            }
+            )
     }
 
     private saveOneRecord = (subaction: string, record: IContractData) => {
@@ -95,7 +92,6 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
     private updatePaymentline = (values: IPayment, isAdding: boolean, currentIndex?: number) => {
         if (isAdding) {
             let newData = this.state.currentData;
-            const newLen = newData.paymentInfo?.push(values);
 
             this.setState({ currentData: newData });
         } else {
@@ -123,7 +119,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                 </Link> <hr />
                 <Tabs defaultActiveKey='details' id='detailstab'>
                     <Tab eventKey='details' title='Details'>
-                        <ContractForm buttonText="Save" currentData={this.state.currentData} saveAction={this.saveOneRecord}/>
+                        <ContractForm buttonText="Save" currentData={this.state.currentData} statusvalues={this.state.statusvalues} saveAction={this.saveOneRecord} />
                     </Tab>
                     <Tab eventKey="payments" title="Payments">
                         <ContractPayment currentData={this.state.currentData} updatePaymentline={this.updatePaymentline} />
