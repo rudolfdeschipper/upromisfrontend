@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
 import { Utils } from '../Utils';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { IListState, ISaveMessage, IAPIResult } from '../GeneralTypes';
 
@@ -10,7 +10,7 @@ import ContractDeleteForm from './ContractDeleteForm';
 import { IContractData } from './ContractTypes';
 import { ContractAPI } from './ContractAPI';
 
-class Contract extends Component<{}, IListState<IContractData>> {
+class Contract extends React.Component<RouteComponentProps<{}>, IListState<IContractData>> {
     static displayName = Contract.name;
 
     // normalised structure:
@@ -23,7 +23,7 @@ class Contract extends Component<{}, IListState<IContractData>> {
     // (as in previous version)
 
 
-    constructor(props: Readonly<{}>) {
+    constructor(props: Readonly<RouteComponentProps<{}>>) {
         super(props);
         this.state = {
             data: [],
