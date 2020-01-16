@@ -1,6 +1,7 @@
-import { IContractData } from './ContractTypes';
 import { ILoadResult, IListInfo, ISaveMessage, IAPIResult, ISelectValueList } from '../GeneralTypes';
 import { Utils } from '../Utils';
+
+import { IContractData } from './ContractTypes';
 
 export class ContractAPI {
 

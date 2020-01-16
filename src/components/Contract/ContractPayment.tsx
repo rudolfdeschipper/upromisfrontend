@@ -1,8 +1,9 @@
 import React from 'react';
-import { Utils } from '../Utils';
-import ReactTable from 'react-table';
-import { IContractData, IPayment } from './ContractTypes';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import ReactTable from 'react-table';
+import { Utils } from '../Utils';
+
+import { IContractData, IPayment } from './ContractTypes';
 import ContractPaymentForm from './ContractPaymentForm';
 
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Form, Datepicker, Input, SubmitBtn } from 'react-formik-ui'
+
 import { IPayment } from './ContractTypes';
 
 

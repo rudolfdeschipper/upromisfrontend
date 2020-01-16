@@ -2,8 +2,9 @@ import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Form, Datepicker, SubmitBtn, Input, Textarea, Select } from 'react-formik-ui'
-import { IContractData } from './ContractTypes';
 import { ISelectValue } from '../GeneralTypes';
+
+import { IContractData } from './ContractTypes';
 
 interface IProps {
     currentData: IContractData,

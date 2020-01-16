@@ -1,13 +1,14 @@
 import React from 'react';
 import "react-table/react-table.css";
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import ContractForm from './ContractForm';
-import ContractPayment from './ContractPayment';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
-import { IContractData, IPayment } from './ContractTypes';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 import { ISaveMessage, ISelectValue } from '../GeneralTypes';
+
+import ContractForm from './ContractForm';
+import ContractPayment from './ContractPayment';
+import { IContractData, IPayment } from './ContractTypes';
 import { ContractAPI } from './ContractAPI';
 
 

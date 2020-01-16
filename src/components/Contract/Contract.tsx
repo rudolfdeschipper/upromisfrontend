@@ -1,13 +1,13 @@
-
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import "react-table/react-table.css";
 import { Utils } from '../Utils';
 import { Link } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { IListState, ISaveMessage, IAPIResult } from '../GeneralTypes';
+
 import ContractDeleteForm from './ContractDeleteForm';
 import { IContractData } from './ContractTypes';
-import { IListState, ISaveMessage, IAPIResult } from '../GeneralTypes';
 import { ContractAPI } from './ContractAPI';
 
 class Contract extends Component<{}, IListState<IContractData>> {
