@@ -3,8 +3,10 @@ import Navbar from 'react-bootstrap/Navbar'
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Nav from 'react-bootstrap/Nav';
 import './NavMenu.css';
+import { RouteComponentProps } from 'react-router';
+import { Utils } from './Utils';
 
-export class NavMenu extends Component {
+export class NavMenu extends React.Component<{ User: any }> {
     static displayName = NavMenu.name;
 
     render() {
@@ -52,9 +54,36 @@ export class NavMenu extends Component {
                                 <NavDropdown.Divider />
                             </NavDropdown>
                         </Nav>
-                  </Navbar.Collapse>
+                        <Nav className="mr-auto justify-content-center">
+                            <Nav.Item>
+                                {
+                                    !!this.props.User ?
+                                        <Nav.Link className="text-dark" onClick={() => {
+                                            let mgr = new Utils();
+                                            mgr.Logout();
+                                        }} title="Log out" >Logged in as: {this.props.User.profile.name}</Nav.Link>
+                                        :
+                                        <Nav.Link className="text-dark" onClick={() => { 
+                                            let mgr = new Utils();
+                                            mgr.Login();
+                                         }} >Log In</Nav.Link>
+                                }
+
+
+                            </Nav.Item>
+                            <NavDropdown title="Help" id="collapsable-contract-dropdown">
+                                <NavDropdown.Item className="text-dark" href='/help' >
+                                    Help
+                                </NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                <NavDropdown.Item className="text-dark" href='/about' >
+                                    About
+                                </NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
+                    </Navbar.Collapse>
                 </Navbar>
-            </header>
+            </header >
         );
     }
 }

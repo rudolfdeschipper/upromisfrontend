@@ -1,0 +1,100 @@
+%FileOverwrite:components\=<Screen.$>DeleteForm.tsx
+
+import React from 'react';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { Form, SubmitBtn, Input, Textarea, Datepicker } from 'react-formik-ui'
+
+import { I=<Screen.$>Data } from './=<Screen.$>Types';
+
+interface IProps {
+    currentData: I=<Screen.$>Data,
+    buttonText: string;
+    saveAction: (subaction: string, record: I=<Screen.$>Data) => void
+}
+
+interface IState {
+    isSubmitting: boolean;
+}
+
+class =<Screen.$>DeleteForm extends React.Component<IProps, IState> {
+
+    constructor(props: Readonly<IProps>) {
+        super(props);
+        this.state = { isSubmitting: false };
+    }
+
+    render() {
+        return (
+            <Formik
+                initialValues={this.props.currentData as any}
+                enableReinitialize={true}
+                validationSchema={Yup.object({
+%Loop:Screen.Edit
+                =<Name> : 
+		%If:Type=date
+                Yup.date()
+		%Else
+			%If:Type=double
+                Yup.number()
+			%Else
+                Yup.string()
+                %If:Length?
+                        .max(=<Length>, 'Must be =<Length> characters or less')
+                %EndIf
+			%EndIf
+		%EndIf
+        %If:!Nullable
+                .required('Required'),
+        %EndIf
+        %If:Type=code
+                .oneOf([ %Loop:Values '=<Value>', %/Loop:Values ]),
+        %EndIf
+%If:HasMore , %EndIf
+
+%/Loop:Screen.Edit
+                })}
+                onSubmit={(values, { setSubmitting }) => {
+                    this.props.saveAction("Delete", values);
+                    setSubmitting(false);
+                }}
+            >
+                <Form mode="themed">
+%Loop:Screen.Edit
+                %If:Type=daterange
+                    <div className="w3-cell-row">
+                        <div className="w3-cell">
+                            <Datepicker name="=<Fromdate>" label="=<Title>" disabled />
+                        </div>
+                        <div className="w3-cell">
+                            <Datepicker name="=<Todate>"  disabled/>
+                        </div>
+                    </div>
+                %Else
+                    %If:Length=-1
+                        <Textarea name="=<Name>" label="=<Title>"
+                    %Else
+                        %If:Type=code
+                            <Select name='=<JSONName>' label='=<Title>' options={this.props.=<JSONName>values}
+                        %Else
+                        <Input name="=<Name>" label="=<Title>"
+                            %If:Type:double
+                                type="number" step="0.01"
+                            %EndIf
+                        %EndIf
+                    %EndIf
+                    disabled />
+                %EndIf
+%/Loop:Screen.Edit
+                    <hr />
+                    <SubmitBtn className="w3-button w3-light-grey w3-round" title={this.props.buttonText + "s this record"} disabled={this.state.isSubmitting}>
+                        <i className="fa fa-save" ></i>&nbsp;{this.props.buttonText}
+                    </SubmitBtn>
+                </Form>
+            </Formik>
+        );
+    }
+};
+export default =<Screen.$>DeleteForm;
+
+%/File

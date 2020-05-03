@@ -1,0 +1,101 @@
+%Loop:Tabs
+%FileOverwrite:components\=<Tabs.$>Form.tsx
+
+import React from 'react';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { Form, Datepicker, Input, SubmitBtn } from 'react-formik-ui'
+
+import { I=<Tabs.$> } from './=<Screen.$>Types';
+
+
+interface IProps {
+    currentData: I=<Tabs.$>;
+    buttonText: string;
+    updateValues:  (values: I=<Tabs.$>) => void;
+}
+
+interface IState {
+    isSubmitting: boolean
+}
+
+class =<Screen.$>=<Tabs.$>Form extends React.Component<IProps, IState> {
+
+    constructor(props: Readonly<IProps>) {
+        super(props);
+        this.state = { isSubmitting: false };
+    }
+
+    render() {
+        return (
+            <Formik
+                initialValues={this.props.currentData as any}
+                enableReinitialize={true}
+                onSubmit={(values, { setSubmitting }) => {
+                    this.props.updateValues({...values});
+                    setSubmitting(false);
+                }}
+                validationSchema={Yup.object({
+%Loop:Model
+                    =<List.JSONName>: Yup.=<List.Type>()
+                    %If:Length?
+                        .max(=<Length>, 'Must be =<Length> characters or less')
+                    %EndIf
+                    %If:Nullable?
+                    %If:Nullabe=false
+                        .required('Required'),
+                    %EndIf
+                    %EndIf
+                    %If:Values?
+                        .oneOf([
+                    %Loop:Values
+                        '=<Values.$>',
+                    %/Loop:Values
+                        ]),
+                    %EndIf
+%/Loop:Model
+                })}
+
+            >
+                <Form className="w3-container" mode="themed">
+                    <Input name="id" label="ID" disabled />
+%Loop:Model
+                %If:Type=daterange
+                    <div className="w3-cell-row">
+                        <div className="w3-cell">
+                            <Datepicker name="=<Fromdate>" label="=<Title>"  />
+                        </div>
+                        <div className="w3-cell">
+                            <Datepicker name="=<Todate>"  />
+                        </div>
+                    </div>
+                %Else
+                    %If:Length=-1
+                        <Textarea name="=<Name>" label="=<Title>"
+                    %Else
+                        %If:Type=code
+                            <Select name='=<JSONName>' label='=<Title>' options={this.props.=<JSONName>values}
+                        %Else
+                        <Input name="=<Name>" label="=<Title>"
+                            %If:Type:double
+                                type="number" step="0.01"
+                            %EndIf
+                        %EndIf
+                    %EndIf
+                     />
+                %EndIf
+%/Loop:Model
+                    <hr />
+                    <SubmitBtn className="w3-button w3-light-grey w3-round" title={this.props.buttonText + "s this record"} disabled={this.state.isSubmitting}>
+                        <i className="fa fa-save" ></i>&nbsp;{this.props.buttonText}
+                    </SubmitBtn>
+                </Form>
+            </Formik>
+        );
+    }
+};
+export default =<Screen.$>=<Tabs.$>Form;
+
+
+%/File
+%/Loop:Tabs

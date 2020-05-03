@@ -1,0 +1,26 @@
+
+%FileOverwrite:components\=<Screen.$>Types.tsx
+
+export interface I=<Screen.$>Data {
+%Loop:Edit
+    =<List.JSONName>: =<List.Type> ,
+%/Loop:Edit
+%Loop:Tabs
+    =<Tabs.JSONName>Info: I=<Tabs.$>[] | null,
+%/Loop:Tabs
+
+    modifier: "Unchanged" | "Added" | "Modified" | "Deleted"
+}
+
+%Loop:Tabs
+export interface I=<Tabs.$> {
+%Loop:Model
+    =<Model.JSONName> : =<Model.Type>,
+%/Loop:Model
+
+    modifier: "Unchanged" | "Added" | "Modified" | "Deleted"
+}
+
+%/Loop:Tabs
+
+%/File

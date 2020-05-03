@@ -1,0 +1,215 @@
+%Loop:Tabs
+%FileOverwrite:components\=<Tabs.$>.tsx
+
+import React from 'react';
+import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import ReactTable from 'react-table';
+import { Utils } from '../Utils';
+
+import { I=<Screen.$>Data, I=<Tabs.$> } from './=<Screen.$>Types';
+import =<Screen.$>=<Tabs.$>Form from './=<Screen.$>=<Tabs.$>Form';
+
+
+interface IProps {
+    currentData: I=<Screen.$>Data;
+    =<Tabs.$>: (values: I=<Tabs.$>, isAdding: boolean, currentIndex?: number) => void;
+}
+
+interface IState {
+    modalAddIsOpen: boolean,
+    modalEditIsOpen: boolean,
+    modalDeleteIsOpen: boolean,
+    =<Tabs.$>: I=<Tabs.$> | null,
+    currentIndex?: number
+}
+
+class =<Screen.$>=<Tabs.$> extends React.Component<IProps, IState> {
+
+    constructor(props: Readonly<IProps>) {
+        super(props);
+        this.state = {
+            modalAddIsOpen: false,
+            modalEditIsOpen: false,
+            modalDeleteIsOpen: false,
+            current=<Tabs.$>Record: null,
+        };
+
+    }
+
+    private openAddModal = () => {
+        this.setState({
+            modalAddIsOpen: true,
+            current=<Tabs.$>Record: { id: -1, 
+            %Loop:Model
+                =<JSONName> : %If:Type=date new Date() %EndIf %If:Type=double 0.0 %EndIf %If:Type:string "" %EndIf ,
+            %/Loop:Model
+            modifier: "Unchanged" }
+        });
+    }
+
+    private closeAddModalNoSave = () => {
+        this.setState({
+            modalAddIsOpen: false,
+            current=<Tabs.$>Record: null
+        });
+    }
+
+    private openEditModal = (row: { row: { _index: number; }; }) => {
+        if (this.props.currentData.=<Tabs.JSONName>Info) {
+            this.setState({
+                current=<Tabs.$>Record: ((this.props.currentData.=<Tabs.JSONName>Info[row.row._index]) as I=<Tabs.$>),
+                modalEditIsOpen: true,
+                currentIndex: row.row._index
+            })
+        }
+    }
+
+    private closeEditModalNoSave = () => {
+        this.setState({
+            modalEditIsOpen: false,
+            current=<Tabs.$>Record: null
+        });
+    }
+
+    private openDeleteModal = (row: { row: { _index: number; }; }) => {
+        if (this.props.currentData.=<Tabs.JSONName>Info) {
+            this.setState({
+                current=<Tabs.$>Record: ((this.props.currentData.=<Tabs.JSONName>Info[row.row._index]) as I=<Tabs.$>),
+                modalDeleteIsOpen: true,
+                currentIndex: row.row._index
+            })
+        }
+    }
+
+    private closeDeleteModalNoSave = () => {
+        this.setState({
+            modalDeleteIsOpen: false,
+            current=<Tabs.$>Record: null
+        });
+    }
+
+    private update=<Tabs.$>Line = (values: I=<Tabs.$>) => {
+        // update the record
+        if (values.modifier !== "Added") {
+            values.modifier = "Modified";
+        }
+        this.props.update=<Tabs.$>line(values, false, this.state.currentIndex);
+
+        this.setState({
+            modalEditIsOpen: false,
+            current=<Tabs.$>Record: null
+        });
+    }
+
+    private add=<Tabs.$>Line = (values: I=<Tabs.$>) => {
+        // add the record
+        values.modifier = "Added";
+        this.props.update=<Tabs.$>line(values, true, this.state.currentIndex);
+
+        this.setState({
+            modalAddIsOpen: false,
+            current=<Tabs.$>Record: null
+        });
+    }
+
+    private delete=<Tabs.$>Line = (values: I=<Tabs.$>) => {
+        // add the record
+        values.modifier = "Deleted";
+        this.props.update=<Tabs.$>line(values, false, this.state.currentIndex);
+
+        this.setState({
+            modalDeleteIsOpen: false,
+            current=<Tabs.$>Record: null
+        });
+    }
+
+    render() {
+        const =<Tabs.JSONName>columns = [
+            {
+                Header: 'Actions',
+                Cell: (row: { row: { _index: number; }; }) => (
+                    <div className="w3-bar">
+                        <button className="w3-bar-item w3-button" title="Edit" onClick={() => { this.openEditModal(row); }}>
+                            <i className="fa fa-pencil" ></i>
+                        </button>
+                        <button className="w3-bar-item w3-button" title="Delete" onClick={() => { this.openDeleteModal(row); }}>
+                            <i className="fa fa-trash-o" ></i>
+                        </button>
+%If:Tabs.Actions?
+                        <div className="w3-dropdown-hover">
+                            <button className="w3-button" title="More actions...">...</button>
+                            <div className="w3-dropdown-content w3-bar-block w3-card-4">
+%Loop:Tabs.Actions
+                                <a onClick={() => { this.performAction=<Name>(row); }} className="w3-bar-item w3-button" >=<Title></a>
+%/Loop:Tabs.Actions
+                            </div>
+                        </div>
+%EndIf
+                    </div>
+                ),
+                sortable: false
+            },
+%Loop:Tabs.Model
+            {
+                Header: '=<Title>',
+		%If:Type=date
+                accessor: (d: I=<Screen.$>Data) => Utils.formatDate(d.=<Name>),
+                // date sorting
+                sortMethod: Utils.dateSorter,
+		%Else
+			%If:Type=double
+				accessor: (d: I=<Screen.$>Data) => Utils.formatAmount(d.=<Name>),
+				style: { 'textAlign': "right" },
+			%Else
+				accessor: '=<Name>',
+			%EndIf
+		%EndIf
+                show: =<Show>
+            }
+%If:HasMore , %EndIf
+%/Loop:Tabs.Model
+        ];
+
+        const tabledata = this.props.currentData.=<Tabs.JSONName>Info as I=<Tabs.$>[];
+        //).filter(r => r.modifier != "Deleted") : this.props.currentData.=<Tabs.JSONName>Info as I=<Tabs.$>[];
+
+        return (
+            <div>
+                <button className="w3-button w3-light-grey w3-round" onClick={this.openAddModal} title="Add new record">
+                    <i className="fa fa-plus-circle" ></i>&nbsp;Add new
+                </button>
+                {this.props.currentData && (
+                    <ReactTable className="-striped"
+                        data={tabledata}
+                        minRows={1}
+                        columns={=<Tabs.JSONName>columns}
+                    />)
+                }
+                <Modal isOpen={this.state.modalEditIsOpen} >
+                    <ModalHeader toggle={this.closeEditModalNoSave} charCode="&times;" >Edit =<Tabs.$></ModalHeader>
+                    <ModalBody>
+                        <=<Screen.$> buttonText="Save" currentData={this.state.current=<Tabs.$>Record as I=<Tabs.$>} updateValues={this.update=<Tabs.$>Line} />
+                    </ModalBody>
+                </Modal>
+                <Modal isOpen={this.state.modalAddIsOpen} >
+                    <ModalHeader toggle={this.closeAddModalNoSave} charCode="&times;" >Add =<Tabs.$></ModalHeader>
+                    <ModalBody>
+                        <=<Screen.$> buttonText="Add" currentData={this.state.current=<Tabs.$>Record as I=<Tabs.$>} updateValues={this.add=<Tabs.$>Line} />
+                    </ModalBody>
+                </Modal>
+                <Modal isOpen={this.state.modalDeleteIsOpen} >
+                    <ModalHeader toggle={this.closeDeleteModalNoSave} charCode="&times;" >Delete =<Tabs.$></ModalHeader>
+                    <ModalBody>
+                        <=<Screen.$> buttonText="Delete" currentData={this.state.current=<Tabs.$>Record as I=<Tabs.$>} updateValues={this.delete=<Tabs.$>Line} />
+                    </ModalBody>
+                </Modal>
+            </div>
+        );
+    }
+};
+
+export default =<Screen.$>=<Tabs.$>;
+
+%/File
+
+%/Loop:Tabs
