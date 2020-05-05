@@ -1,11 +1,10 @@
-import React, { Component, Suspense } from 'react';
-import { Route, Switch, RouteComponentProps } from 'react-router';
+import React, { Suspense } from 'react';
+import { Route, Switch } from 'react-router';
 import { Layout } from './components/Layout';
 import { Home } from './components/Home';
 import { Counter } from './components/Counter';
 import nfp from './components/NotFoundPage';
 import {UserManager} from './components/UserManager' ;
-import { Utils } from './components/Utils';
 
 interface IProps {
 }
@@ -48,9 +47,9 @@ class App extends React.Component<IProps, IState> {
                         <Route exact path='/' component={Home} />
                         <Route path='/home' component={Home} />
                         <Route path='/counter' component={Counter} />
-                        <Route path='/contract' component={contract} />
-                        <Route path='/contractdetails/:id' component={contractdetails} />
-                        <Route path='/contractdetails/add' component={contractdetails} />
+                        <Route path='/contract' component={!!this.state._user ?  contract : nfp} />
+                        <Route path='/contractdetails/:id' component={!!this.state._user ? contractdetails : nfp} />
+                        <Route path='/contractdetails/add' component={!!this.state._user ?contractdetails : nfp} />
                         <Route component={nfp} />
                     </Switch>
                 </Suspense>

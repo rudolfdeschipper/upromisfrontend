@@ -4,7 +4,7 @@ export class UserManager {
 
     private static config : Oidc.UserManagerSettings = {
         authority: "http://localhost:5000",
-        client_id: "spa",
+        client_id: "uProMISspa",
         redirect_uri: "http://localhost:3000/callback.html",
         response_type: "code",
         scope: "openid profile api1",

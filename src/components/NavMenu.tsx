@@ -1,10 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Navbar from 'react-bootstrap/Navbar'
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Nav from 'react-bootstrap/Nav';
 import './NavMenu.css';
-import { RouteComponentProps } from 'react-router';
-import { Utils } from './Utils';
 import { UserManager } from './UserManager';
 
 export class NavMenu extends React.Component<{ User: any }> {
@@ -24,7 +22,7 @@ export class NavMenu extends React.Component<{ User: any }> {
                             <Nav.Item>
                                 <Nav.Link className="text-dark" href="/counter">Counter</Nav.Link>
                             </Nav.Item>
-                            <NavDropdown title="Contract" id="collapsable-contract-dropdown">
+                            <NavDropdown title="Contract" id="collapsable-contract-dropdown" disabled={!this.props.User} >
                                 <NavDropdown.Item className="text-dark" href='/contract' >
                                     Contracts
                                 </NavDropdown.Item>
@@ -36,7 +34,7 @@ export class NavMenu extends React.Component<{ User: any }> {
                                     Proposals
                                 </NavDropdown.Item>
                             </NavDropdown>
-                            <NavDropdown title="Project" id="collapsable-contract-dropdown">
+                            <NavDropdown title="Project" id="collapsable-contract-dropdown"  disabled={!this.props.User}>
                                 <NavDropdown.Item className="text-dark" href='/project' >
                                     Projects
                                 </NavDropdown.Item>
