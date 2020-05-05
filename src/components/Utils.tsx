@@ -1,4 +1,4 @@
-import * as Oidc from 'oidc-client' ;
+
 
 export class Utils {
 
@@ -45,29 +45,4 @@ export class Utils {
         return 0
     }
 
-    config : Oidc.UserManagerSettings = {
-        authority: "http://localhost:5000",
-        client_id: "spa",
-        redirect_uri: "http://localhost:3000/callback.html",
-        response_type: "code",
-        scope: "openid profile api1",
-        post_logout_redirect_uri: "http://localhost:3000/home",
-    };
-
-    mgr : Oidc.UserManager = new Oidc.UserManager(this.config);  
-
-    Login()
-    {
-        return this.mgr.signinRedirect();  
-    }
-
-    Logout()
-    {
-        return this.mgr.signoutRedirect();  
-    }
-
-    GetUser(): Promise<Oidc.User | null>
-    {
-        return this.mgr.getUser()        
-    }
 }

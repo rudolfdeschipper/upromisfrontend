@@ -5,6 +5,7 @@ import Nav from 'react-bootstrap/Nav';
 import './NavMenu.css';
 import { RouteComponentProps } from 'react-router';
 import { Utils } from './Utils';
+import { UserManager } from './UserManager';
 
 export class NavMenu extends React.Component<{ User: any }> {
     static displayName = NavMenu.name;
@@ -59,12 +60,12 @@ export class NavMenu extends React.Component<{ User: any }> {
                                 {
                                     !!this.props.User ?
                                         <Nav.Link className="text-dark" onClick={() => {
-                                            let mgr = new Utils();
+                                            let mgr = new UserManager();
                                             mgr.Logout();
                                         }} title="Log out" >Logged in as: {this.props.User.profile.name}</Nav.Link>
                                         :
                                         <Nav.Link className="text-dark" onClick={() => { 
-                                            let mgr = new Utils();
+                                            let mgr = new UserManager();
                                             mgr.Login();
                                          }} >Log In</Nav.Link>
                                 }

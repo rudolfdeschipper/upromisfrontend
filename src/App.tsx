@@ -4,7 +4,7 @@ import { Layout } from './components/Layout';
 import { Home } from './components/Home';
 import { Counter } from './components/Counter';
 import nfp from './components/NotFoundPage';
-import * as Oidc from 'oidc-client' ;
+import {UserManager} from './components/UserManager' ;
 import { Utils } from './components/Utils';
 
 interface IProps {
@@ -27,7 +27,7 @@ class App extends React.Component<IProps, IState> {
 
     componentDidMount()
     {
-        let mgr = new Utils();  
+        let mgr = new UserManager();  
         mgr.GetUser().then((user) => {  
             this.setState({  
                 _user: user  
