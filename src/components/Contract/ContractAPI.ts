@@ -5,7 +5,7 @@ import { IContractData } from './ContractTypes';
 
 export class ContractAPI {
 
-    static loadList = (listInfo: IListInfo) => fetch('http://localhost:5001/api/home/getcontractdata', {
+    static loadList = (listInfo: IListInfo) => fetch('http://localhost:5001/api/contract/getcontractdata', {
         method: 'POST',
         headers: {
             'Accept': 'application/json, text/plain, */*',
@@ -23,7 +23,7 @@ export class ContractAPI {
         })
         ;
 
-    static loadListForExport = (title: string, listInfo: IListInfo) => fetch('http://localhost:5001/api/home/getcontractdataexport', {
+    static loadListForExport = (title: string, listInfo: IListInfo) => fetch('http://localhost:5001/api/contract/getcontractdataexport', {
         method: 'post',
         headers: {
             'Accept': 'application/json, text/plain, */*',
@@ -52,7 +52,7 @@ export class ContractAPI {
 
     static saveRecord = (message: ISaveMessage<IContractData>): Promise<IAPIResult<IContractData>> => {
 
-        return fetch('http://localhost:5001/api/home/postonecontractdata', {
+        return fetch('http://localhost:5001/api/contract/postonecontractdata', {
             method: message.action,
             headers: {
                 'Accept': 'application/json, text/plain, */*',
@@ -73,7 +73,7 @@ export class ContractAPI {
     };
 
     static loadOneRecord = (id: number): Promise<IAPIResult<IContractData>> => {
-        return (fetch('http://localhost:5001/api/home/getonecontractdata', {
+        return (fetch('http://localhost:5001/api/contract/getonecontractdata', {
             method: 'post',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
@@ -89,7 +89,7 @@ export class ContractAPI {
     }
 
 static loadDropdownValues = (valueType: string): Promise<ISelectValueList> => {
-    return (fetch('http://localhost:5001/api/home/getselectvalues', {
+    return (fetch('http://localhost:5001/api/contract/getselectvalues', {
         method: 'post',
         headers: {
             'Accept': 'application/json, text/plain, */*',
