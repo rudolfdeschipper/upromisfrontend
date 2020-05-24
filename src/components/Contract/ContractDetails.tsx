@@ -15,6 +15,7 @@ import { ContractAPI } from './ContractAPI';
 interface IState {
     currentData: IContractData;
     statusvalues: ISelectValue[],
+    typevalues: ISelectValue[],
     id: number;
 }
 
@@ -37,16 +38,18 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
             this.state =
             {
                 id: parseInt(this.props.match.params.id, 10),
-                currentData: { id: 0, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), status: "", value: 0.0, paymentInfo: [], modifier: "Unchanged" },
-                statusvalues: []
+                currentData: { id: 0, code: "", externalId: "", description: "", title: "", createdOn: new Date(), createdBy: "", updatedOn: new Date(), updatedBy: "", startDate: new Date(), endDate: new Date(), status: "", contractType: 0, value: 0.0, accountInfoId: 0, parentContractId : 0, paymentInfo: [], teamComposition: [], modifier: "Unchanged" },
+                statusvalues: [],
+                typevalues: []
             };
         } else {
             // adding
             this.state =
             {
                 id: -1,
-                currentData: { id: -1, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), status: "", value: 0.0, paymentInfo: [], modifier: "Added" },
-                statusvalues: []
+                currentData: { id: -1, code: "", externalId: "", description: "", title: "", createdOn: new Date(), createdBy: "", updatedOn: new Date(), updatedBy: "", startDate: new Date(), endDate: new Date(), status: "", contractType: 0, value: 0.0, accountInfoId: 0, parentContractId : 0, paymentInfo: [], teamComposition: [], modifier: "Added" },
+                statusvalues: [],
+                typevalues: []
             };
 
         }
@@ -58,7 +61,6 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
             ContractAPI.loadOneRecord(this.state.id)
                 .then((res) => {
                     // Update form values
-                    console.log(res);
                     this.setState({
                         currentData: { ...res.dataSubject, modifier: "Modified" }
                     });
@@ -70,36 +72,60 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
             .then(res => {
                 this.setState({ statusvalues: res.data });
             }
+            );
+        ContractAPI.loadDropdownValues("ContractType")
+            .then(res => {
+                this.setState({ typevalues: res.data });
+            }
             )
     }
 
     private saveOneRecord = (subaction: string, record: IContractData) => {
         const action = (record.modifier === "Added") ? "POST" : (record.modifier === "Deleted") ? "DELETE" : "PUT";
-        const toSave: ISaveMessage<IContractData> = { id: record.id, action: action, dataSubject: { ...record }, subaction: subaction, additionalData: [] };
 
-        ContractAPI.saveRecord(toSave)
+        const toSave: ISaveMessage<IContractData> = 
+            { 
+                id: record.id, 
+                action: action, 
+                dataSubject: 
+                    { 
+                        ...record, 
+                        // don't forget to take the sublists as well:
+                        teamComposition: this.state.currentData.teamComposition, 
+                        paymentInfo: this.state.currentData.paymentInfo 
+                    }, 
+                subaction: subaction, 
+                additionalData: [] 
+            };
+
+            ContractAPI.saveRecord(toSave)
             .then(result => {
                 if (result.success) {
                     this.setState({ ...this.state, currentData: result.dataSubject })
-                    alert(result.message)
+                    // TODO: put a toast here
+                    alert("Save result: " + result.message)
                 } else {
+                    // TODO: put a toast here
                     alert("Save failed " + result.message)
                 }
             }
             )
-            .catch(e => alert(e))
+            .catch(e => alert("Unexpected error: " + e))
     }
 
     private updatePaymentline = (values: IPayment, isAdding: boolean, currentIndex?: number) => {
-        if (isAdding) {
+
+    //alert("Adding: " + isAdding + " Values: " + JSON.stringify(values) + "Row number: "+ currentIndex);
+
+       if (isAdding) {
             let newData = this.state.currentData;
 
             const _ = newData.paymentInfo?.push(values);
 
             this.setState({ currentData: newData });
         } else {
-            if (currentIndex && this.state.currentData.paymentInfo) {
-                let newData = this.state.currentData;
+            if (typeof(currentIndex) === "number" && this.state.currentData.paymentInfo) {
+                const newData = this.state.currentData;
                 if (newData.paymentInfo) {
                     // if we deleted a newly added element, just remove it from the list
                     if (values.modifier === "Deleted" && values.id === -1) {
@@ -111,7 +137,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                 }
             }
         }
-        alert("updatePaymentline " + (isAdding ? "Added" : values.modifier) + " " + JSON.stringify(this.state.currentData, null, 2));
+        //alert("updatePaymentline " + (isAdding ? "Added" : values.modifier) + " " + JSON.stringify(this.state.currentData));
     }
 
     render() {
@@ -122,7 +148,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                 </Link> <hr />
                 <Tabs defaultActiveKey='details' id='detailstab'>
                     <Tab eventKey='details' title='Details'>
-                        <ContractForm buttonText="Save" currentData={this.state.currentData} statusvalues={this.state.statusvalues} saveAction={this.saveOneRecord} />
+                        <ContractForm buttonText="Save" currentData={this.state.currentData} statusvalues={this.state.statusvalues} typevalues={this.state.typevalues} saveAction={this.saveOneRecord} />
                     </Tab>
                     <Tab eventKey="payments" title="Payments">
                         <ContractPayment currentData={this.state.currentData} updatePaymentline={this.updatePaymentline} />

@@ -5,6 +5,8 @@ import { Utils } from '../Utils';
 
 import { IContractData, IPayment } from './ContractTypes';
 import ContractPaymentForm from './ContractPaymentForm';
+import { ISelectValue } from '../GeneralTypes';
+import { ContractAPI } from './ContractAPI';
 
 
 interface IProps {
@@ -13,6 +15,7 @@ interface IProps {
 }
 
 interface IState {
+    paymentstatusvalues: ISelectValue[],
     modalAddIsOpen: boolean,
     modalEditIsOpen: boolean,
     modalDeleteIsOpen: boolean,
@@ -25,18 +28,18 @@ class ContractPayment extends React.Component<IProps, IState> {
     constructor(props: Readonly<IProps>) {
         super(props);
         this.state = {
+            paymentstatusvalues: [],
             modalAddIsOpen: false,
             modalEditIsOpen: false,
             modalDeleteIsOpen: false,
             currentPaymentRecord: null,
         };
-
     }
 
     private openAddModal = () => {
         this.setState({
             modalAddIsOpen: true,
-            currentPaymentRecord: { id: -1, description: "", plannedinvoicedate: new Date(), actualinvoicedate: new Date(), amount: 0.0, modifier: "Unchanged" }
+            currentPaymentRecord: { id: -1, description: "", comment: "", paymentStatus: 0, plannedInvoiceDate: new Date(), actualInvoiceDate: new Date(), amount: 0.0, modifier: "Unchanged" }
         });
     }
 
@@ -116,6 +119,14 @@ class ContractPayment extends React.Component<IProps, IState> {
         });
     }
 
+    componentDidMount() {
+        ContractAPI.loadDropdownValues("PaymentStatus")
+            .then(res => {
+                this.setState({ paymentstatusvalues: res.data });
+            }
+            )
+    }
+
     render() {
         const paymentcolumns = [
             {
@@ -150,16 +161,16 @@ class ContractPayment extends React.Component<IProps, IState> {
                 accessor: 'description'
             },
             {
-                id: 'plannedinvoicedate',
+                id: 'plannedInvoiceDate',
                 Header: 'Planned date',
-                accessor: (d: any) => Utils.formatDate(d.plannedinvoicedate),
+                accessor: (d: any) => Utils.formatDate(d.plannedInvoiceDate),
                 // date sorting
                 sortMethod: Utils.dateSorter
             },
             {
-                id: 'actualinvoicedate',
+                id: 'actualInvoiceDate',
                 Header: 'Actual date',
-                accessor: (d: any) => Utils.formatDate(d.actualinvoicedate),
+                accessor: (d: any) => Utils.formatDate(d.actualInvoiceDate),
                 // date sorting
                 sortMethod: Utils.dateSorter
             },
@@ -171,8 +182,9 @@ class ContractPayment extends React.Component<IProps, IState> {
             }
         ];
 
-        const tabledata = this.props.currentData.paymentInfo as IPayment[];
-        //).filter(r => r.modifier != "Deleted") : this.props.currentData.paymentInfo as IPayment[];
+        const tabledata = this.props.currentData.paymentInfo as IPayment[] ?
+            (this.props.currentData.paymentInfo as IPayment[]).filter(r => r.modifier != "Deleted") 
+            : this.props.currentData.paymentInfo as IPayment[];
 
         return (
             <div>
@@ -189,19 +201,19 @@ class ContractPayment extends React.Component<IProps, IState> {
                 <Modal isOpen={this.state.modalEditIsOpen} >
                     <ModalHeader toggle={this.closeEditModalNoSave} charCode="&times;" >Edit Payment</ModalHeader>
                     <ModalBody>
-                        <ContractPaymentForm buttonText="Save" currentData={this.state.currentPaymentRecord as IPayment} updateValues={this.updatePaymentLine} />
+                        <ContractPaymentForm buttonText="Save" currentData={this.state.currentPaymentRecord as IPayment} paymentstatusvalues={this.state.paymentstatusvalues} updateValues={this.updatePaymentLine} />
                     </ModalBody>
                 </Modal>
                 <Modal isOpen={this.state.modalAddIsOpen} >
                     <ModalHeader toggle={this.closeAddModalNoSave} charCode="&times;" >Add Payment</ModalHeader>
                     <ModalBody>
-                        <ContractPaymentForm buttonText="Add" currentData={this.state.currentPaymentRecord as IPayment} updateValues={this.addPaymentLine} />
+                        <ContractPaymentForm buttonText="Add" currentData={this.state.currentPaymentRecord as IPayment} paymentstatusvalues={this.state.paymentstatusvalues} updateValues={this.addPaymentLine} />
                     </ModalBody>
                 </Modal>
                 <Modal isOpen={this.state.modalDeleteIsOpen} >
                     <ModalHeader toggle={this.closeDeleteModalNoSave} charCode="&times;" >Delete Payment</ModalHeader>
                     <ModalBody>
-                        <ContractPaymentForm buttonText="Delete" currentData={this.state.currentPaymentRecord as IPayment} updateValues={this.deletePaymentLine} />
+                        <ContractPaymentForm buttonText="Delete" currentData={this.state.currentPaymentRecord as IPayment} paymentstatusvalues={this.state.paymentstatusvalues} updateValues={this.deletePaymentLine} />
                     </ModalBody>
                 </Modal>
             </div>

@@ -5,7 +5,7 @@ import { IContractData } from './ContractTypes';
 
 export class ContractAPI {
 
-    static loadList = (listInfo: IListInfo) => fetch('http://localhost:5001/api/contract/getcontractdata', {
+    static loadList = (listInfo: IListInfo) => fetch('http://localhost:5001/api/contract/getlist', {
         method: 'POST',
         headers: {
             'Accept': 'application/json, text/plain, */*',
@@ -23,7 +23,7 @@ export class ContractAPI {
         })
         ;
 
-    static loadListForExport = (title: string, listInfo: IListInfo) => fetch('http://localhost:5001/api/contract/getcontractdataexport', {
+    static loadListForExport = (title: string, listInfo: IListInfo) => fetch('http://localhost:5001/api/contract/getforexport', {
         method: 'post',
         headers: {
             'Accept': 'application/json, text/plain, */*',
@@ -50,9 +50,17 @@ export class ContractAPI {
         .catch(e => console.error(e))
         ;
 
-    static saveRecord = (message: ISaveMessage<IContractData>): Promise<IAPIResult<IContractData>> => {
+    static saveRecord = async (message: ISaveMessage<IContractData>): Promise<IAPIResult<IContractData>> => {
 
-        return fetch('http://localhost:5001/api/contract/postonecontractdata', {
+        // alert(JSON.stringify({
+        //     id: message.id,
+        //     dataSubject: (message.dataSubject as IContractData),
+        //     action: message.action,
+        //     subaction: message.subaction,
+        //     additionalData: message.additionalData
+        // }));
+
+        const response = await fetch('http://localhost:5001/api/contract', {
             method: message.action,
             headers: {
                 'Accept': 'application/json, text/plain, */*',
@@ -60,49 +68,43 @@ export class ContractAPI {
             },
             body: JSON.stringify({
                 id: message.id,
-                dataSubject: message.dataSubject as IContractData,
+                dataSubject: (message.dataSubject as IContractData),
                 action: message.action,
                 subaction: message.subaction,
                 additionalData: message.additionalData
-
             })
-        })
-            .then(response => {
-                return response.json() as Promise<IAPIResult<IContractData>>;
-            })
+        });
+        return response.json() as Promise<IAPIResult<IContractData>>;
     };
 
     static loadOneRecord = (id: number): Promise<IAPIResult<IContractData>> => {
-        return (fetch('http://localhost:5001/api/contract/getonecontractdata', {
-            method: 'post',
+        return (fetch('http://localhost:5001/api/contract/' + id, {
+            method: 'get',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                ID: id
-            })
+            }
         })
             .then(response => {
                 return response.json() as Promise<IAPIResult<IContractData>>;
             }))
     }
 
-static loadDropdownValues = (valueType: string): Promise<ISelectValueList> => {
-    return (fetch('http://localhost:5001/api/contract/getselectvalues', {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            valueType: valueType
+    static loadDropdownValues = (valueType: string): Promise<ISelectValueList> => {
+        return (fetch('http://localhost:5001/api/contract/getselectvalues', {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                valueType: valueType
+            })
         })
-    })
-        .then(response => {
-            return response.json() as Promise<ISelectValueList>;
-        }))
+            .then(response => {
+                return response.json() as Promise<ISelectValueList>;
+            }))
 
-}
+    }
 
 }

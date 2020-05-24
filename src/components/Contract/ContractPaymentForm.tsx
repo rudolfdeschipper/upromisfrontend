@@ -1,14 +1,16 @@
 import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { Form, Datepicker, Input, SubmitBtn } from 'react-formik-ui'
+import { Form, Datepicker, Input, SubmitBtn, Select } from 'react-formik-ui'
 
 import { IPayment } from './ContractTypes';
+import { ISelectValue } from '../GeneralTypes';
 
 
 interface IProps {
     currentData: IPayment;
     buttonText: string;
+    paymentstatusvalues : ISelectValue[];
     updateValues:  (values: IPayment) => void;
 }
 
@@ -35,11 +37,14 @@ class ContractPaymentForm extends React.Component<IProps, IState> {
                 validationSchema={Yup.object({
                     description: Yup.string()
                         .required('Required'),
-                    plannedinvoicedate: Yup.date()
+                    plannedInvoiceDate: Yup.date()
                         .required('Required'),
-                    actualinvoicedate: Yup.date()
+                    actualInvoiceDate: Yup.date()
                         ,
                     amount: Yup.number()
+                        .required('Required')
+                        ,
+                    paymentStatus: Yup.number()
                         .required('Required')
                 })}
 
@@ -49,15 +54,16 @@ class ContractPaymentForm extends React.Component<IProps, IState> {
                     <Input name="description" label="Description" />
                     <div className="w3-cell-row">
                         <div className="w3-cell">
-                            <Datepicker name="plannedinvoicedate" label="Planned/Actual date" className="w3-input w3-border" >
+                            <Datepicker name="plannedInvoiceDate" label="Planned/Actual date" className="w3-input w3-border" >
                             </Datepicker>
                         </div>
                         <div className="w3-cell">
-                            <Datepicker name="actualinvoicedate" className="w3-input w3-border" >
+                            <Datepicker name="actualInvoiceDate" className="w3-input w3-border" >
                             </Datepicker>
                         </div>
                     </div>
                     <Input name="amount" label="Amount" type="number" step="0.01" />
+                    <Select name='paymentStatus' label='Status' options={this.props.paymentstatusvalues} />
                     <hr />
                     <SubmitBtn className="w3-button w3-light-grey w3-round" title={this.props.buttonText + "s this record"} disabled={this.state.isSubmitting}>
                         <i className="fa fa-save" ></i>&nbsp;{this.props.buttonText}

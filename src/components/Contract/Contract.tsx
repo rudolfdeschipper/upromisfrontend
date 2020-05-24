@@ -171,14 +171,14 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
             {
                 id: 'startdate',
                 Header: 'Start date',
-                accessor: (d: IContractData) => Utils.formatDate(d.startdate),
+                accessor: (d: IContractData) => Utils.formatDate(d.startDate),
                 // date sorting
                 sortMethod: Utils.dateSorter
             },
             {
                 id: 'enddate',
                 Header: 'End date',
-                accessor: (d: IContractData) => Utils.formatDate(d.enddate),
+                accessor: (d: IContractData) => Utils.formatDate(d.endDate),
                 // date sorting
                 sortMethod: Utils.dateSorter
             }
