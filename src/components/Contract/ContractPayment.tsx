@@ -183,7 +183,7 @@ class ContractPayment extends React.Component<IProps, IState> {
         ];
 
         const tabledata = this.props.currentData.paymentInfo as IPayment[] ?
-            (this.props.currentData.paymentInfo as IPayment[]).filter(r => r.modifier != "Deleted") 
+            (this.props.currentData.paymentInfo as IPayment[]).filter(r => r.modifier !== "Deleted") 
             : this.props.currentData.paymentInfo as IPayment[];
 
         return (
