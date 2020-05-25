@@ -48,7 +48,7 @@ class ContractForm extends React.Component<IProps, IState> {
                         .oneOf(['Planned', 'Open', 'Closed']),
                     value: Yup.number()
                         .required('Required'),
-                    contracttype: Yup.number()
+                    contractType: Yup.number()
 
                 })}
                 onSubmit={(values, { setSubmitting }) => {
@@ -70,7 +70,7 @@ class ContractForm extends React.Component<IProps, IState> {
                         </div>
                     </div>
                     <Select name='status' label='Status' options={this.props.statusvalues} />
-                    <Select name='contracttype' label='Type' options={this.props.typevalues} />
+                    <Select name='contractType' label='Type' options={this.props.typevalues} />
                     <Input name="value" type="number" label="Value" step="0.01" />
                     <hr />
                     <SubmitBtn className="w3-button w3-light-grey w3-round" title={this.props.buttonText + "s this record"} disabled={this.state.isSubmitting}>

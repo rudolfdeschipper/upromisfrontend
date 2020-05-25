@@ -38,7 +38,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
             this.state =
             {
                 id: parseInt(this.props.match.params.id, 10),
-                currentData: { id: 0, code: "", externalId: "", description: "", title: "", createdOn: new Date(), createdBy: "", updatedOn: new Date(), updatedBy: "", startDate: new Date(), endDate: new Date(), status: "", contractType: 0, value: 0.0, accountInfoId: 0, parentContractId : 0, paymentInfo: [], teamComposition: [], modifier: "Unchanged" },
+                currentData: { id: 0, code: "", description: "", title: "", createdOn: new Date(), createdBy: "", updatedOn: new Date(), updatedBy: "", startDate: new Date(), endDate: new Date(), status: "", contractType: 0, value: 0.0, accountInfoId: 0, parentContractId : 0, paymentInfo: [], teamComposition: [], modifier: "Unchanged" },
                 statusvalues: [],
                 typevalues: []
             };
@@ -47,7 +47,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
             this.state =
             {
                 id: -1,
-                currentData: { id: -1, code: "", externalId: "", description: "", title: "", createdOn: new Date(), createdBy: "", updatedOn: new Date(), updatedBy: "", startDate: new Date(), endDate: new Date(), status: "", contractType: 0, value: 0.0, accountInfoId: 0, parentContractId : 0, paymentInfo: [], teamComposition: [], modifier: "Added" },
+                currentData: { id: -1, code: "", description: "", title: "", createdOn: new Date(), createdBy: "", updatedOn: new Date(), updatedBy: "", startDate: new Date(), endDate: new Date(), status: "", contractType: 0, value: 0.0, accountInfoId: 0, parentContractId : 0, paymentInfo: [], teamComposition: [], modifier: "Added" },
                 statusvalues: [],
                 typevalues: []
             };

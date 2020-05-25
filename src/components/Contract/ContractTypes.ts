@@ -2,7 +2,7 @@ import { InputGroupRadio } from "react-bootstrap/InputGroup";
 
 export interface IContractData {
     id: number,
-    externalId : string,
+    //externalId : string,
     code: string,
     title: string,
     description: string,
