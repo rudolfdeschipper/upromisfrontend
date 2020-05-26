@@ -10,13 +10,19 @@ import ContractForm from './ContractForm';
 import ContractPayment from './ContractPayment';
 import { IContractData, IPayment } from './ContractTypes';
 import { ContractAPI } from './ContractAPI';
+import { Popup } from '../Popup';
 
 
 interface IState {
     currentData: IContractData;
     statusvalues: ISelectValue[],
     typevalues: ISelectValue[],
-    id: number;
+    id: number,
+
+    // popup stuff
+    popupStyle: string,
+    popupMessage: string,
+    popupVisible: boolean;
 }
 
 class ContractDetails extends React.Component<RouteComponentProps<{ id?: string }>, IState> {
@@ -40,7 +46,11 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                 id: parseInt(this.props.match.params.id, 10),
                 currentData: { id: 0, code: "", description: "", title: "", createdOn: new Date(), createdBy: "", updatedOn: new Date(), updatedBy: "", startDate: new Date(), endDate: new Date(), status: "", contractType: 0, value: 0.0, accountInfoId: 0, parentContractId : 0, paymentInfo: [], teamComposition: [], modifier: "Unchanged" },
                 statusvalues: [],
-                typevalues: []
+                typevalues: [],
+
+                popupStyle: "",
+                popupMessage: "",
+                popupVisible: false
             };
         } else {
             // adding
@@ -49,7 +59,11 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                 id: -1,
                 currentData: { id: -1, code: "", description: "", title: "", createdOn: new Date(), createdBy: "", updatedOn: new Date(), updatedBy: "", startDate: new Date(), endDate: new Date(), status: "", contractType: 0, value: 0.0, accountInfoId: 0, parentContractId : 0, paymentInfo: [], teamComposition: [], modifier: "Added" },
                 statusvalues: [],
-                typevalues: []
+                typevalues: [],
+
+                popupStyle: "",
+                popupMessage: "",
+                popupVisible: false
             };
 
         }
@@ -102,11 +116,13 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
             .then(result => {
                 if (result.success) {
                     this.setState({ ...this.state, currentData: result.dataSubject })
-                    // TODO: put a toast here
-                    alert("Save result: " + result.message)
+                    // put a toast here
+                    this.setState({ popupVisible: true, popupMessage: "Save result: " + result.message, popupStyle: "success" });
+                    //alert("Save result: " + result.message)
                 } else {
-                    // TODO: put a toast here
-                    alert("Save failed " + result.message)
+                    // put a toast here
+                    //alert("Save failed " + result.message)
+                    this.setState({ popupVisible: true, popupMessage: "Save failed: " + result.message, popupStyle: "danger" });
                 }
             }
             )
@@ -137,6 +153,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                 }
             }
         }
+        this.setState({ popupVisible: true, popupMessage: (isAdding ? "Added" : values.modifier) + " paymentline", popupStyle: "info" });
         //alert("updatePaymentline " + (isAdding ? "Added" : values.modifier) + " " + JSON.stringify(this.state.currentData));
     }
 
@@ -146,6 +163,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                 <Link to={"/contract"} className="w3-button w3-light-grey w3-round" title="Back to list">
                     <i className="fa fa-list" ></i>&nbsp;Back to List
                 </Link> <hr />
+                <Popup visible={this.state.popupVisible} message={this.state.popupMessage} style={this.state.popupStyle} onDismiss={() => {this.setState({popupVisible: false})} } />
                 <Tabs defaultActiveKey='details' id='detailstab'>
                     <Tab eventKey='details' title='Details'>
                         <ContractForm buttonText="Save" currentData={this.state.currentData} statusvalues={this.state.statusvalues} typevalues={this.state.typevalues} saveAction={this.saveOneRecord} />

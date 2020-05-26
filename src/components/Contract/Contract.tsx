@@ -9,6 +9,7 @@ import { IListState, ISaveMessage, IAPIResult } from '../GeneralTypes';
 import ContractDeleteForm from './ContractDeleteForm';
 import { IContractData } from './ContractTypes';
 import { ContractAPI } from './ContractAPI';
+import { Popup } from '../Popup';
 
 class Contract extends React.Component<RouteComponentProps<{}>, IListState<IContractData>> {
     static displayName = Contract.name;
@@ -34,7 +35,12 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
             pageSize: 10,
             message: "",
             modalDeleteIsOpen: false,
-            currentRecord: null
+            currentRecord: null,
+
+            // popup stuff
+            popupStyle: "",
+            popupMessage: "",
+            popupVisible: false
         };
 
     }
@@ -79,9 +85,9 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
             .then(result => {
                 if (result.success) {
                     this.setState({ ...this.state, currentRecord: result.dataSubject })
-                    alert(result.message)
+                    this.setState({ popupVisible: true, popupMessage: "Save result: " + result.message, popupStyle: "success" });
                 } else {
-                    alert("Save failed")
+                    this.setState({ popupVisible: true, popupMessage: "Save failed: " + result.message, popupStyle: "danger" });
                 }
             }
             )
@@ -190,6 +196,7 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
                 <Link className="w3-button w3-light-grey w3-round" title="Add new record" to="/contractdetails/add" >
                     <i className="fa fa-plus-circle" ></i>&nbsp;Add new
                 </Link>
+                <Popup visible={this.state.popupVisible} message={this.state.popupMessage} style={this.state.popupStyle} onDismiss={() => {this.setState({popupVisible: false})} } />
                 <ReactTable className="-striped"
                     data={this.state.data}
                     pages={this.state.pages}

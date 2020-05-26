@@ -9,7 +9,12 @@ export interface IListState<T> {
     message: string,
     modalDeleteIsOpen: boolean,
     currentRecord: T | null
-}
+    ,
+
+    // popup stuff
+    popupStyle: string,
+    popupMessage: string,
+    popupVisible: boolean;}
 
 export interface ILoadResult<T>
 {
