@@ -12,13 +12,10 @@ export class NavMenu extends React.Component<{ User: any }> {
         return (
             <header>
                 <Navbar collapseOnSelect className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" >
-                    <Navbar.Brand href="#home">u-ProMIS</Navbar.Brand>
+                    <Navbar.Brand href="/">u-ProMIS</Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="mr-auto">
-                            <Nav.Item>
-                                <Nav.Link className="text-dark" href="/">Home</Nav.Link>
-                            </Nav.Item>
                             <Nav.Item>
                                 <Nav.Link className="text-dark" href="/counter">Counter</Nav.Link>
                             </Nav.Item>

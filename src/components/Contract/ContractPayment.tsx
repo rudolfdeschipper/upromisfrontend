@@ -142,9 +142,9 @@ class ContractPayment extends React.Component<IProps, IState> {
                         <div className="w3-dropdown-hover">
                             <button className="w3-button" title="More actions...">...</button>
                             <div className="w3-dropdown-content w3-bar-block w3-card-4">
-                                <a href="#" className="w3-bar-item w3-button" >Link 1</a>
-                                <a href="#" className="w3-bar-item w3-button">Link 2</a>
-                                <a href="#" className="w3-bar-item w3-button">Link 3</a>
+                                <button onClick={ () => {return false} } className="w3-bar-item w3-button" >Link 1</button>
+                                <button onClick={ () => {return false} } className="w3-bar-item w3-button" >Link 2</button>
+                                <button onClick={ () => {return false} } className="w3-bar-item w3-button" >Link 3</button>
                             </div>
                         </div>
                     </div>

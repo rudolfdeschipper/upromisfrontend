@@ -5,7 +5,6 @@ import { Utils } from '../Utils';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { IListState, ISaveMessage, IAPIResult } from '../GeneralTypes';
-
 import ContractDeleteForm from './ContractDeleteForm';
 import { IContractData } from './ContractTypes';
 import { ContractAPI } from './ContractAPI';
@@ -120,6 +119,7 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
             ;
     }
 
+
     //
     // w3-styles are used to have properly behaving dropdown menu in the react-table 
     //
@@ -138,9 +138,9 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
                         <div className="w3-dropdown-hover">
                             <button className="w3-button" title="More actions...">...</button>
                             <div className="w3-dropdown-content w3-bar-block w3-card-4">
-                                <a onClick={() => { this.performAction1(row); }} className="w3-bar-item w3-button" >Action 1</a>
-                                <a href="#" className="w3-bar-item w3-button">Link 2</a>
-                                <a href="#" className="w3-bar-item w3-button">Link 3</a>
+                            <button onClick={() => { this.performAction1(row); }} className="w3-bar-item w3-button" >Action 1</button>
+                            <button onClick={() => { return false; }} className="w3-bar-item w3-button" >Link 2</button>
+                            <button onClick={() => { return false; }} className="w3-bar-item w3-button" >Link 3</button>
                             </div>
                         </div>
                     </div>
@@ -196,7 +196,7 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
                 <Link className="w3-button w3-light-grey w3-round" title="Add new record" to="/contractdetails/add" >
                     <i className="fa fa-plus-circle" ></i>&nbsp;Add new
                 </Link>
-                <Popup visible={this.state.popupVisible} message={this.state.popupMessage} style={this.state.popupStyle} onDismiss={() => {this.setState({popupVisible: false})} } />
+                <Popup visible={this.state.popupVisible} message={this.state.popupMessage} style={this.state.popupStyle} onDismiss={() => { this.setState({ popupVisible: false }) }} />
                 <ReactTable className="-striped"
                     data={this.state.data}
                     pages={this.state.pages}
@@ -214,7 +214,7 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
                 <Modal isOpen={this.state.modalDeleteIsOpen} >
                     <ModalHeader toggle={this.closeDeleteModalNoSave} charCode="&times;" >Delete Contract</ModalHeader>
                     <ModalBody>
-                        <ContractDeleteForm buttonText="Delete" currentData={this.state.currentRecord as IContractData}  saveAction={this.closeDeleteModalWithSave} />
+                        <ContractDeleteForm buttonText="Delete" currentData={this.state.currentRecord as IContractData} saveAction={this.closeDeleteModalWithSave} />
                     </ModalBody>
                 </Modal>
             </div>
