@@ -4,7 +4,9 @@ import { Layout } from './components/Layout';
 import { Home } from './components/Home';
 import { Counter } from './components/Counter';
 import nfp from './components/NotFoundPage';
-import {UserManager} from './components/UserManager' ;
+import { UserManager } from './components/UserManager';
+import { UserContext } from './context/UserContext';
+
 
 interface IProps {
 }
@@ -24,15 +26,14 @@ class App extends React.Component<IProps, IState> {
         };
     }
 
-    componentDidMount()
-    {
-        let mgr = new UserManager();  
-        mgr.GetUser().then((user) => {  
-            this.setState({  
-                _user: user  
-            });  
-            console.log(user);  
-        })  
+    componentDidMount() {
+        let mgr = new UserManager();
+        mgr.GetUser().then((user) => {
+            this.setState({
+                _user: user
+            });
+            console.log(user);
+        })
 
     }
 
@@ -47,9 +48,13 @@ class App extends React.Component<IProps, IState> {
                         <Route exact path='/' component={Home} />
                         <Route path='/home' component={Home} />
                         <Route path='/counter' component={Counter} />
-                        <Route path='/contract' component={!!this.state._user ?  contract : nfp} />
-                        <Route path='/contractdetails/:id' component={!!this.state._user ? contractdetails : nfp} />
-                        <Route path='/contractdetails/add' component={!!this.state._user ?contractdetails : nfp} />
+                        <UserContext.Provider value={this.state._user}>
+                            <Route path='/contract' component={!!this.state._user ? contract : nfp} />
+                            <Route path='/contractdetails/:id' component={!!this.state._user ? contractdetails : nfp} />
+                        </UserContext.Provider>
+                        <UserContext.Provider value={this.state._user}>
+                            <Route path='/contractdetails/add' component={!!this.state._user ? contractdetails : nfp} />
+                        </UserContext.Provider>
                         <Route component={nfp} />
                     </Switch>
                 </Suspense>

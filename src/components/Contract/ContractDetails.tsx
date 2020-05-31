@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { ISaveMessage, ISelectValue } from '../GeneralTypes';
+import { UserContext } from '../../context/UserContext';
 
 import ContractForm from './ContractForm';
 import ContractPayment from './ContractPayment';
@@ -12,6 +13,7 @@ import { IContractData, IPayment } from './ContractTypes';
 import { ContractAPI } from './ContractAPI';
 import { Popup } from '../Popup';
 
+import Attachment from '../Attachment/Attachment';
 
 interface IState {
     currentData: IContractData;
@@ -37,14 +39,18 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
     // sublists are also tabs with modal forms to add and edit
     // (as in previous version)
 
+    //Declare the User context to access the User properties.
+    static contextType = UserContext;
+    private User: any;
 
     constructor(props: Readonly<RouteComponentProps<{ id?: string }>>) {
         super(props);
+
         if (this.props.match.params.id && this.props.match.params.id !== "add") {
             this.state =
             {
                 id: parseInt(this.props.match.params.id, 10),
-                currentData: { id: 0, code: "", description: "", title: "", createdOn: new Date(), createdBy: "", updatedOn: new Date(), updatedBy: "", startDate: new Date(), endDate: new Date(), status: "", contractType: 0, value: 0.0, accountInfoId: 0, parentContractId : 0, paymentInfo: [], teamComposition: [], modifier: "Unchanged" },
+                currentData: { id: 0, code: "", description: "", title: "", createdOn: new Date(), createdBy: "", updatedOn: new Date(), updatedBy: "", startDate: new Date(), endDate: new Date(), status: "", contractType: 0, value: 0.0, accountInfoId: 0, parentContractId: 0, paymentInfo: [], teamComposition: [], modifier: "Unchanged" },
                 statusvalues: [],
                 typevalues: [],
 
@@ -57,7 +63,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
             this.state =
             {
                 id: -1,
-                currentData: { id: -1, code: "", description: "", title: "", createdOn: new Date(), createdBy: "", updatedOn: new Date(), updatedBy: "", startDate: new Date(), endDate: new Date(), status: "", contractType: 0, value: 0.0, accountInfoId: 0, parentContractId : 0, paymentInfo: [], teamComposition: [], modifier: "Added" },
+                currentData: { id: -1, code: "", description: "", title: "", createdOn: new Date(), createdBy: "", updatedOn: new Date(), updatedBy: "", startDate: new Date(), endDate: new Date(), status: "", contractType: 0, value: 0.0, accountInfoId: 0, parentContractId: 0, paymentInfo: [], teamComposition: [], modifier: "Added" },
                 statusvalues: [],
                 typevalues: [],
 
@@ -67,6 +73,12 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
             };
 
         }
+    }
+
+    UNSAFE_componentWillMount() {
+        //TODO: find the proper way to get the user before the component mount.
+        this.User = this.context;
+
     }
 
     componentDidMount() {
@@ -80,7 +92,6 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                     });
                 })
                 .catch(e => console.error(e));
-
         }
         ContractAPI.loadDropdownValues("ContractStatus")
             .then(res => {
@@ -97,22 +108,22 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
     private saveOneRecord = (subaction: string, record: IContractData) => {
         const action = (record.modifier === "Added") ? "POST" : (record.modifier === "Deleted") ? "DELETE" : "PUT";
 
-        const toSave: ISaveMessage<IContractData> = 
-            { 
-                id: record.id, 
-                action: action, 
-                dataSubject: 
-                    { 
-                        ...record, 
-                        // don't forget to take the sublists as well:
-                        teamComposition: this.state.currentData.teamComposition, 
-                        paymentInfo: this.state.currentData.paymentInfo 
-                    }, 
-                subaction: subaction, 
-                additionalData: [] 
-            };
+        const toSave: ISaveMessage<IContractData> =
+        {
+            id: record.id,
+            action: action,
+            dataSubject:
+            {
+                ...record,
+                // don't forget to take the sublists as well:
+                teamComposition: this.state.currentData.teamComposition,
+                paymentInfo: this.state.currentData.paymentInfo
+            },
+            subaction: subaction,
+            additionalData: []
+        };
 
-            ContractAPI.saveRecord(toSave)
+        ContractAPI.saveRecord(toSave)
             .then(result => {
                 if (result.success) {
                     this.setState({ ...this.state, currentData: result.dataSubject })
@@ -131,16 +142,16 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
 
     private updatePaymentline = (values: IPayment, isAdding: boolean, currentIndex?: number) => {
 
-    //alert("Adding: " + isAdding + " Values: " + JSON.stringify(values) + "Row number: "+ currentIndex);
+        //alert("Adding: " + isAdding + " Values: " + JSON.stringify(values) + "Row number: "+ currentIndex);
 
-       if (isAdding) {
+        if (isAdding) {
             let newData = this.state.currentData;
 
-            const _ = newData.paymentInfo?.push(values);
+            // const _ = newData.paymentInfo?.push(values);
 
             this.setState({ currentData: newData });
         } else {
-            if (typeof(currentIndex) === "number" && this.state.currentData.paymentInfo) {
+            if (typeof (currentIndex) === "number" && this.state.currentData.paymentInfo) {
                 const newData = this.state.currentData;
                 if (newData.paymentInfo) {
                     // if we deleted a newly added element, just remove it from the list
@@ -163,13 +174,19 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                 <Link to={"/contract"} className="w3-button w3-light-grey w3-round" title="Back to list">
                     <i className="fa fa-list" ></i>&nbsp;Back to List
                 </Link> <hr />
-                <Popup visible={this.state.popupVisible} message={this.state.popupMessage} style={this.state.popupStyle} onDismiss={() => {this.setState({popupVisible: false})} } />
+                <Popup visible={this.state.popupVisible} message={this.state.popupMessage} style={this.state.popupStyle} onDismiss={() => { this.setState({ popupVisible: false }) }} />
                 <Tabs defaultActiveKey='details' id='detailstab'>
                     <Tab eventKey='details' title='Details'>
                         <ContractForm buttonText="Save" currentData={this.state.currentData} statusvalues={this.state.statusvalues} typevalues={this.state.typevalues} saveAction={this.saveOneRecord} />
                     </Tab>
                     <Tab eventKey="payments" title="Payments">
                         <ContractPayment currentData={this.state.currentData} updatePaymentline={this.updatePaymentline} />
+                    </Tab>
+                    <Tab eventKey="attachments" title="Attachments">
+                        {
+                            this.state.id === -1 ? <p>You shoud save the new Contract before adding attachments</p> :
+                                <Attachment parentItem='00000000-0000-0000-0000-000000000000' uploadedBy={this.User.profile.name} />
+                        }
                     </Tab>
                 </Tabs>
             </React.Fragment>
