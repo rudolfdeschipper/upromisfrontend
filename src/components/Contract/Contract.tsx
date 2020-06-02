@@ -64,12 +64,15 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
     private closeDeleteModalWithSave = (subaction: string, record: IContractData) => {
         this.saveOneRecord(subaction, record)
             .then(() =>
+            {
+                this.loadData({ page: 0, pageSize: this.state.pageSize, sorted: this.state.currentSort, filtered: this.state.currentFilter });
                 this.setState(
                     {
                         modalDeleteIsOpen: false,
                         currentRecord: null
                     }
                 )
+            }
             )
             .catch(e => alert(e))
     }
