@@ -126,7 +126,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
         ContractAPI.saveRecord(toSave)
             .then(result => {
                 if (result.success) {
-                    this.setState({ ...this.state, currentData: result.dataSubject })
+                    this.setState({ ...this.state, id: result.dataSubject.id, currentData: result.dataSubject })
                     // put a toast here
                     this.setState({ popupVisible: true, popupMessage: "Save result: " + result.message, popupStyle: "success" });
                     //alert("Save result: " + result.message)
