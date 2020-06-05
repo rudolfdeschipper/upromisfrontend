@@ -13,7 +13,7 @@ interface IProps {
 
 
 interface IState {
-    _user: any;
+    _user: Oidc.User | null;
 }
 
 class App extends React.Component<IProps, IState> {

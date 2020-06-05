@@ -5,11 +5,12 @@ import { IContractData } from './ContractTypes';
 
 export class ContractAPI {
 
-    static loadList = (listInfo: IListInfo) => fetch('http://localhost:5001/api/contract/getlist', {
+    static loadList = (listInfo: IListInfo, token : string) => fetch('http://localhost:5001/api/contract/getlist', {
         method: 'POST',
         headers: {
             'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json;charset=UTF-8'
+            'Content-Type': 'application/json;charset=UTF-8',
+            'Authorization': 'Bearer ' + token
         },
         body: JSON.stringify({
             page: listInfo.page,
@@ -23,11 +24,12 @@ export class ContractAPI {
         })
         ;
 
-    static loadListForExport = (title: string, listInfo: IListInfo) => fetch('http://localhost:5001/api/contract/getforexport', {
+    static loadListForExport = (title: string, listInfo: IListInfo, token : string) => fetch('http://localhost:5001/api/contract/getforexport', {
         method: 'post',
         headers: {
             'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
         },
         body: JSON.stringify({
             page: 1,
@@ -50,7 +52,7 @@ export class ContractAPI {
         .catch(e => console.error(e))
         ;
 
-    static saveRecord = async (message: ISaveMessage<IContractData>): Promise<IAPIResult<IContractData>> => {
+    static saveRecord = async (message: ISaveMessage<IContractData>, token : string): Promise<IAPIResult<IContractData>> => {
 
         // alert(JSON.stringify({
         //     id: message.id,
@@ -64,7 +66,8 @@ export class ContractAPI {
             method: message.action,
             headers: {
                 'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json;charset=UTF-8'
+                'Content-Type': 'application/json;charset=UTF-8',
+                'Authorization': 'Bearer ' + token
             },
             body: JSON.stringify({
                 id: message.id,
@@ -77,12 +80,13 @@ export class ContractAPI {
         return response.json() as Promise<IAPIResult<IContractData>>;
     };
 
-    static loadOneRecord = (id: number): Promise<IAPIResult<IContractData>> => {
+    static loadOneRecord = (id: number, token : string): Promise<IAPIResult<IContractData>> => {
         return (fetch('http://localhost:5001/api/contract/' + id, {
             method: 'get',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             }
         })
             .then(response => {
@@ -90,12 +94,13 @@ export class ContractAPI {
             }))
     }
 
-    static loadDropdownValues = (valueType: string): Promise<ISelectValueList> => {
+    static loadDropdownValues = (valueType: string, token : string): Promise<ISelectValueList> => {
         return (fetch('http://localhost:5001/api/contract/getselectvalues', {
             method: 'post',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             },
             body: JSON.stringify({
                 valueType: valueType

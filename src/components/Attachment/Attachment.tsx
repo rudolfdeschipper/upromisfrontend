@@ -28,7 +28,6 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
 
     //Declare the User context to access the User properties.
     static contextType = UserContext;
-    private User: any;
 
     constructor(props: Readonly<IAttachmentKey>) {
         super(props);
@@ -57,12 +56,6 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
         this.onFilesAdded = this.onFilesAdded.bind(this);
     }
 
-    UNSAFE_componentWillMount() {
-        //TODO: find the proper way to get the user before the component mount.
-        this.User = this.context;
-    }
-
-
     onFilesAdded(files: File[]) {
         //Create the list of files to be displayed
         this.setState(prevState => ({
@@ -71,7 +64,7 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
 
         //Process each files
         files.forEach(file => {
-            this.uploadFile(file, this.User.access_token)
+            this.uploadFile(file, this.context!.access_token)
                 .then(response => {
                     //add the created attachment to the list and remove the entry from the upload list
                     console.log(response);
@@ -149,7 +142,7 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
     }
 
     private closeDeleteModalWithSave = (subaction: string, record: IAttachmentData) => {
-        AttachmentAPI.deleteAttachment(record.id, this.User.access_token)
+        AttachmentAPI.deleteAttachment(record.id, this.context!.access_token)
             .then(result => {
                 this.setState({
                     popupVisible: true, popupMessage: "Attachment deleted ", popupStyle: "success",
@@ -171,7 +164,7 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
         this.setState({ loading: true });
 
         // fetch your data
-        AttachmentAPI.loadList(this.props.parentItem, state.page, state.pageSize, this.User.access_token)
+        AttachmentAPI.loadList(this.props.parentItem, state.page, state.pageSize, this.context!.access_token)
             .then((res) => {
                 // Update react-table
                 this.setState({
