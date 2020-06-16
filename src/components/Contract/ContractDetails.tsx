@@ -30,16 +30,6 @@ interface IState {
 class ContractDetails extends React.Component<RouteComponentProps<{ id?: string }>, IState> {
     static displayName = ContractDetails.name;
 
-    // normalised structure:
-    // list - links to details page, and actions in the rows
-    // details page contains tabs
-    // with details on tab 1
-    // and sub-lists in tab 2 - n+1
-    // this component just contains the list
-    // sublists are also tabs with modal forms to add and edit
-    // (as in previous version)
-
-    //Declare the User context to access the User properties.
     static contextType = UserContext;
 
     constructor(props: Readonly<RouteComponentProps<{ id?: string }>>) {
@@ -77,7 +67,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
     componentDidMount() {
         // fetch the record
         if (this.state.id !== -1) {
-            ContractAPI.loadOneRecord(this.state.id)
+            ContractAPI.loadOneRecord(this.state.id, this.context!.access_token)
                 .then((res) => {
                     // Update form values
                     this.setState({
@@ -86,12 +76,12 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                 })
                 .catch(e => console.error(e));
         }
-        ContractAPI.loadDropdownValues("ContractStatus")
+        ContractAPI.loadDropdownValues("ContractStatus", this.context!.access_token)
             .then(res => {
                 this.setState({ statusvalues: res.data });
             }
             );
-        ContractAPI.loadDropdownValues("ContractType")
+        ContractAPI.loadDropdownValues("ContractType", this.context!.access_token)
             .then(res => {
                 this.setState({ typevalues: res.data });
             }
@@ -116,10 +106,10 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
             additionalData: []
         };
 
-        ContractAPI.saveRecord(toSave)
+        ContractAPI.saveRecord(toSave, this.context!.access_token)
             .then(result => {
                 if (result.success) {
-                    this.setState({ ...this.state, currentData: result.dataSubject })
+                    this.setState({ ...this.state, id: result.dataSubject.id, currentData: result.dataSubject })
                     // put a toast here
                     this.setState({ popupVisible: true, popupMessage: "Save result: " + result.message, popupStyle: "success" });
                     //alert("Save result: " + result.message)
@@ -178,7 +168,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                     <Tab eventKey="attachments" title="Attachments">
                         {
                             this.state.id === -1 ? <p>You shoud save the new Contract before adding attachments</p> :
-                                <Attachment parentItem='00000000-0000-0000-0000-000000000000' uploadedBy={this.context.profile.name} />
+                                <Attachment parentItem='00000000-0000-0000-0000-000000000000' uploadedBy={this.context!.profile.name} />
                         }
                     </Tab>
                 </Tabs>

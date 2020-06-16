@@ -9,19 +9,12 @@ import ContractDeleteForm from './ContractDeleteForm';
 import { IContractData } from './ContractTypes';
 import { ContractAPI } from './ContractAPI';
 import { Popup } from '../Popup';
+import { UserContext } from '../../context/UserContext';
 
 class Contract extends React.Component<RouteComponentProps<{}>, IListState<IContractData>> {
     static displayName = Contract.name;
 
-    // normalised structure:
-    // list - links to details page, and actions in the rows
-    // details page contains tabs
-    // with details on tab 1
-    // and sub-lists in tab 2 - n+1
-    // this component just contains the list
-    // sublists are also tabs with modal forms to add and edit
-    // (as in previous version)
-
+    static contextType = UserContext;
 
     constructor(props: Readonly<RouteComponentProps<{}>>) {
         super(props);
@@ -64,12 +57,15 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
     private closeDeleteModalWithSave = (subaction: string, record: IContractData) => {
         this.saveOneRecord(subaction, record)
             .then(() =>
+            {
+                this.loadData({ page: 0, pageSize: this.state.pageSize, sorted: this.state.currentSort, filtered: this.state.currentFilter });
                 this.setState(
                     {
                         modalDeleteIsOpen: false,
                         currentRecord: null
                     }
                 )
+            }
             )
             .catch(e => alert(e))
     }
@@ -80,7 +76,7 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
 
         // alert("saveOneRecord " + JSON.stringify(toSave));
 
-        const res = (ContractAPI.saveRecord(toSave)
+        const res = (ContractAPI.saveRecord(toSave, this.context!.access_token)
             .then(result => {
                 if (result.success) {
                     this.setState({ ...this.state, currentRecord: result.dataSubject })
@@ -99,7 +95,7 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
         this.setState({ loading: true })
         // fetch your data
 
-        ContractAPI.loadList({ page: state.page, pageSize: state.pageSize, sorted: state.sorted, filtered: state.filtered })
+        ContractAPI.loadList({ page: state.page, pageSize: state.pageSize, sorted: state.sorted, filtered: state.filtered }, this.context!.access_token)
             .then(res => {
                 // Update react-table
                 this.setState({
@@ -115,7 +111,7 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
     }
 
     downloadToExcel = () => {
-        ContractAPI.loadListForExport("Contract data", { page: 1, pageSize: this.state.pageSize, sorted: this.state.currentSort, filtered: this.state.currentFilter })
+        ContractAPI.loadListForExport("Contract data", { page: 1, pageSize: this.state.pageSize, sorted: this.state.currentSort, filtered: this.state.currentFilter }, this.context!.access_token)
             ;
     }
 

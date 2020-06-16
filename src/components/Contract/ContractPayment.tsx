@@ -7,6 +7,7 @@ import { IContractData, IPayment } from './ContractTypes';
 import ContractPaymentForm from './ContractPaymentForm';
 import { ISelectValue } from '../GeneralTypes';
 import { ContractAPI } from './ContractAPI';
+import { UserContext } from '../../context/UserContext';
 
 
 interface IProps {
@@ -24,6 +25,9 @@ interface IState {
 }
 
 class ContractPayment extends React.Component<IProps, IState> {
+
+    //Declare the User context to access the User properties.
+    static contextType = UserContext;
 
     constructor(props: Readonly<IProps>) {
         super(props);
@@ -120,7 +124,7 @@ class ContractPayment extends React.Component<IProps, IState> {
     }
 
     componentDidMount() {
-        ContractAPI.loadDropdownValues("PaymentStatus")
+        ContractAPI.loadDropdownValues("PaymentStatus", this.context!.access_token)
             .then(res => {
                 this.setState({ paymentstatusvalues: res.data });
             }

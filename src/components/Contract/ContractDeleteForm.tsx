@@ -36,9 +36,9 @@ class ContractDeleteForm extends React.Component<IProps, IState> {
                         .required('Required'),
                     description: Yup.string()
                         .required('Required'),
-                    startdate: Yup.date()
+                    startDate: Yup.date()
                         .required('Required'),
-                    enddate: Yup.date()
+                    endDate: Yup.date()
                         .required('Required'),
                     status: Yup.string()
                         .required('Required')
@@ -58,10 +58,10 @@ class ContractDeleteForm extends React.Component<IProps, IState> {
                     <Textarea name="description" label="Description" disabled />
                     <div className="w3-cell-row">
                         <div className="w3-cell">
-                            <Datepicker name="startdate" label="Start/End date" disabled />
+                            <Datepicker name="startDate" label="Start/End date" disabled />
                         </div>
                         <div className="w3-cell">
-                            <Datepicker name="enddate"  disabled/>
+                            <Datepicker name="endDate"  disabled/>
                         </div>
                     </div>
                     <Input name='status' label='Status' disabled />

@@ -13,7 +13,7 @@ interface IProps {
 
 
 interface IState {
-    _user: any;
+    _user: Oidc.User | null;
 }
 
 class App extends React.Component<IProps, IState> {
@@ -43,21 +43,19 @@ class App extends React.Component<IProps, IState> {
 
         return (
             <Layout User={this.state._user}>
-                <Suspense fallback={<div className="page-container">Loading...</div>}>
-                    <Switch>
-                        <Route exact path='/' component={Home} />
-                        <Route path='/home' component={Home} />
-                        <Route path='/counter' component={Counter} />
-                        <UserContext.Provider value={this.state._user}>
+                <UserContext.Provider value={this.state._user}>
+                    <Suspense fallback={<div className="page-container">Loading...</div>}>
+                        <Switch>
+                            <Route exact path='/' component={Home} />
+                            <Route path='/home' component={Home} />
+                            <Route path='/counter' component={Counter} />
                             <Route path='/contract' component={!!this.state._user ? contract : nfp} />
                             <Route path='/contractdetails/:id' component={!!this.state._user ? contractdetails : nfp} />
-                        </UserContext.Provider>
-                        <UserContext.Provider value={this.state._user}>
                             <Route path='/contractdetails/add' component={!!this.state._user ? contractdetails : nfp} />
-                        </UserContext.Provider>
-                        <Route component={nfp} />
-                    </Switch>
-                </Suspense>
+                            <Route path="*" component={nfp} />
+                        </Switch>
+                    </Suspense>
+                </UserContext.Provider>
             </Layout>
         );
     }
