@@ -41,7 +41,6 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
 
     //Declare the User context to access the User properties.
     static contextType = UserContext;
-    private User: any;
 
     constructor(props: Readonly<RouteComponentProps<{ id?: string }>>) {
         super(props);
@@ -73,12 +72,6 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
             };
 
         }
-    }
-
-    UNSAFE_componentWillMount() {
-        //TODO: find the proper way to get the user before the component mount.
-        this.User = this.context;
-
     }
 
     componentDidMount() {
@@ -185,7 +178,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                     <Tab eventKey="attachments" title="Attachments">
                         {
                             this.state.id === -1 ? <p>You shoud save the new Contract before adding attachments</p> :
-                                <Attachment parentItem='00000000-0000-0000-0000-000000000000' uploadedBy={this.User.profile.name} />
+                                <Attachment parentItem='00000000-0000-0000-0000-000000000000' uploadedBy={this.context.profile.name} />
                         }
                     </Tab>
                 </Tabs>

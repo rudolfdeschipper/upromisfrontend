@@ -2,6 +2,7 @@
 
 # Visual source Code Files
 .vs
+.vscode
 
 # dependencies
 /node_modules
