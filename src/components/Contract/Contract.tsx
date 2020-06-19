@@ -27,7 +27,7 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
             pageSize: 10,
             message: "",
             modalDeleteIsOpen: false,
-            currentRecord: null,
+            currentRecord: undefined,
 
             // popup stuff
             popupStyle: "",
@@ -49,7 +49,7 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
         this.setState(
             {
                 modalDeleteIsOpen: false,
-                currentRecord: null
+                currentRecord: undefined
             }
         )
     }
@@ -62,7 +62,7 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
                 this.setState(
                     {
                         modalDeleteIsOpen: false,
-                        currentRecord: null
+                        currentRecord: undefined
                     }
                 )
             }
@@ -71,23 +71,24 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
     }
 
     private saveOneRecord = (subaction: string, record: IContractData): Promise<IAPIResult<IContractData>> => {
+
         const action = (record.modifier === "Added") ? "POST" : (record.modifier === "Deleted") ? "DELETE" : "PUT";
         const toSave: ISaveMessage<IContractData> = { id: record.id, action: action, dataSubject: { ...record }, subaction: subaction, additionalData: [] };
 
         // alert("saveOneRecord " + JSON.stringify(toSave));
 
-        const res = (ContractAPI.saveRecord(toSave, this.context!.access_token)
+        return (ContractAPI.saveRecord(toSave, this.context!.access_token)
             .then(result => {
                 if (result.success) {
                     this.setState({ ...this.state, currentRecord: result.dataSubject })
                     this.setState({ popupVisible: true, popupMessage: "Save result: " + result.message, popupStyle: "success" });
                 } else {
-                    this.setState({ popupVisible: true, popupMessage: "Save failed: " + result.message, popupStyle: "danger" });
+                    this.setState({ popupVisible: true, popupMessage: "Save failed.", popupStyle: "danger" });
                 }
+                return result;
             }
             )
-        ) as Promise<IAPIResult<IContractData>>;
-        return res;
+        );
     }
 
     private loadData = (state: any) => {
@@ -111,8 +112,7 @@ class Contract extends React.Component<RouteComponentProps<{}>, IListState<ICont
     }
 
     downloadToExcel = () => {
-        ContractAPI.loadListForExport("Contract data", { page: 1, pageSize: this.state.pageSize, sorted: this.state.currentSort, filtered: this.state.currentFilter }, this.context!.access_token)
-            ;
+        ContractAPI.loadListForExport("Contract data", { page: 1, pageSize: this.state.pageSize, sorted: this.state.currentSort, filtered: this.state.currentFilter }, this.context!.access_token);
     }
 
 

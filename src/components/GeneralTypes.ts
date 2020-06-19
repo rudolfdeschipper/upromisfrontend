@@ -8,7 +8,7 @@ export interface IListState<T> {
     pageSize: number,
     message: string,
     modalDeleteIsOpen: boolean,
-    currentRecord: T | null
+    currentRecord: T | undefined
     ,
 
     // popup stuff
@@ -33,7 +33,7 @@ export interface ISaveMessage<T> {
 
 export interface IAPIResult<T> {
     id: number;
-    dataSubject: T;
+    dataSubject: T | undefined;
     success: boolean;
     message: string;
 }
