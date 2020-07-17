@@ -1,115 +1,128 @@
 import { ILoadResult, IListInfo, ISaveMessage, IAPIResult, ISelectValueList } from '../GeneralTypes';
+import { http } from '../http';
 import { Utils } from '../Utils';
 
 import { IContractData } from './ContractTypes';
 
 export class ContractAPI {
 
-    static loadList = (listInfo: IListInfo, token : string) => fetch('http://localhost:5001/api/contract/getlist', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json;charset=UTF-8',
-            'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({
-            page: listInfo.page,
-            pageSize: listInfo.pageSize,
-            sorted: listInfo.sorted,
-            filtered: listInfo.filtered
-        })
-    })
-        .then(response => {
-            return response.json() as Promise<ILoadResult<IContractData>>;
-        })
-        ;
+    static webAPIUrl : string = 'http://localhost:5001/api';
 
-    static loadListForExport = (title: string, listInfo: IListInfo, token : string) => fetch('http://localhost:5001/api/contract/getforexport', {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json, text/plain, */*',
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-        },
-        body: JSON.stringify({
-            page: 1,
-            pageSize: listInfo.pageSize,
-            sorted: listInfo.sorted,
-            filtered: listInfo.filtered
-        })
-    })
-        .then(response => {
-            response.blob().then(blob => {
-                let url = window.URL.createObjectURL(blob);
-                let a = document.createElement('a');
-                let filename = title + " - " + Utils.formatDate(Date.now()).replace(/\//g, "-") + ".xlsx";
-                a.href = url;
-                a.download = filename;
-                a.click();
-                a.remove();
-            });
-        })
-        .catch(e => console.error(e))
-        ;
-
-    static saveRecord = async (message: ISaveMessage<IContractData>, token : string): Promise<IAPIResult<IContractData>> => {
-
-        // alert(JSON.stringify({
-        //     id: message.id,
-        //     dataSubject: (message.dataSubject as IContractData),
-        //     action: message.action,
-        //     subaction: message.subaction,
-        //     additionalData: message.additionalData
-        // }));
-
-        const response = await fetch('http://localhost:5001/api/contract', {
-            method: message.action,
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json;charset=UTF-8',
-                'Authorization': 'Bearer ' + token
-            },
-            body: JSON.stringify({
-                id: message.id,
-                dataSubject: (message.dataSubject as IContractData),
-                action: message.action,
-                subaction: message.subaction,
-                additionalData: message.additionalData
-            })
-        });
-        return response.json() as Promise<IAPIResult<IContractData>>;
-    };
-
-    static loadOneRecord = (id: number, token : string): Promise<IAPIResult<IContractData>> => {
-        return (fetch('http://localhost:5001/api/contract/' + id, {
-            method: 'get',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
+    static loadList = async (listInfo: IListInfo, token: string) : Promise<ILoadResult<IContractData>> => 
+    {
+        try {
+            const result = await http<IListInfo, ILoadResult<IContractData>>( ContractAPI.webAPIUrl,
+                {
+                    path: '/contract/getlist',
+                    method: 'post',
+                    body: listInfo,
+                    accessToken: token
+                }
+            );
+            if (result.ok && result.parsedBody) {
+                return {...result.parsedBody };
+            } else {
+                return { data: [], pages: 0, message: result.statusText  };
             }
-        })
-            .then(response => {
-                return response.json() as Promise<IAPIResult<IContractData>>;
-            }))
+        } catch (ex) {
+            console.error(ex);
+            return { data: [], pages: 0, message: ex  };
+        }
+
     }
 
-    static loadDropdownValues = (valueType: string, token : string): Promise<ISelectValueList> => {
-        return (fetch('http://localhost:5001/api/contract/getselectvalues', {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            },
-            body: JSON.stringify({
-                valueType: valueType
-            })
-        })
-            .then(response => {
-                return response.json() as Promise<ISelectValueList>;
-            }))
+    static loadListForExport = async (title: string, listInfo: IListInfo, token: string)  : Promise<void> => 
+    {
+        try {
+            const result = await http<IListInfo, any>( ContractAPI.webAPIUrl,
+                {
+                    path: '/contract/getforexport',
+                    method: 'post',
+                    body: { ...listInfo, page: 1},
+                    accessToken: token
+                }
+            )
+            result.blob().then(blob => {
+                    let url = window.URL.createObjectURL(blob);
+                    let a = document.createElement('a');
+                    let filename = title + " - " + Utils.formatDate(Date.now()).replace(/\//g, "-") + ".xlsx";
+                    a.href = url;
+                    a.download = filename;
+                    a.click();
+                    a.remove();
+                });
+        } catch (ex) {
+            console.error(ex);
+        }
+    }
 
+    static saveRecord = async (message: ISaveMessage<IContractData>, token: string): Promise<IAPIResult<IContractData>> => {
+
+        try {
+            const result = await http<ISaveMessage<IContractData>, IAPIResult<IContractData>>(
+                ContractAPI.webAPIUrl,
+                {
+                    path: '/contract',
+                    method: message.action,
+                    body: message,
+                    accessToken: token
+                }
+            );
+            if (result.ok && result.parsedBody) {
+                return {...result.parsedBody, success: true };
+            } else {
+                return { id: message.id, dataSubject: undefined, success: false,  message: result.statusText };
+            }
+        } catch (ex) {
+            console.error(ex);
+            return { id: message.id, dataSubject: undefined, success: false,  message: ex };
+        }
+    };
+
+    static loadOneRecord = async (id: number, token: string): Promise<IAPIResult<IContractData>> => {
+
+        try {
+            const result = await http<ISaveMessage<IContractData>, IAPIResult<IContractData>>(
+                ContractAPI.webAPIUrl,
+                {
+                    path: '/contract/' + id,
+                    method: 'get',
+                    accessToken: token
+                }
+            );
+            if (result.ok && result.parsedBody) {
+                return {...result.parsedBody, success: true };
+            } else {
+                return { id: id, dataSubject: undefined, success: false,  message: result.statusText };
+            }
+        } catch (ex) {
+            console.error(ex);
+            return { id: id, dataSubject: undefined, success: false,  message: ex };
+        }
+
+    }
+
+    static loadDropdownValues = async (valueType: string, token: string): Promise<ISelectValueList> => {
+
+        try {
+            const result = await http<any, ISelectValueList>(
+                ContractAPI.webAPIUrl,
+                {
+                    path: '/contract/getselectvalues',
+                    method: 'post',
+                    body: {valueType: valueType},
+                    accessToken: token
+                }
+            );
+            if (result.ok && result.parsedBody) {
+                return {...result.parsedBody };
+            } else {
+                return { data: [], valueType: valueType };
+            }
+        } catch (ex) {
+            console.error(ex);
+            return { data: [], valueType: valueType };
+        }
     }
 
 }

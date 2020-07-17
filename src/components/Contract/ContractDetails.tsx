@@ -71,7 +71,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                 .then((res) => {
                     // Update form values
                     this.setState({
-                        currentData: { ...res.dataSubject, modifier: "Modified" }
+                        currentData: { ...res.dataSubject!, modifier: "Modified" }
                     });
                 })
                 .catch(e => console.error(e));
@@ -109,7 +109,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
         ContractAPI.saveRecord(toSave, this.context!.access_token)
             .then(result => {
                 if (result.success) {
-                    this.setState({ ...this.state, id: result.dataSubject.id, currentData: result.dataSubject })
+                    this.setState({ ...this.state, id: result.dataSubject!.id, currentData: result.dataSubject! })
                     // put a toast here
                     this.setState({ popupVisible: true, popupMessage: "Save result: " + result.message, popupStyle: "success" });
                     //alert("Save result: " + result.message)
@@ -120,7 +120,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
                 }
             }
             )
-            .catch(e => alert("Unexpected error: " + e))
+            .catch(e => this.setState({ popupVisible: true, popupMessage: "Save failed: " + e, popupStyle: "danger" }))
     }
 
     private updatePaymentline = (values: IPayment, isAdding: boolean, currentIndex?: number) => {
@@ -130,7 +130,7 @@ class ContractDetails extends React.Component<RouteComponentProps<{ id?: string 
         if (isAdding) {
             let newData = this.state.currentData;
 
-            // const _ = newData.paymentInfo?.push(values);
+            newData.paymentInfo?.push(values);
 
             this.setState({ currentData: newData });
         } else {
