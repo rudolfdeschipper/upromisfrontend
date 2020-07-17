@@ -17,6 +17,9 @@ import { I=<Screen.$>Data, I=<Tabs.$> } from './=<Screen.$>Types';
 
 import { =<Screen.$>API } from './=<Screen.$>API';
 
+%If:Attachments
+import Attachment from '../Attachment/Attachment';
+%EndIf
 
 interface IState {
     currentData: I=<Screen.$>Data;
@@ -137,6 +140,14 @@ class =<Screen.$>Details extends React.Component<RouteComponentProps<{ id?: stri
                         <=<Screen.$>=<Tabs.$> currentData={this.state.currentData} update=<Tabs.$>line={this.update=<Tabs.$>line} />
                     </Tab>
 %/Loop:Tabs
+%If:Attachments
+                    <Tab eventKey="attachments" title="Attachments">
+                        {
+                            this.state.id === -1 ? <p>You shoud save the new Contract before adding attachments</p> :
+                                <Attachment parentItem='00000000-0000-0000-0000-000000000000' uploadedBy={this.context!.profile.name} />
+                        }
+                    </Tab>
+%EndIf
                 </Tabs>
             </React.Fragment>
         );

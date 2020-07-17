@@ -8,10 +8,11 @@ debug : "on"
 
 Contract : 
 {
-	List <- ViewModel.Contract : {},
-	Edit <- ViewModel.Contract : {},
+	List <- ViewModel.Contract,
+	Edit <- ViewModel.Contract,
+	Attachments: true,
 	Tabs : {
-		Payment : {Title : "Payments", JSONName : "payment", Model : <- Viewmodel.Payments {} }
+		Payment : {Title : "Payments", JSONName : "payment", Model <- Viewmodel.Payments }
 	},
 	Actions : {
 		Action1 : { Name: "copy", Title: "Copy"},
@@ -20,11 +21,11 @@ Contract :
 }
 
 @ViewModel
-Contract <- Datamodel.Contract : {},
-Payments <- Datamodel.Payments : {}
+Contract <- Datamodel.Contract,
+Payments <- Datamodel.Payments
 
 @DTO // data transfer objects
-Contract <- Datamodel.Contract : {}
+Contract <- Datamodel.Contract
 
 
 @Datamodel
@@ -38,23 +39,24 @@ Contract <- Definitions.DefaultObject : {
 			Closed : "3 - Closed",
 			Cancelled : "9 - Cancelled"
 		}
-	}
+	},
+	+Payments : { Type: "IList", EntityType: "Payment" }
 },
 
 Payments : {
-   	ID: <- DataDictionary.IDField : {},
-    Description: <- DataDictionary.DescriptionField : {},
-    PlannedInvoiceDate: <- DataDictionary.DateField : {},
-    ActualInvoiceDate: <- DataDictionary.DateField : {},
-    Amount: <- DataDictionary.AmountField : {}
+   	ID: <- DataDictionary.IDField,
+    Description: <- DataDictionary.DescriptionField,
+    PlannedInvoiceDate: <- DataDictionary.DateField,
+    ActualInvoiceDate: <- DataDictionary.DateField,
+    Amount: <- DataDictionary.AmountField
 }
 
 @Definitions
 
 DefaultObject : {
-	ID <- DataDictionary.IDField : {},
-	Code <- DataDictionary.CodeField : {},
-	Description <- DataDictionary.DescriptionField : {},
+	ID <- DataDictionary.IDField,
+	Code <- DataDictionary.CodeField,
+	Description <- DataDictionary.DescriptionField,
 	Startdate <- DataDictionary.DateField :  { Name : "Startdate", Title : "Startdate" }, 
 	Enddate <- DataDictionary.DateField : { Name : "Enddate", Title : "Enddate" }
 }
