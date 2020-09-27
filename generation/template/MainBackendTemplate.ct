@@ -1,0 +1,7 @@
+%Log:Microservice
+%Loop:@Microservice
+%Include:Controller.ct
+%Include:DBContext.ct
+%Log:Models
+%Include:Model.ct
+%/Loop:@Microservice
