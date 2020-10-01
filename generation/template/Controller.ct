@@ -13,14 +13,14 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using System.Linq.Dynamic.Core;
-using =<#Parameters.msNameSpace>=<Namespace>api.Models;
+using =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models;
 using Microsoft.Extensions.Logging;
 using APIUtils.APIMessaging;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace =<#Parameters.msNameSpace>=<Namespace>api.Controllers
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -57,7 +57,7 @@ namespace =<#Parameters.msNameSpace>=<Namespace>api.Controllers
                     }
                     if (!string.IsNullOrEmpty(whereClause))
                     {
-                        whereClause = whereClause.Substring(0, whereClause.Length - 2);
+                        whereClause = whereClause[0..^2];
                         records = records.Where(whereClause);
                         filteredCount = records.Count();
                     }
@@ -72,7 +72,7 @@ namespace =<#Parameters.msNameSpace>=<Namespace>api.Controllers
                     }
                     if (orderBy.EndsWith(','))
                     {
-                        orderBy = orderBy.Substring(0, orderBy.Length - 1);
+                        orderBy = orderBy[0..^1];
                     }
                     if (!string.IsNullOrEmpty(orderBy))
                     {
@@ -255,11 +255,11 @@ namespace =<#Parameters.msNameSpace>=<Namespace>api.Controllers
         public async Task<IActionResult> GetClaims(string UserID)
         {
             var claims = Repository.List
-                .Where(c => c.TeamComposition.Any(t => t.TeamMember.ToString().Equals(UserID)))
+                .Where(c => c.=<Claimlist>.Any(t => t.TeamMember.ToString().Equals(UserID)))
                 .Select(c => new { 
                     Key = "=<$>|" + c.ID, 
-                    Value = c.TeamComposition
-                        .First(t => t.TeamMember.ToString().Equals(UserID)).MemberType.ToString() 
+                    Value = c.=<Claimlist>
+                        .First(t => t.TeamMember.ToString().Equals(UserID)).=<Model.Name>MemberType.ToString() 
                 });
             return new JsonResult(await claims.ToArrayAsync());
         }
@@ -267,4 +267,4 @@ namespace =<#Parameters.msNameSpace>=<Namespace>api.Controllers
     }
 }
 %/File
-%/Loop:@Microservice
+%/Loop:Controllers

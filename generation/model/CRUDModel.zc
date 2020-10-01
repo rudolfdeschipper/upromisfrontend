@@ -31,24 +31,28 @@ Contract : {
 			Namespace: "accountinfo",
 			Export <- DTO.AccountInfo,
 			DTO <- DTO.AccountInfo,
+			Claimlist: "Teammembers",
 			Model <- Microservice.Contract.Models.AccountInfo
 		},
 		Contract: {
 			Namespace: "contract",
 			Export <- DTO.Contract,
 			DTO <- DTO.Contract,
+			Claimlist: "Teammembers",
 			Model <- Microservice.Contract.Models.Contract
 		},
 		Request: {
 			Namespace: "request",
 			Export <- DTO.Request,
 			DTO <- DTO.Request,
+			Claimlist: "Teammembers",
 			Model <- Microservice.Contract.Models.Request
 		},
 		Proposal: {
 			Namespace: "proposal",
 			Export <- DTO.Proposal,
 			DTO <- DTO.Proposal,
+			Claimlist: "Teammembers",
 			Model <- Microservice.Contract.Models.Proposal
 		}
 	},
@@ -58,11 +62,11 @@ Contract : {
 			SetName : "Accounts",
 			Properties <- Entities.AccountInfo,
 			Children : {
-				AccountField <- Entities.AccountField : { SetName: "AccountFields", Lazy: false },
-				AccountTeamComposition <- Entities.AccountTeamComposition : { SetName: "Teammembers", Lazy: false },
-				Contract <-Entities.Contract : { SetName: "Contracts", Lazy: true },
-				Proposal <-Entities.Proposal : { SetName: "Proposals", Lazy: true },
-				Request <- Entities.Request : { SetName: "Requests", Lazy: true }
+				AccountField  : { Model <- Entities.AccountField, SetName: "AccountFields", Lazy: false },
+				AccountTeamComposition : { Model <- Entities.AccountTeamComposition, SetName: "Teammembers", Lazy: false },
+				Contract : { Model <-Entities.Contract, SetName: "Contracts", Lazy: true },
+				Proposal : { Model <-Entities.Proposal, SetName: "Proposals", Lazy: true },
+				Request : { Model <- Entities.Request, SetName: "Requests", Lazy: true }
 			}
 		},
 		Contract : {
@@ -70,25 +74,25 @@ Contract : {
 			SetName : "Contracts",
 			Properties <- Entities.Contract,
 			Children : {
-				ContractPaymentInfo <- Entities.ContractPaymentInfo : { SetName: "Payments", Lazy: false },
-				ContractTeamComposition <- Entities.ContractTeamComposition : { SetName: "Teammembers", Lazy: false }
+				ContractPaymentInfo : { Model <- Entities.ContractPaymentInfo, SetName: "Payments", Lazy: false },
+				ContractTeamComposition : { Model <- Entities.ContractTeamComposition, SetName: "Teammembers", Lazy: false }
 			}
 		},
 		Request : {
 			Name : "Request",
 			SetName : "Requests",
-			Properties <- Entities.Proposal,
+			Properties <- Entities.Request,
 			Children : {
-				RequestTeamComposition <- Entities.RequestTeamComposition : { SetName: "Teammembers", Lazy: false }
+				RequestTeamComposition : { Model <- Entities.RequestTeamComposition, SetName: "Teammembers", Lazy: false }
 			}
 		},
 		Proposal : {
 			Name : "Proposal",
 			SetName : "Proposals",
-			Properties <- Entities.Request,
+			Properties <- Entities.Proposal,
 			Children : {
-				ProposalPaymentInfo <- Entities.ProposalPaymentInfo : { SetName: "Payments", Lazy: false },
-				ProposalTeamComposition <- Entities.ProposalTeamComposition : { SetName: "Teammembers", Lazy: false }
+				ProposalPaymentInfo : { Model <- Entities.ProposalPaymentInfo, SetName: "Payments", Lazy: false },
+				ProposalTeamComposition : { Model <- Entities.ProposalTeamComposition, SetName: "Teammembers", Lazy: false }
 			}
 		}
 	}
@@ -142,7 +146,8 @@ AccountField : {
 }
 
 AccountTeamComposition <- Definitions.DefaultObject : {
-
+	+TeamMember <- DataDictionary.GuidField : { Title: "Team member", Nullable: false },
+	+AccountInfoMemberType <- DataDictionary.TeamMemberTypeField
 }
 
 Contract <- Definitions.DefaultObject : {
@@ -179,7 +184,8 @@ ContractPaymentInfo : {
 }
 
 ContractTeamComposition <- Definitions.DefaultObject : {
-	
+	+TeamMember <- DataDictionary.GuidField : { Title: "Team member", Nullable: false },
+	+ContractMemberType <- DataDictionary.TeamMemberTypeField
 }
 
 Proposal <- Definitions.DefaultObject : {
@@ -194,7 +200,8 @@ ProposalPaymentInfo : {
 }
 
 ProposalTeamComposition <- Definitions.DefaultObject : {
-	
+	+TeamMember <- DataDictionary.GuidField : { Title: "Team member", Nullable: false },
+	+ProposalMemberType <- DataDictionary.TeamMemberTypeField
 }
 
 Request <- Definitions.DefaultObject : {
@@ -202,7 +209,8 @@ Request <- Definitions.DefaultObject : {
 }
 
 RequestTeamComposition <- Definitions.DefaultObject : {
-	
+	+TeamMember <- DataDictionary.GuidField : { Title: "Team member", Nullable: false },
+	+RequestMemberType <- DataDictionary.TeamMemberTypeField
 }
 
 @Definitions
@@ -261,7 +269,7 @@ DescriptionField : {
 }
 
 DateField : {
-	Type:"date", 
+	Type:"DateTime", 
 	JSONType: "Date",
 	YupType: "date",
 	JSONDefault: "new Date()",
@@ -318,10 +326,29 @@ GuidField : {
 	JSONType: "string",
 	YupType: "string",
 	JSONDefault: "''",
-	Default: "new Guid.NewGuid()",
+	Default: "Guid.NewGuid()",
 	Name:"ExternalID", 
 	JSONName: "externalId", 
 	Title:"External ID",
 	Nullable:false,
 	Show:false
+}
+
+TeamMemberTypeField : {
+	Type:"string", 
+	JSONType: "string",
+	YupType: "string",
+	JSONDefault: "Reader",
+	Name:"MemberType", 
+	JSONName: "memberType", 
+	Title:"Member Type",
+	Nullable:false,
+	Show:true,
+	Values : {
+			Owner : "Owner",
+			Administrator : "Administrator",
+			Member : "Member",
+			Participant: "Participant",
+			Reader: "Reader"
+	}
 }
