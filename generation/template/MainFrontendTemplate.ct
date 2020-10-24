@@ -1,19 +1,19 @@
 %Loop:@Screen
-
+%Log:Main
 %Include:CRUDMain.tsx.ct
-
+%Log:API
 %Include:CRUDAPI.ts.ct
-
+%Log:Main delete form
 %Include:CRUDMainDeleteForm.tsx.ct
-
+%Log:Main details
 %Include:CRUDMainDetails.tsx.ct
-
+%Log:Main form
 %Include:CRUDMainForm.tsx.ct
-
+%Log:Main sublist
 %Include:CRUDMainSublist.tsx.ct
-
+%Log:Main sublist Form
 %Include:CRUDMainSublistForm.tsx.ct
-
+%Log:Main types
 %Include:CRUDMainTypes.ts.ct
-
+%Log:=<Screen.$> done
 %/Loop:@Screen
