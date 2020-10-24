@@ -40,6 +40,10 @@ class App extends React.Component<IProps, IState> {
     render() {
         const contract = React.lazy(() => import("./components/Contract/Contract"));
         const contractdetails = React.lazy(() => import("./components/Contract/ContractDetails"));
+        const request = React.lazy(() => import("./components/Request/Request"));
+        const requestdetails = React.lazy(() => import("./components/Request/RequestDetails"));
+        const proposal = React.lazy(() => import("./components/Proposal/Proposal"));
+        const proposaldetails = React.lazy(() => import("./components/Proposal/ProposalDetails"));
 
         return (
             <Layout User={this.state._user}>
@@ -52,6 +56,12 @@ class App extends React.Component<IProps, IState> {
                             <Route path='/contract' component={!!this.state._user ? contract : nfp} />
                             <Route path='/contractdetails/:id' component={!!this.state._user ? contractdetails : nfp} />
                             <Route path='/contractdetails/add' component={!!this.state._user ? contractdetails : nfp} />
+                            <Route path='/proposal' component={!!this.state._user ? proposal : nfp} />
+                            <Route path='/proposaldetails/:id' component={!!this.state._user ? proposaldetails : nfp} />
+                            <Route path='/proposaldetails/add' component={!!this.state._user ? proposaldetails : nfp} />
+                            <Route path='/request' component={!!this.state._user ? request : nfp} />
+                            <Route path='/requestdetails/:id' component={!!this.state._user ? requestdetails : nfp} />
+                            <Route path='/requeqstdetails/add' component={!!this.state._user ? requestdetails : nfp} />
                             <Route path="*" component={nfp} />
                         </Switch>
                     </Suspense>

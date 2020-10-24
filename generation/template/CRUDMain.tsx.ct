@@ -170,7 +170,7 @@ class =<Screen.$> extends React.Component<RouteComponentProps<{}>, IListState<I=
 				accessor: '=<JSONName>',
 %EndIf
 %EndIf
-				
+				id: '=<JSONName>',
                 show: =<Show>
             }
 %If:HasMore , %EndIf
@@ -217,6 +217,6 @@ class =<Screen.$> extends React.Component<RouteComponentProps<{}>, IListState<I=
 }
 
 // required to have lazy loading
-export default Contract;
+export default =<Screen.$>;
 
 %/File

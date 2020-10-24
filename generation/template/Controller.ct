@@ -15,6 +15,7 @@ using OfficeOpenXml;
 using System.Linq.Dynamic.Core;
 using =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models;
 using Microsoft.Extensions.Logging;
+using APIUtils;
 using APIUtils.APIMessaging;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
@@ -224,29 +225,21 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
         [HttpPost]
         public async Task<ActionResult> GetSelectValues([FromBody] ListValueInfo info)
         {
+            var EnumProducer = new SelectValueFromEnumProducer();
             List<ListValue> list = new List<ListValue>();
-            Type t = null;
 
             switch (info.ValueType)
             {
 %Loop:Model.Properties
 %If:Lookup?=true
                 case "=<$>":
-                    t = typeof(=<$>);
+                     list = EnumProducer.ProduceValues(list, typeof(=<$>));
                     break;
 %EndIf
 %/Loop:Model.Properties
                 default:
                     break;
             }
-            if (t != null)
-            {
-                foreach (var item in Enum.GetValues(t))
-                {
-                    list.Add(new ListValue() { Label = Enum.GetName(t, item), Value = item });
-                }
-            }
-
             return Ok(new ListValues() { ValueType = info.ValueType, data = list });
         }
 
