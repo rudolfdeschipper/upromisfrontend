@@ -10,13 +10,22 @@
 import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+<<<<<<< HEAD
 import { Form, Datepicker, Input, Textarea, SubmitBtn } from 'react-formik-ui'
+=======
+import { Form, Datepicker, Input, Textarea, SubmitBtn, Select } from 'react-formik-ui'
+>>>>>>> 9688682ea239520b67688a5702d077f52b379989
 
 import { I=<Tabs.$> } from './=<Screen.$>Types';
+import { ISelectValue } from '../GeneralTypes';
+import { UserContext } from '../../context/UserContext';
 
 
 interface IProps {
     currentData: I=<Tabs.$>;
+    %Loop:Model %If:Lookup?=true
+    =<JSONName>values : ISelectValue[]; 
+    %EndIf %/Loop:Model
     buttonText: string;
     updateValues:  (values: I=<Tabs.$>) => void;
 }
@@ -63,6 +72,7 @@ class =<Screen.$>=<Tabs.$>Form extends React.Component<IProps, IState> {
             >
                 <Form className="w3-container" mode="themed">
 %Loop:Model
+<<<<<<< HEAD
 %If:Type=daterange
                     <div className="w3-cell-row">
                         <div className="w3-cell">
@@ -91,6 +101,10 @@ class =<Screen.$>=<Tabs.$>Form extends React.Component<IProps, IState> {
 %EndIf
                      />
 %EndIf
+=======
+                    <=<UIControl>
+                     />
+>>>>>>> 9688682ea239520b67688a5702d077f52b379989
 %/Loop:Model
                     <hr />
                     <SubmitBtn className="w3-button w3-light-grey w3-round" title={this.props.buttonText + "s this record"} disabled={this.state.isSubmitting}>

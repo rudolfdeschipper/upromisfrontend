@@ -15,6 +15,10 @@ using OfficeOpenXml;
 using System.Linq.Dynamic.Core;
 using =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models;
 using Microsoft.Extensions.Logging;
+<<<<<<< HEAD
+=======
+using APIUtils;
+>>>>>>> 9688682ea239520b67688a5702d077f52b379989
 using APIUtils.APIMessaging;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
@@ -224,21 +228,31 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
         [HttpPost]
         public async Task<ActionResult> GetSelectValues([FromBody] ListValueInfo info)
         {
+<<<<<<< HEAD
             List<ListValue> list = new List<ListValue>();
             Type t = null;
+=======
+            var EnumProducer = new SelectValueFromEnumProducer();
+            List<ListValue> list = new List<ListValue>();
+>>>>>>> 9688682ea239520b67688a5702d077f52b379989
 
             switch (info.ValueType)
             {
 %Loop:Model.Properties
 %If:Lookup?=true
                 case "=<$>":
+<<<<<<< HEAD
                     t = typeof(=<$>);
+=======
+                     list = EnumProducer.ProduceValues(list, typeof(=<$>));
+>>>>>>> 9688682ea239520b67688a5702d077f52b379989
                     break;
 %EndIf
 %/Loop:Model.Properties
                 default:
                     break;
             }
+<<<<<<< HEAD
             if (t != null)
             {
                 foreach (var item in Enum.GetValues(t))
@@ -247,6 +261,8 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
                 }
             }
 
+=======
+>>>>>>> 9688682ea239520b67688a5702d077f52b379989
             return Ok(new ListValues() { ValueType = info.ValueType, data = list });
         }
 

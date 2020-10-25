@@ -71,6 +71,7 @@ class =<Screen.$>DeleteForm extends React.Component<IProps, IState> {
                 }}
             >
                 <Form mode="themed">
+<<<<<<< HEAD
 %Loop:Screen.Edit
 %If:Type=daterange
                     <div className="w3-cell-row">
@@ -97,6 +98,10 @@ class =<Screen.$>DeleteForm extends React.Component<IProps, IState> {
 %EndIf
                     disabled />
 %EndIf
+=======
+%Loop:Screen.Edit   
+                <=<UIROControl> />
+>>>>>>> 9688682ea239520b67688a5702d077f52b379989
 %/Loop:Screen.Edit
                     <hr />
                     <SubmitBtn className="w3-button w3-light-grey w3-round" title={this.props.buttonText + "s this record"} disabled={this.state.isSubmitting}>
