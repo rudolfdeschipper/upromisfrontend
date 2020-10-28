@@ -19,11 +19,7 @@ import =<Screen.$>Form from './=<Screen.$>Form';
 
 %Loop:Tabs
 import =<Screen.$>=<Tabs.$> from './=<Screen.$>=<Tabs.$>';
-<<<<<<< HEAD
-import { I=<Screen.$>Data, I=<Tabs.$> } from './=<Screen.$>Types';
-=======
 import { I=<Tabs.$> } from './=<Screen.$>Types';
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
 %/Loop:Tabs
 
 import { I=<Screen.$>Data } from './=<Screen.$>Types';
@@ -37,11 +33,7 @@ import Attachment from '../Attachment/Attachment';
 interface IState {
     currentData: I=<Screen.$>Data;
 %Loop:Edit
-<<<<<<< HEAD
-%If:Type=code
-=======
 %If:Lookup?=true
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
     =<Edit.JSONName>values: ISelectValue[],
 %EndIf
 %/Loop:Edit
@@ -77,11 +69,7 @@ class =<Screen.$>Details extends React.Component<RouteComponentProps<{ id?: stri
                     modifier: "Unchanged"
                 },
 %Loop:Edit
-<<<<<<< HEAD
-%If:Type=code
-=======
 %If:Lookup?=true
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
                 =<Edit.JSONName>values: [],
 %EndIf
 %/Loop:Edit
@@ -108,11 +96,7 @@ class =<Screen.$>Details extends React.Component<RouteComponentProps<{ id?: stri
                     
                 },
 %Loop:Edit
-<<<<<<< HEAD
-%If:Type=code
-=======
 %If:Lookup?=true
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
                 =<Edit.JSONName>values: [],
 %EndIf
 %/Loop:Edit
@@ -138,11 +122,7 @@ class =<Screen.$>Details extends React.Component<RouteComponentProps<{ id?: stri
                 .catch(e => console.error(e));
         }
 %Loop:Edit
-<<<<<<< HEAD
-%If:Type=code
-=======
 %If:Lookup?=true
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
         =<Screen.$>API.loadDropdownValues("=<$>", this.context!.access_token)
             .then(res => {
                 this.setState({ =<Edit.JSONName>values: res.data });
@@ -222,15 +202,12 @@ class =<Screen.$>Details extends React.Component<RouteComponentProps<{ id?: stri
                 <Link to={"/=<Screen.$>"} className="w3-button w3-light-grey w3-round" title="Back to list">
                     <i className="fa fa-list" ></i>&nbsp;Back to List
                 </Link> <hr />
+                <Popup visible={this.state.popupVisible} message={this.state.popupMessage} style={this.state.popupStyle} onDismiss={() => { this.setState({ popupVisible: false }) }} />
                 <Tabs defaultActiveKey='details' id='detailstab'>
                     <Tab eventKey='details' title='Details'>
                         <=<Screen.$>Form buttonText="Save" currentData={this.state.currentData} 
 %Loop:Edit
-<<<<<<< HEAD
-%If:Type=code
-=======
 %If:Lookup?=true
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
                             =<Edit.JSONName>values={this.state.=<Edit.JSONName>values}
 %EndIf
 %/Loop:Edit

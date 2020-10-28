@@ -29,12 +29,9 @@ interface IState {
     modalEditIsOpen: boolean,
     modalDeleteIsOpen: boolean,
     current=<Tabs.$>Record: I=<Tabs.$> | null,
-<<<<<<< HEAD
-=======
     %Loop:Model %If:Lookup?=true
     =<JSONName>values : ISelectValue[], 
     %EndIf %/Loop:Model
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
     currentIndex?: number
 }
 
@@ -197,10 +194,7 @@ class =<Screen.$>=<Tabs.$> extends React.Component<IProps, IState> {
 				accessor: '=<Name>',
 %EndIf
 %EndIf
-<<<<<<< HEAD
-=======
                 id: '=<JSONName>',
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
                 show: =<Show>
             } %If:HasMore , %EndIf
 %/Loop:Model
@@ -224,44 +218,32 @@ class =<Screen.$>=<Tabs.$> extends React.Component<IProps, IState> {
                 <Modal isOpen={this.state.modalEditIsOpen} >
                     <ModalHeader toggle={this.closeEditModalNoSave} charCode="&times;" >Edit =<Tabs.$></ModalHeader>
                     <ModalBody>
-<<<<<<< HEAD
-                        <=<Screen.$>=<Tabs.$>Form buttonText="Save" currentData={this.state.current=<Tabs.$>Record as I=<Tabs.$>} updateValues={this.update=<Tabs.$>Line} />
-=======
                         <=<Screen.$>=<Tabs.$>Form buttonText="Save" currentData={this.state.current=<Tabs.$>Record as I=<Tabs.$>} updateValues={this.update=<Tabs.$>Line} 
 %Loop:Model %If:Lookup?=true
                             =<JSONName>values = {this.state.=<JSONName>values} 
 %EndIf %/Loop:Model
                         
                         />
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
                     </ModalBody>
                 </Modal>
                 <Modal isOpen={this.state.modalAddIsOpen} >
                     <ModalHeader toggle={this.closeAddModalNoSave} charCode="&times;" >Add =<Tabs.$></ModalHeader>
                     <ModalBody>
-<<<<<<< HEAD
-                        <=<Screen.$>=<Tabs.$>Form buttonText="Add" currentData={this.state.current=<Tabs.$>Record as I=<Tabs.$>} updateValues={this.add=<Tabs.$>Line} />
-=======
                         <=<Screen.$>=<Tabs.$>Form buttonText="Add" currentData={this.state.current=<Tabs.$>Record as I=<Tabs.$>} updateValues={this.add=<Tabs.$>Line} 
 %Loop:Model %If:Lookup?=true
                             =<JSONName>values = {this.state.=<JSONName>values} 
 %EndIf %/Loop:Model
                         />
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
                     </ModalBody>
                 </Modal>
                 <Modal isOpen={this.state.modalDeleteIsOpen} >
                     <ModalHeader toggle={this.closeDeleteModalNoSave} charCode="&times;" >Delete =<Tabs.$></ModalHeader>
                     <ModalBody>
-<<<<<<< HEAD
-                        <=<Screen.$>=<Tabs.$>Form buttonText="Delete" currentData={this.state.current=<Tabs.$>Record as I=<Tabs.$>} updateValues={this.delete=<Tabs.$>Line} />
-=======
                         <=<Screen.$>=<Tabs.$>Form buttonText="Delete" currentData={this.state.current=<Tabs.$>Record as I=<Tabs.$>} updateValues={this.delete=<Tabs.$>Line} 
 %Loop:Model %If:Lookup?=true
                             =<JSONName>values = {this.state.=<JSONName>values} 
 %EndIf %/Loop:Model
                         />
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
                     </ModalBody>
                 </Modal>
             </div>

@@ -10,11 +10,7 @@
 import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-<<<<<<< HEAD
-import { Form, Datepicker, Input, Textarea, SubmitBtn } from 'react-formik-ui'
-=======
 import { Form, Datepicker, Input, Textarea, SubmitBtn, Select } from 'react-formik-ui'
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
 
 import { I=<Tabs.$> } from './=<Screen.$>Types';
 import { ISelectValue } from '../GeneralTypes';
@@ -72,39 +68,8 @@ class =<Screen.$>=<Tabs.$>Form extends React.Component<IProps, IState> {
             >
                 <Form className="w3-container" mode="themed">
 %Loop:Model
-<<<<<<< HEAD
-%If:Type=daterange
-                    <div className="w3-cell-row">
-                        <div className="w3-cell">
-                            <Datepicker name="=<Fromdate>" label="=<Title>"  />
-                        </div>
-                        <div className="w3-cell">
-                            <Datepicker name="=<Todate>"  />
-                        </div>
-                    </div>
-%Else
-%If:Type=code
-                    <Select name='=<JSONName>' label='=<Title>' options={this.props.=<JSONName>values}
-%Else
-%If:Type=double
-                    <Input name="=<JSONName>" label="=<Title>" type="number" step="0.01"
-%Else
-%If:Length?=unlimited
-                    <Textarea name="=<JSONName>" label="=<Title>"
-%Else
-                    <Input name="=<JSONName>" label="=<Title>"
-%EndIf
-%EndIf
-%EndIf
-%If:Key?=true
-                    disabled
-%EndIf
-                     />
-%EndIf
-=======
                     <=<UIControl>
                      />
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
 %/Loop:Model
                     <hr />
                     <SubmitBtn className="w3-button w3-light-grey w3-round" title={this.props.buttonText + "s this record"} disabled={this.state.isSubmitting}>

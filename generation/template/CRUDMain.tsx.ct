@@ -170,11 +170,7 @@ class =<Screen.$> extends React.Component<RouteComponentProps<{}>, IListState<I=
 				accessor: '=<JSONName>',
 %EndIf
 %EndIf
-<<<<<<< HEAD
-				
-=======
 				id: '=<JSONName>',
->>>>>>> 9688682ea239520b67688a5702d077f52b379989
                 show: =<Show>
             }
 %If:HasMore , %EndIf
