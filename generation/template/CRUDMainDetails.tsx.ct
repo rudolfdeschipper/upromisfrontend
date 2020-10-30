@@ -202,6 +202,7 @@ class =<Screen.$>Details extends React.Component<RouteComponentProps<{ id?: stri
                 <Link to={"/=<Screen.$>"} className="w3-button w3-light-grey w3-round" title="Back to list">
                     <i className="fa fa-list" ></i>&nbsp;Back to List
                 </Link> <hr />
+                <Popup visible={this.state.popupVisible} message={this.state.popupMessage} style={this.state.popupStyle} onDismiss={() => { this.setState({ popupVisible: false }) }} />
                 <Tabs defaultActiveKey='details' id='detailstab'>
                     <Tab eventKey='details' title='Details'>
                         <=<Screen.$>Form buttonText="Save" currentData={this.state.currentData} 
