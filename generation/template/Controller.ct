@@ -233,7 +233,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
 %Loop:Model.Properties
 %If:Lookup?=true
                 case "=<$>":
-                     list = EnumProducer.ProduceValues(list, typeof(=<$>));
+                     list.AddRange( Models.=<Controllers.$>.=<$>Values);
                     break;
 %EndIf
 %/Loop:Model.Properties

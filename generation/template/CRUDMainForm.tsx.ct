@@ -51,7 +51,7 @@ class =<Screen.$>Form extends React.Component<IProps, IState> {
 %If:Values?
                         .oneOf([
 %Loop:Values
-                        '=<Values.$>',  // =<$>: =<@DTO.Contract.ContractType.Values.[$]>
+                        '=<Values.$>',  // =<$>: =<[$]>
 %/Loop:Values
                         ])
 %EndIf

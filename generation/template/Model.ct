@@ -137,24 +137,26 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using APIUtils.APIMessaging;
 
 namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 {
 
+    public class =<Name> 
+    {
 %Loop:Properties
 %If:Values?
-    public enum =<$>
-    {
+        public static ListValue[] =<$>Values =
+        {
 %Loop:Values
-    =<$> %If:HasMore , %EndIf
-
-%/Loop:Values        
-    }
+            new ListValue() { Value = "=<$>", Label = "=<[$]>" } %If:HasMore , %EndIf
+            
+%/Loop:Values
+        };
 %EndIf
 %/Loop:Properties
 
-    public class =<Name> 
-    {
+
 %Loop:Properties
 %If:Key?
         [Key]
@@ -168,12 +170,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %If:Format?
         [DisplayFormat(DataFormatString = "{0:=<Format>}")]
 %EndIf
-%If:Values?
-        [EnumDataType(typeof(=<$>))]
-        public =<$> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
-%Else
         public =<Type> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
-%EndIf
 
 %/Loop:Properties
 
@@ -214,24 +211,25 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using APIUtils.APIMessaging;
 
 namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 {
 
+    public class =<$> 
+    {
 %Loop:Model
 %If:Values?
-    public enum =<$>
-    {
+        public static ListValue[] =<$>Values =
+        {
 %Loop:Values
-    =<$> %If:HasMore , %EndIf
+            new ListValue() { Value = "=<$>", Label = "=<[$]>" } %If:HasMore , %EndIf
 
-%/Loop:Values        
-    }
+%/Loop:Values
+        };
 %EndIf
 %/Loop:Model
 
-    public class =<$> 
-    {
 %Loop:Model
 %If:Type?
 %If:Key?
@@ -246,12 +244,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %If:Format?
         [DisplayFormat(DataFormatString = "{0:=<Format>}")]
 %EndIf
-%If:Values?
-        [EnumDataType(typeof(=<$>))]
-        public =<$> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
-%Else
         public =<Type> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
-%EndIf
 
 %EndIf
 %/Loop:Model
@@ -310,12 +303,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %If:Format?
         [DisplayFormat(DataFormatString = "{0:=<Format>}")]
 %EndIf
-%If:Values?
-        [EnumDataType(typeof(=<$>))]
-        public =<$> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
-%Else
         public =<Type> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
-%EndIf
 
 %/Loop:Properties
 
@@ -376,12 +364,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %If:Format?
         [DisplayFormat(DataFormatString = "{0:=<Format>}")]
 %EndIf
-%If:Values?
-        [EnumDataType(typeof(=<$>))]
-        public =<$> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
-%Else
         public =<Type> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
-%EndIf
 
 %EndIf
 %/Loop:Model

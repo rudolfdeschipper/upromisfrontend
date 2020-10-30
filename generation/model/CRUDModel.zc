@@ -201,7 +201,7 @@ Contract <- Definitions.DefaultTimeboundObject : {
 			Closed : "3 - Closed",
 			Cancelled : "9 - Cancelled"
 		}, 
-		JSONName : "Contractstatus",
+		JSONName : "contractStatus",
 		Title: "Status"
 	},
 	+ContractType <- DataDictionary.StatusField : {
@@ -237,7 +237,7 @@ Proposal <- Definitions.DefaultTimeboundObject : {
 			Closed : "3 - Closed",
 			Cancelled : "9 - Cancelled"
 		}, 
-		JSONName : "Proposalstatus",
+		JSONName : "proposalStatus",
 		Title: "Status"
 	},
 	+ProposalType <- DataDictionary.StatusField : {
@@ -409,7 +409,7 @@ DateRange : {
 }
 
 StatusField <- DataDictionary.CodeField : {
-	Type: "lookup",
+	Type: "string",
 	JSONType: "string",
 	YupType: "string",
 	JSONDefault: "''",
