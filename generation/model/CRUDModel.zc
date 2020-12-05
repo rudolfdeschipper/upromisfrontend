@@ -5,15 +5,23 @@ msNameSpace : "upromis"
 debug : "on"
 
 
-@Screen
+@App
 
 Contract : 
 {
-	List <- DTO.Contract,
-	Edit <- DTO.Contract,
+	List <- Microservice.Contract.DTO.Contract,
+	Edit <- Microservice.Contract.DTO.Contract,
 	Tabs : {
-		Payment : {Title : "Payments", JSONName : "payment", Model <- DTO.ContractPaymentInfo },
-		Team : {Title : "Team members", JSONName : "team", Model <- DTO.ContractTeamComposition }
+		Payment : {
+			Title : "Payments", 
+			JSONName : "payment", 
+			Model <- Microservice.Contract.DTO.Contract.Children.ContractPaymentInfo 
+		},
+		Team : {
+			Title : "Team members", 
+			JSONName : "team", 
+			Model <- Microservice.Contract.DTO.Contract.Children.ContractTeamComposition 
+		}
 	},
 	Actions : {
 		Action1 : { Name: "copy", Title: "Copy"},
@@ -25,11 +33,19 @@ Contract :
 
 Proposal : 
 {
-	List <- DTO.Proposal,
-	Edit <- DTO.Proposal,
+	List <- Microservice.Contract.DTO.Proposal,
+	Edit <- Microservice.Contract.DTO.Proposal,
 	Tabs : {
-		Payment : {Title : "Payments", JSONName : "payment", Model <- DTO.ProposalPaymentInfo },
-		Team : {Title : "Team members", JSONName : "team", Model <- DTO.ProposalTeamComposition }
+		Payment : {
+			Title : "Payments", 
+			JSONName : "payment", 
+			Model <- Microservice.Contract.DTO.Proposal.Children.ProposalPaymentInfo 
+		},
+		Team : {
+			Title : "Team members", 
+			JSONName : "team", 
+			Model <- Microservice.Contract.DTO.Proposal.Children.ProposalTeamComposition 
+		}
 	},
 	Actions : {
 		Action1 : { Name: "copy", Title: "Copy"},
@@ -41,10 +57,14 @@ Proposal :
 
 Request : 
 {
-	List <- DTO.Request,
-	Edit <- DTO.Request,
+	List <- Microservice.Contract.DTO.Request,
+	Edit <- Microservice.Contract.DTO.Request,
 	Tabs : {
-		Team : {Title : "Team members", JSONName : "team", Model <- DTO.RequestTeamComposition }
+		Team : {
+			Title : "Team members", 
+			JSONName : "team", 
+			Model <- Microservice.Contract.DTO.Request.Children.RequestTeamComposition 
+		}
 	},
 	Actions : {
 		Action1 : { Name: "copy", Title: "Copy"},
@@ -61,118 +81,143 @@ Contract : {
 	Controllers: {
 		AccountInfo : {
 			Namespace: "accountinfo",
-			Export <- DTO.AccountInfo,
-			DTO <- DTO.AccountInfo,
-			Claimlist: "Teammembers",
+			Export <- Microservice.Contract.DTO.AccountInfo,
+			DTO <- Microservice.Contract.DTO.AccountInfo,
+			ClaimInfo: { ClaimList : "Teammembers", ClaimField : "AccountInfoMemberType" },
 			Model <- Microservice.Contract.Models.AccountInfo
 		},
 		Contract: {
 			Namespace: "contract",
-			Export <- DTO.Contract,
-			DTO <- DTO.Contract,
-			Claimlist: "Teammembers",
+			Export <- Microservice.Contract.DTO.Contract,
+			DTO <- Microservice.Contract.DTO.Contract,
+			ClaimInfo: { ClaimList : "Teammembers", ClaimField : "ContractMemberType" },
 			Model <- Microservice.Contract.Models.Contract
 		},
 		Request: {
 			Namespace: "request",
-			Export <- DTO.Request,
-			DTO <- DTO.Request,
-			Claimlist: "Teammembers",
+			Export <- Microservice.Contract.DTO.Request,
+			DTO <- Microservice.Contract.DTO.Request,
+			ClaimInfo: { ClaimList : "Teammembers", ClaimField : "RequestMemberType" },
 			Model <- Microservice.Contract.Models.Request
 		},
 		Proposal: {
 			Namespace: "proposal",
-			Export <- DTO.Proposal,
-			DTO <- DTO.Proposal,
-			Claimlist: "Teammembers",
+			Export <- Microservice.Contract.DTO.Proposal,
+			DTO <- Microservice.Contract.DTO.Proposal,
+			ClaimInfo: { ClaimList : "Teammembers", ClaimField : "ProposalMemberType" },
 			Model <- Microservice.Contract.Models.Proposal
 		}
 	},
 	Models: {
 		AccountInfo : {
-			Name : "AccountInfo",
 			SetName : "Accounts",
 			Properties <- Entities.AccountInfo,
 			Children : {
-				AccountField  : { Model <- Entities.AccountField, SetName: "AccountFields", Lazy: false },
-				AccountTeamComposition : { Model <- Entities.AccountTeamComposition, SetName: "Teammembers", Lazy: false },
-				Contract : { Model <-Entities.Contract, SetName: "Contracts", Lazy: true },
-				Proposal : { Model <-Entities.Proposal, SetName: "Proposals", Lazy: true },
-				Request : { Model <- Entities.Request, SetName: "Requests", Lazy: true }
+				AccountField  : { 
+					Properties <- Entities.AccountField, 
+					SetName: "AccountFields", 
+					Lazy: false 
+				},
+				AccountTeamComposition : { 
+					Properties <- Entities.AccountTeamComposition, 
+					SetName: "Teammembers", 
+					Lazy: false 
+				},
+				Contract : { 
+					Properties <-Entities.Contract, 
+					SetName: "Contracts", 
+					Lazy: true 
+				},
+				Proposal : { 
+					Properties <-Entities.Proposal, 
+					SetName: "Proposals", 
+					Lazy: true 
+				},
+				Request : { 
+					Properties <- Entities.Request, 
+					SetName: "Requests", 
+					Lazy: true 
+				}
 			}
 		},
 		Contract : {
-			Name : "Contract",
 			SetName : "Contracts",
 			Properties <- Entities.Contract,
 			Children : {
-				ContractPaymentInfo : { Model <- Entities.ContractPaymentInfo, SetName: "Payments", Lazy: false },
-				ContractTeamComposition : { Model <- Entities.ContractTeamComposition, SetName: "Teammembers", Lazy: false }
+				ContractPaymentInfo : { 
+					Properties <- Entities.ContractPaymentInfo, 
+					SetName: "Payments", 
+					Lazy: false 
+				},
+				ContractTeamComposition : { 
+					Properties <- Entities.ContractTeamComposition, 
+					SetName: "Teammembers", 
+					Lazy: false 
+				}
 			}
 		},
 		Request : {
-			Name : "Request",
 			SetName : "Requests",
 			Properties <- Entities.Request,
 			Children : {
-				RequestTeamComposition : { Model <- Entities.RequestTeamComposition, SetName: "Teammembers", Lazy: false }
+				RequestTeamComposition : { 
+					Properties <- Entities.RequestTeamComposition, 
+					SetName: "Teammembers", 
+					Lazy: false 
+				}
 			}
 		},
 		Proposal : {
-			Name : "Proposal",
 			SetName : "Proposals",
 			Properties <- Entities.Proposal,
 			Children : {
-				ProposalPaymentInfo : { Model <- Entities.ProposalPaymentInfo, SetName: "Payments", Lazy: false },
-				ProposalTeamComposition : { Model <- Entities.ProposalTeamComposition, SetName: "Teammembers", Lazy: false }
+				ProposalPaymentInfo : { 
+					Properties <- Entities.ProposalPaymentInfo, 
+					SetName: "Payments", 
+					Lazy: false 
+				},
+				ProposalTeamComposition : { 
+					Properties <- Entities.ProposalTeamComposition, 
+					SetName: "Teammembers", 
+					Lazy: false 
+				}
+			}
+		}
+	},
+	DTO: {
+		AccountInfo <- Microservice.Contract.Models.AccountInfo : {
+			Properties : {
+				-ExternalID
+			}
+		},
+		Contract <- Microservice.Contract.Models.Contract : {
+			Properties : {
+				-ExternalID
+			},
+			Children: {
+				ContractPaymentInfo: {
+					Properties: {
+						-ExternalID
+					}
+				},
+				ContractTeamComposition: {
+					Properties: {
+						-ExternalID
+					}
+				}
+			}
+		},
+		Request <- Microservice.Contract.Models.Request : {
+			Properties : {
+				-ExternalID
+			}
+		},
+		Proposal <- Microservice.Contract.Models.Proposal : {
+			Properties : {
+				-ExternalID
 			}
 		}
 	}
-}
-
-@ViewModel
-Contract <- Entities.Contract : {
-	-Startdate,
-	-Enddate,
-	+Dates: { Type: "daterange", Fromdate: "Startdate", ToDate: "Enddate", Title: "Start/End" },
-	Payments <- Entities.ContractPaymentInfo
-}
-
-@DTO // data transfer objects
-Contract <- Entities.Contract : {
-	-ExternalID
-}
-
-ContractPaymentInfo <- Entities.ContractPaymentInfo : {
-
-}
-
-ContractTeamComposition <- Entities.ContractTeamComposition : {
-
-}
-
-AccountInfo <- Entities.AccountInfo : {
-
-}
-
-Request <- Entities.Request : {
-
-}
-
-RequestTeamComposition <- Entities.RequestTeamComposition : {
-
-}
-
-Proposal <- Entities.Proposal : {
-
-}
-
-ProposalPaymentInfo <- Entities.ProposalPaymentInfo : {
-
-}
-
-ProposalTeamComposition <- Entities.ProposalTeamComposition : {
-
 }
 
 
@@ -318,12 +363,12 @@ IDField : {
 	Type:"int", 
 	JSONType: "number",
 	YupType: "number",
-	JSONDefault: "-1",
+	JSONDefault: "0",
 	Name:"ID",
 	JSONName: "id", 
-	Title:"Unique ID",
-	UIControl: "Input name='[JSONName]' label='[Name]' disabled",
-	UIROControl: "Input name='[JSONName]' label='[Name]' disabled",
+	Title:"ID",
+	UIControl: "Input name='[JSONName]' label='[Title]' disabled",
+	UIROControl: "Input name='[JSONName]' label='[Title]' disabled",
 	Nullable:false,
 	Show:false,
 	Key: true
@@ -431,8 +476,8 @@ AmountField : {
 	Name:"Amount", 
 	JSONName: "amount", 
 	Title:"Amount",
-	UIControl: "Input name='[JSONName]' label='[Name]' type='number' step='0.01'",
-	UIROControl: "Input name='[JSONName]' label='[Name]' type='number' step='0.01' disabled ",
+	UIControl: "Input name='[JSONName]' label='[Title]' type='number' step='0.01'",
+	UIROControl: "Input name='[JSONName]' label='[Title]' type='number' step='0.01' disabled ",
 	Nullable:true,
 	Show:true
 }
@@ -446,8 +491,8 @@ GuidField : {
 	Name:"ExternalID", 
 	JSONName: "externalId", 
 	Title:"External ID",
-	UIControl: "Input name='[JSONName]' label='[Name]' disabled",
-	UIROControl: "Input name='[JSONName]' label='[Name]' disabled",
+	UIControl: "Input name='[JSONName]' label='[Title]' disabled",
+	UIROControl: "Input name='[JSONName]' label='[Title]' disabled",
 	Nullable:false,
 	Show:false
 }

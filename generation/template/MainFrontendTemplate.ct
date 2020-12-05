@@ -1,4 +1,4 @@
-%Loop:@Screen
+%Loop:@App
 %Log:Main
 %Include:CRUDMain.tsx.ct
 %Log:API
@@ -15,5 +15,5 @@
 %Include:CRUDMainSublistForm.tsx.ct
 %Log:Main types
 %Include:CRUDMainTypes.ts.ct
-%Log:=<Screen.$> done
-%/Loop:@Screen
+%Log:=<App.$> done
+%/Loop:@App

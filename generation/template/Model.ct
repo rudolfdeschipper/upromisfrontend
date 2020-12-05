@@ -9,7 +9,7 @@
 */
 namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 {
-    public interface I=<$>Repository : IRepository<=<$>DTO>
+    public interface I=<$>Repository : IRepository<=<$>DTO, =<$>>
     {
     }
 }
@@ -35,14 +35,14 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 
     public class =<$>Repository : I=<$>Repository
     {
-        =<Microservice.$>DbContext _context { get; set; }
+        =<Microservice.$>DbContext Context { get; set; }
 
         public =<$>Repository(=<Microservice.$>DbContext context)
         {
-            _context = context;
+            Context = context;
 
         }
-        public IQueryable<=<$>DTO> List => _context.=<SetName>.Select(c => Transformers.Transform(c, new =<$>DTO() { Modifier = "Unchanged" })).AsQueryable();
+        public IQueryable<=<$>> List => Context.=<SetName>;
 
         public async Task<=<$>DTO> Post(SaveMessage<=<$>DTO> rec)
         {
@@ -60,22 +60,22 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %EndIf
 %/Loop:Children
 
-//            record.AccountInfo = _context.AccountInfo.FirstOrDefault();
+//            record.AccountInfo = Context.AccountInfo.FirstOrDefault();
 
-//            record.ParentContract = _context.Contracts.Find(rec.DataSubject.ParentContractID);
+//            record.ParentContract = Context.Contracts.Find(rec.DataSubject.ParentContractID);
 
-            _context.=<SetName>.Add(record);
+            Context.=<SetName>.Add(record);
 
-            await _context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
 
             return Transformers.Transform(record, new =<$>DTO());
         }
 
         public async Task<=<$>DTO> Put(SaveMessage<=<$>DTO> rec)
         {
-            var ctr = await _context.=<SetName>.Where(c => c.ID == rec.ID)
+            var ctr = await Context.=<SetName>.Where(c => c.ID == rec.ID)
 %Loop:Children
-                .Include("=<$>")
+                .Include("=<SetName>")
 %/Loop:Children
                 .FirstOrDefaultAsync();
 
@@ -86,32 +86,32 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 
             ctr = Transformers.Transform(rec.DataSubject, ctr);
 
-            await _context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
 
             return Transformers.Transform(ctr, new =<$>DTO());
         }
 
         public async Task<bool> Delete(SaveMessage<=<$>DTO> rec)
         {
-            var ctr = _context.=<SetName>.FirstOrDefault(c => c.ID == rec.ID);
+            var ctr = Context.=<SetName>.FirstOrDefault(c => c.ID == rec.ID);
 
             if (ctr == null)
             {
                 return false;
             }
 
-            _context.=<SetName>.Remove(ctr);
+            Context.=<SetName>.Remove(ctr);
 
-            await _context.SaveChangesAsync();
+            await Context.SaveChangesAsync();
 
             return true;
         }
 
         public async Task<=<$>DTO> Get(int id)
         {
-            var record = await _context.=<SetName>.Where(c => c.ID == id)
+            var record = await Context.=<SetName>.Where(c => c.ID == id)
 %Loop:Children
-                .Include("=<$>")
+                .Include("=<SetName>")
 %/Loop:Children
                 .FirstOrDefaultAsync();
 
@@ -142,7 +142,7 @@ using APIUtils.APIMessaging;
 namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 {
 
-    public class =<Name> 
+    public class =<$> 
     {
 %Loop:Properties
 %If:Values?
@@ -218,7 +218,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 
     public class =<$> 
     {
-%Loop:Model
+%Loop:Properties
 %If:Values?
         public static ListValue[] =<$>Values =
         {
@@ -228,9 +228,9 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %/Loop:Values
         };
 %EndIf
-%/Loop:Model
+%/Loop:Properties
 
-%Loop:Model
+%Loop:Properties
 %If:Type?
 %If:Key?
         [Key]
@@ -247,7 +247,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
         public =<Type> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
 
 %EndIf
-%/Loop:Model
+%/Loop:Properties
 
         // Parent property
         public =<Models.$> =<Models.$> { get; set; } 
@@ -288,7 +288,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 {
 
 
-    public class =<Name>DTO : DTOBase
+    public class =<$>DTO : DTOBase
     {
 %Loop:Properties
 %If:Key?
@@ -303,6 +303,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %If:Format?
         [DisplayFormat(DataFormatString = "{0:=<Format>}")]
 %EndIf
+        [JsonProperty(PropertyName = "=<JSONName>")]
         public =<Type> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
 
 %/Loop:Properties
@@ -319,6 +320,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
         public string UpdatedBy { get; set; }
 
 %Loop:Children
+        [JsonProperty(PropertyName = "=<SetName>")]
         public %If:Lazy? virtual %EndIf List<=<$>DTO> =<SetName> { get; private set; } = new List<=<$>DTO>();
 %/Loop:Children
 
@@ -350,7 +352,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 
     public class =<$>DTO : DTOBase
     {
-%Loop:Model
+%Loop:Properties
 %If:Type?
 %If:Key?
         [Key]
@@ -364,10 +366,11 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %If:Format?
         [DisplayFormat(DataFormatString = "{0:=<Format>}")]
 %EndIf
+        [JsonProperty(PropertyName = "=<JSONName>")]
         public =<Type> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
 
 %EndIf
-%/Loop:Model
+%/Loop:Properties
 
         // Parent property
         public =<Models.$> =<Models.$>DTO {get; set; } 
@@ -448,18 +451,18 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %If:!Lazy
         public static =<$> Transform(=<$>DTO from, =<$> to)
         {
-%Loop:Model
+%Loop:Properties
             to.=<$> = from.=<$>;
-%/Loop:Model
+%/Loop:Properties
 
             return to;
         }
 
         public static =<$>DTO Transform(=<$> from, =<$>DTO to)
         {
-%Loop:Model
+%Loop:Properties
             to.=<$> = from.=<$>;
-%/Loop:Models
+%/Loop:Properties
 
             return to;
         }

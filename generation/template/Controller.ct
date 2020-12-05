@@ -122,7 +122,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
             }
 
             // return posted values
-            return Ok(new APIResult<=<$>DTO>() { ID = res.ID, DataSubject = res, Message = "Put was performed" });
+            return Ok(new APIResult<=<$>DTO>() { ID = res.ID, DataSubject = res, Message = "New =<$> was created." });
         }
 
         [HttpPut()]
@@ -146,7 +146,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
             }
 
             // return posted values
-            return Ok(new APIResult<=<$>DTO>() { ID = res.ID, DataSubject = res, Message = "Put was performed" });
+            return Ok(new APIResult<=<$>DTO>() { ID = res.ID, DataSubject = res, Message = "=<$> was saved." });
         }
 
         [HttpDelete()]
@@ -170,7 +170,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
             }
 
             // return 
-            return Ok(new APIResult<=<$>DTO>() { ID = rec.ID, DataSubject = null, Message = "Delete was performed" });
+            return Ok(new APIResult<=<$>DTO>() { ID = rec.ID, DataSubject = null, Message = "=<$> was deleted." });
         }
 
         // TODO: transform into a get with a body (this is possible)
@@ -178,46 +178,45 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
         public async Task<ActionResult> GetList([FromBody] DataTableAjaxPostModel sentModel)
         {
             var records = DoSortFilterAndPaging(Repository.List, sentModel, true);
+            var recordsDTO = records.Item1.Select(c => Transformers.Transform(c, new =<$>DTO() { Modifier = "Unchanged" }));
 
-            return Ok(new LoadResult<=<$>DTO>() { Data = await records.Item1.ToArrayAsync(), Pages = records.Item2, Message = "" });
+            return Ok(new LoadResult<=<$>DTO>() { Data = await recordsDTO.ToArrayAsync(), Pages = records.Item2, Message = "" });
         }
 
         // TODO: this can be a normal "get", with a filter on the header " 'Content-Type': 'application/excel' or something
         [HttpPost("getforexport")]
         public async Task<IActionResult> GetForExport([FromBody] DataTableAjaxPostModel sentModel)
         {
-            using (var package = new ExcelPackage())
+            using ExcelPackage package = new ExcelPackage();
+            ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("=<$> List");
+            //Add the headers
+            int col = 0;
+            int row = 1;
+%Loop:Export.Properties
+            col++;
+            worksheet.Cells[row, col].Value = "=<Title>";
+%/Loop:Export.Properties
+            worksheet.Cells[1, 1, 1, col].Style.Font.Bold = true;
+
+            var records = DoSortFilterAndPaging(Repository.List, sentModel, false).Item1;
+
+            foreach (var item in records)
             {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("=<$> List");
-                //Add the headers
-                int col = 0;
-                int row = 1;
-%Loop:Export
-                col++;
-                worksheet.Cells[row, col].Value = "=<Title>";
-%/Loop:Export
-                worksheet.Cells[1, 1, 1, col].Style.Font.Bold = true;
-
-                var records = DoSortFilterAndPaging(Repository.List, sentModel, false).Item1;
-
-                foreach (var item in records)
-                {
-                    row++;
-                    col = 1;
-%Loop:Export
-                    worksheet.Cells[row, col].Value = item.=<$>;
+                row++;
+                col = 1;
+%Loop:Export.Properties
+                worksheet.Cells[row, col].Value = item.=<$>;
 %If:Format?
-                    worksheet.Cells[row, col].Style.Numberformat.Format = "=<Format>";
+                worksheet.Cells[row, col].Style.Numberformat.Format = "=<Format>";
 %EndIf
-                    col++;
-%/Loop:Export
-                }
-
-                System.IO.MemoryStream fs = new System.IO.MemoryStream();
-                await package.SaveAsAsync(fs);
-
-                return File(fs.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                col++;
+%/Loop:Export.Properties
             }
+
+            System.IO.MemoryStream fs = new System.IO.MemoryStream();
+            await package.SaveAsAsync(fs);
+
+            return File(fs.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
 
         // TODO: make into a get with a body
@@ -225,7 +224,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
         [HttpPost]
         public async Task<ActionResult> GetSelectValues([FromBody] ListValueInfo info)
         {
-            var EnumProducer = new SelectValueFromEnumProducer();
+            //var EnumProducer = new SelectValueFromEnumProducer();
             List<ListValue> list = new List<ListValue>();
 
             switch (info.ValueType)
@@ -237,6 +236,15 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
                     break;
 %EndIf
 %/Loop:Model.Properties
+%Loop:Model.Children
+%Loop:Properties
+%If:Lookup?=true
+                case "=<$>":
+                     list.AddRange( Models.=<Model.Children.$>.=<$>Values);
+                    break;
+%EndIf
+%/Loop:Properties
+%/Loop:Model.Children
                 default:
                     break;
             }
@@ -247,12 +255,12 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
         [Authorize()]
         public async Task<IActionResult> GetClaims(string UserID)
         {
-            var claims = Repository.List
-                .Where(c => c.=<Claimlist>.Any(t => t.TeamMember.ToString().Equals(UserID)))
+            var claims = Repository.List.Select(c => Transformers.Transform(c, new =<$>DTO() { Modifier = "Unchanged" }))
+                .Where(c => c.=<ClaimInfo.ClaimList>.Any(t => t.TeamMember.ToString().Equals(UserID)))
                 .Select(c => new { 
                     Key = "=<$>|" + c.ID, 
-                    Value = c.=<Claimlist>
-                        .First(t => t.TeamMember.ToString().Equals(UserID)).=<Model.Name>MemberType.ToString() 
+                    Value = c.=<ClaimInfo.ClaimList>
+                        .First(t => t.TeamMember.ToString().Equals(UserID)).=<ClaimInfo.ClaimField>.ToString() 
                 });
             return new JsonResult(await claims.ToArrayAsync());
         }

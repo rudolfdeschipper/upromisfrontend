@@ -18,7 +18,7 @@ namespace =<#Parameters.msNameSpace>=<Namespace>api
         }
 
 %Loop:Models
-        public DbSet<=<Name>> =<SetName> { get; set; }
+        public DbSet<=<$>> =<SetName> { get; set; }
 %/Loop
     }
 }                   
