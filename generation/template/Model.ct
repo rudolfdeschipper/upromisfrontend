@@ -119,6 +119,49 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 
             return ctr;
         }
+%Loop:Properties
+%If:Reference?=true
+
+        public async List<ListValue> Get=<$>Reference()
+        {
+%If:ReferenceDBContext?
+        // need to correctly create another context
+        var ct = new =<ReferenceDBContext>(this.context)
+%Else
+        var ct = context;
+%EndIf
+        var records = context.=<ReferenceTable>;
+%If:ReferenceFilter?
+        records.Where(r => r.(=<ReferenceWhere));
+%EndIf
+                return await records.Select( s => new ListValue() { Value = s.=<ReferenceID>, Title = s.=<ReferenceTitle>}).ToListAsync();
+        }
+
+%EndIf
+%/Loop:Properties
+
+%Loop:Children
+%Loop:Properties
+%If:Reference?=true
+
+        public async List<ListValue> Get=<$>Reference()
+        {
+%If:ReferenceDBContext?
+        // need to correctly create another context
+        var ct = new =<ReferenceDBContext>(this.context)
+%Else
+        var ct = context;
+%EndIf
+        var records = context.=<ReferenceTable>;
+%If:ReferenceFilter?
+        records.Where(r => r.(=<ReferenceWhere));
+%EndIf
+                return await records.Select( s => new ListValue() { Value = s.=<ReferenceID>, Title = s.=<ReferenceTitle>}).ToListAsync();
+        }
+
+%EndIf
+%/Loop:Properties
+%/Loop:Children
     }
 }
 %/File
@@ -306,6 +349,11 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
         [JsonProperty(PropertyName = "=<JSONName>")]
         public =<Type> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
 
+%If:Lookup?=true
+        [JsonProperty(PropertyName = "=<JSONName>Label")]
+        public =<Type> =<$>Label { get; set; }
+%EndIf
+
 %/Loop:Properties
 
         // Default model properties
@@ -368,6 +416,11 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %EndIf
         [JsonProperty(PropertyName = "=<JSONName>")]
         public =<Type> =<$> { get; set; } %If:Default? = =<Default>; %EndIf
+
+%If:Lookup?=true
+        [JsonProperty(PropertyName = "=<JSONName>Label")]
+        public =<Type> =<$>Label { get; set; }
+%EndIf
 
 %EndIf
 %/Loop:Properties
@@ -436,6 +489,9 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
         {
 %Loop:Properties
                 to.=<$> = from.=<$>;
+%If:Lookup?=true
+                to.=<$>Label = =<Models.$>.=<$>Values.FirstOrDefault( v => v.Value.Equals(from.=<$>))?.Label;
+%EndIf
 %/Loop:Properties
 
 %Loop:Children
@@ -462,6 +518,9 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
         {
 %Loop:Properties
             to.=<$> = from.=<$>;
+%If:Lookup?=true
+            to.=<$>Label = =<Children.$>.=<$>Values.FirstOrDefault( v => v.Value.Equals(from.=<$>))?.Label;
+%EndIf
 %/Loop:Properties
 
             return to;

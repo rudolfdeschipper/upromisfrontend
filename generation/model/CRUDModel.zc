@@ -247,7 +247,8 @@ Contract <- Definitions.DefaultTimeboundObject : {
 			Cancelled : "9 - Cancelled"
 		}, 
 		JSONName : "contractStatus",
-		Title: "Status"
+		Title: "Status",
+		Nullable: false
 	},
 	+ContractType <- DataDictionary.StatusField : {
 		+Values : {
@@ -257,7 +258,8 @@ Contract <- Definitions.DefaultTimeboundObject : {
 			FrameContract: "4 - Frame Contract"
 		}, 
 		JSONName : "contractType",
-		Title: "Contract type"
+		Title: "Contract type",
+		Nullable: false
 	}
 	/ ID, Code, Title, Description, ContractType, ContractStatus, Startdate, Enddate, Budget 
 }
@@ -283,7 +285,8 @@ Proposal <- Definitions.DefaultTimeboundObject : {
 			Cancelled : "9 - Cancelled"
 		}, 
 		JSONName : "proposalStatus",
-		Title: "Status"
+		Title: "Status",
+		Nullable: false
 	},
 	+ProposalType <- DataDictionary.StatusField : {
 		+Values : {
@@ -293,7 +296,8 @@ Proposal <- Definitions.DefaultTimeboundObject : {
 			FrameContract: "4 - Frame Contract"
 		}, 
 		JSONName : "proposalType",
-		Title: "Proposal type"
+		Title: "Proposal type",
+		Nullable: false
 	}
 
 }
@@ -318,7 +322,8 @@ Request <- Definitions.DefaultTimeboundObject : {
 			Cancelled : "9 - Cancelled"
 		}, 
 		JSONName : "requestStatus",
-		Title: "Status"
+		Title: "Status",
+		Nullable: false
 	},
 	+RequestType <- DataDictionary.StatusField : {
 		+Values : {
@@ -328,7 +333,8 @@ Request <- Definitions.DefaultTimeboundObject : {
 			FrameContract: "4 - Frame Contract"
 		}, 
 		JSONName : "requestType",
-		Title: "Request type"
+		Title: "Request type",
+		Nullable: false
 	}
 	
 }
@@ -462,10 +468,19 @@ StatusField <- DataDictionary.CodeField : {
 	JSONName: "status", 
 	Title:"Status", 
 	UIControl: "Select name='[JSONName]' label='[Title]' options={this.props.[JSONName]values}",
-	UIROControl: "Input name='[JSONName]' label='[Title]' disabled ",
+	UIROControl: "Input name='[JSONName]Label' label='[Title]' disabled ",
 	Nullable : true,
 	Show:true,
 	Lookup: true
+}
+
+ReferenceField <- DataDictionary.StatusField : {
+	Reference : true,
+	Lookup : false,
+	ReferenceTable : "referenced table",
+	ReferenceDBContext : "if different from the normale one",
+	ReferenceID : "ID",
+	ReferenceTitle : "Title"
 }
 
 AmountField : {

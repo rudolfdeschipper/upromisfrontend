@@ -230,6 +230,11 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
             switch (info.ValueType)
             {
 %Loop:Model.Properties
+%If:Reference?=true
+                case "=<$>Reference"
+                    list.AddRange(this.Repository.Get=<$>Reference());
+                    break;
+%EndIf
 %If:Lookup?=true
                 case "=<$>":
                      list.AddRange( Models.=<Controllers.$>.=<$>Values);
@@ -238,6 +243,11 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
 %/Loop:Model.Properties
 %Loop:Model.Children
 %Loop:Properties
+%If:Reference?=true
+                case "=<$>Reference"
+                    list.AddRange(this.Repository.Get=<$>Reference());
+                    break;
+%EndIf
 %If:Lookup?=true
                 case "=<$>":
                      list.AddRange( Models.=<Model.Children.$>.=<$>Values);

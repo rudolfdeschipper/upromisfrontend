@@ -61,6 +61,9 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
                     //id: 0, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), status: "", value: 0.0, paymentInfo: [], modifier: "Unchanged" 
 %Loop:App.Edit.Properties
                     =<JSONName>: =<JSONDefault>,
+%If:Lookup?=true
+                    =<JSONName>Label: '',
+%EndIf
 %/Loop:App.Edit.Properties
 %Loop:Tabs
                     =<Model.SetName>: [],
@@ -87,6 +90,9 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
                     //id: 0, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), status: "", value: 0.0, paymentInfo: [], modifier: "Added" 
 %Loop:App.Edit.Properties
                     =<JSONName>: =<JSONDefault>,
+%If:Lookup?=true
+                    =<JSONName>Label: '',
+%EndIf
 %/Loop:App.Edit.Properties
 %Loop:Tabs
                     =<Model.SetName>: [],
@@ -124,6 +130,14 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
 %Loop:Edit.Properties
 %If:Lookup?=true
         =<App.$>API.loadDropdownValues("=<$>", this.context!.access_token)
+            .then(res => {
+                this.setState({ =<JSONName>values: res.data });
+            }
+            );
+
+%EndIf
+%If:Reference?=true
+        =<App.$>API.loadDropdownValues("=<$>Reference", this.context!.access_token)
             .then(res => {
                 this.setState({ =<JSONName>values: res.data });
             }

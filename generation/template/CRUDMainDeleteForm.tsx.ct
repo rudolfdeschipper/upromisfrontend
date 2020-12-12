@@ -35,36 +35,6 @@ class =<App.$>DeleteForm extends React.Component<IProps, IState> {
             <Formik
                 initialValues={this.props.currentData as any}
                 enableReinitialize={true}
-                validationSchema={Yup.object({
-%Loop:Edit.Properties
-                =<JSONName> : 
-%If:Type=date
-                Yup.date()
-%Else
-%If:Type=double
-                Yup.number()
-%Else
-                Yup.string()
-%If:Length?!=unlimited
-                .max(=<Length>, 'Must be =<Length> characters or less')
-%EndIf
-%EndIf
-%EndIf
-%If:!Nullable
-                .required('Required')
-%EndIf
-%If:Values?
-                .oneOf([ 
-%Loop:Values
-                    '=<Values.$>', 
-%/Loop:Values
-                ])
-%EndIf
-%If:HasMore
-                ,
-%EndIf
-%/Loop:Edit.Properties
-                })}
                 onSubmit={(values, { setSubmitting }) => {
                     this.props.saveAction("Delete", values);
                     setSubmitting(false);

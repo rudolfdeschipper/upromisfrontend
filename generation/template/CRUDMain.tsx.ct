@@ -163,12 +163,16 @@ class =<App.$> extends React.Component<RouteComponentProps<{}>, IListState<I=<Ap
                 // date sorting
                 sortMethod: Utils.dateSorter,
 %Else
-%If:Type=double
+ %If:Type=double
 				accessor: (d: I=<App.$>Data) => Utils.formatAmount(d.=<JSONName>),
 				style: { 'textAlign': "right" },
-%Else
+ %Else
+  %If:Lookup?=true
+				accessor: '=<JSONName>Label',
+  %Else
 				accessor: '=<JSONName>',
-%EndIf
+  %EndIf
+ %EndIf
 %EndIf
 				id: '=<JSONName>',
                 show: =<Show>

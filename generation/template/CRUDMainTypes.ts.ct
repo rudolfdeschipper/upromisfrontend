@@ -10,6 +10,9 @@ export interface I=<App.$>Data {
 
 %Loop:App.Edit.Properties
     =<JSONName>: =<JSONType>,
+%If:Lookup?=true
+    =<JSONName>Label: =<JSONType>,
+%EndIf
 %/Loop:App.Edit.Properties
 %Loop:App.Edit.Children
     =<SetName>: I=<SetName>[] | null,
@@ -22,6 +25,9 @@ export interface I=<App.$>Data {
 export interface I=<SetName> {
 %Loop:Properties
     =<JSONName> : =<JSONType>,
+%If:Lookup?=true
+    =<JSONName>Label: =<JSONType>,
+%EndIf
 %/Loop:Properties
 
     modifier: "Unchanged" | "Added" | "Modified" | "Deleted"

@@ -67,6 +67,14 @@ class =<App.$>=<Tabs.$> extends React.Component<IProps, IState> {
             );
 
 %EndIf
+%If:Reference?=true
+        =<App.$>API.loadDropdownValues("=<$>Reference", this.context!.access_token)
+            .then(res => {
+                this.setState({ =<JSONName>values: res.data });
+            }
+            );
+
+%EndIf
 %/Loop:Model.Properties
 
     }
@@ -78,6 +86,9 @@ class =<App.$>=<Tabs.$> extends React.Component<IProps, IState> {
             current=<Tabs.$>Record: { 
 %Loop:Model.Properties
                 =<JSONName> : =<JSONDefault>,
+%If:Lookup?=true
+                =<JSONName>Label: '',
+%EndIf
 %/Loop:Model.Properties
             modifier: "Unchanged" }
         });
@@ -197,7 +208,11 @@ class =<App.$>=<Tabs.$> extends React.Component<IProps, IState> {
 				accessor: (d: I=<Tabs.Model.SetName>) => Utils.formatAmount(d.=<JSONName>),
 				style: { 'textAlign': "right" },
 %Else
-				accessor: '=<Name>',
+%If:Lookup?=true
+				accessor: '=<JSONName>Label',
+%Else
+				accessor: '=<JSONName>',
+%EndIf
 %EndIf
 %EndIf
                 id: '=<JSONName>',
