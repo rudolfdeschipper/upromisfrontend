@@ -60,13 +60,6 @@ class =<App.$>=<Tabs.$> extends React.Component<IProps, IState> {
     componentDidMount() {
 %Loop:Model.Properties
 %If:Lookup?=true
-        =<App.$>API.loadDropdownValues("=<$>", this.context!.access_token)
-            .then(res => {
-                this.setState({ =<JSONName>values: res.data });
-            }
-            );
-
-%EndIf
 %If:Reference?=true
         =<App.$>API.loadDropdownValues("=<$>Reference", this.context!.access_token)
             .then(res => {
@@ -74,6 +67,14 @@ class =<App.$>=<Tabs.$> extends React.Component<IProps, IState> {
             }
             );
 
+%Else
+        =<App.$>API.loadDropdownValues("=<$>", this.context!.access_token)
+            .then(res => {
+                this.setState({ =<JSONName>values: res.data });
+            }
+            );
+
+%EndIf
 %EndIf
 %/Loop:Model.Properties
 

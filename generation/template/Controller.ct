@@ -227,31 +227,36 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
             //var EnumProducer = new SelectValueFromEnumProducer();
             List<ListValue> list = new List<ListValue>();
 
+            // provide empty value in the dropdown:
+            list.Add(new ListValue() { Value = "", Label = "" });
+
             switch (info.ValueType)
             {
 %Loop:Model.Properties
-%If:Reference?=true
-                case "=<$>Reference"
-                    list.AddRange(this.Repository.Get=<$>Reference());
-                    break;
-%EndIf
 %If:Lookup?=true
-                case "=<$>":
+%If:Reference?=true
+                case "=<$>Reference" :
+                    list.AddRange(await this.Repository.Get=<$>Reference());
+                    break;
+%Else
+                case "=<$>" :
                      list.AddRange( Models.=<Controllers.$>.=<$>Values);
                     break;
+%EndIf
 %EndIf
 %/Loop:Model.Properties
 %Loop:Model.Children
 %Loop:Properties
-%If:Reference?=true
-                case "=<$>Reference"
-                    list.AddRange(this.Repository.Get=<$>Reference());
-                    break;
-%EndIf
 %If:Lookup?=true
-                case "=<$>":
+%If:Reference?=true
+                case "=<$>Reference" :
+                    list.AddRange(await this.Repository.Get=<$>Reference());
+                    break;
+%Else
+                case "=<$>" :
                      list.AddRange( Models.=<Model.Children.$>.=<$>Values);
                     break;
+%EndIf
 %EndIf
 %/Loop:Properties
 %/Loop:Model.Children

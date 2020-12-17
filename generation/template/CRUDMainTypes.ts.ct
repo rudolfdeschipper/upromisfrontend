@@ -11,7 +11,7 @@ export interface I=<App.$>Data {
 %Loop:App.Edit.Properties
     =<JSONName>: =<JSONType>,
 %If:Lookup?=true
-    =<JSONName>Label: =<JSONType>,
+    =<JSONName>Label: string,
 %EndIf
 %/Loop:App.Edit.Properties
 %Loop:App.Edit.Children
@@ -26,7 +26,7 @@ export interface I=<SetName> {
 %Loop:Properties
     =<JSONName> : =<JSONType>,
 %If:Lookup?=true
-    =<JSONName>Label: =<JSONType>,
+    =<JSONName>Label: string,
 %EndIf
 %/Loop:Properties
 

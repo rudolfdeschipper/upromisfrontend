@@ -260,6 +260,16 @@ Contract <- Definitions.DefaultTimeboundObject : {
 		JSONName : "contractType",
 		Title: "Contract type",
 		Nullable: false
+	},
+	+ProposalId <- DataDictionary.ReferenceField : {
+		ReferenceType : "Proposal",
+		ReferenceSet : "Proposals",
+		ReferenceObjectName: "Proposal",
+		-ReferenceDBContext,
+		Title : "Proposal",
+		Type : "int?",
+		JSONName : "proposal",
+		Nullable: true
 	}
 	/ ID, Code, Title, Description, ContractType, ContractStatus, Startdate, Enddate, Budget 
 }
@@ -476,11 +486,17 @@ StatusField <- DataDictionary.CodeField : {
 
 ReferenceField <- DataDictionary.StatusField : {
 	Reference : true,
-	Lookup : false,
-	ReferenceTable : "referenced table",
+	ReferenceSet : "referenced table set",
+	ReferenctType : "",
+	ReferenceObjectName: "",
 	ReferenceDBContext : "if different from the normale one",
 	ReferenceID : "ID",
-	ReferenceTitle : "Title"
+	ReferenceTitle : "Title",
+	Type: "int",
+	JSONType: "number",
+	YupType: "number",
+	JSONDefault: "0",
+	-Length
 }
 
 AmountField : {
