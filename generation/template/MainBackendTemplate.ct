@@ -1,7 +1,9 @@
 %Log:Microservice
 %Loop:@Microservice
-%Include:Controller.ct
-%Include:DBContext.ct
+%Log:Generating Microservice =<$>
+%Include:.\template\Controller.ct
+%Include:.\template\DBContext.ct
 %Log:Models
-%Include:Model.ct
+%Include:.\template\Model.ct
+%Log:Generating Microservice =<$> done
 %/Loop:@Microservice
