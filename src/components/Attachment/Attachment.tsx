@@ -41,7 +41,7 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
             pageSize: 10,
             message: "",
             modalDeleteIsOpen: false,
-            currentRecord: null,
+            currentRecord: undefined,
 
             //Files Upload state
             files: [],
@@ -136,7 +136,7 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
         this.setState(
             {
                 modalDeleteIsOpen: false,
-                currentRecord: null
+                currentRecord: undefined
             }
         )
     }
@@ -154,7 +154,7 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
                 this.setState({
                     popupVisible: true,
                     popupMessage: "Error while deleting " + error, popupStyle: "danger",
-                    modalDeleteIsOpen: false, currentRecord: null
+                    modalDeleteIsOpen: false, currentRecord: undefined
                 });
             });
     }

@@ -1,0 +1,20 @@
+%Loop:@App
+%Log:Generating App =<App.$>
+%Log:Main
+%Include:.\template\CRUDMain.tsx.ct
+%Log:API
+%Include:.\template\CRUDAPI.ts.ct
+%Log:Main delete form
+%Include:.\template\CRUDMainDeleteForm.tsx.ct
+%Log:Main details
+%Include:.\template\CRUDMainDetails.tsx.ct
+%Log:Main form
+%Include:.\template\CRUDMainForm.tsx.ct
+%Log:Main sublist
+%Include:.\template\CRUDMainSublist.tsx.ct
+%Log:Main sublist Form
+%Include:.\template\CRUDMainSublistForm.tsx.ct
+%Log:Main types
+%Include:.\template\CRUDMainTypes.ts.ct
+%Log:Generating App =<App.$> done
+%/Loop:@App

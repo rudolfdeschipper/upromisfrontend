@@ -1,127 +1,551 @@
 #Parameters
 appName : "uProMIS App"
 nameSpace : "upromisfrontend"
+msNameSpace : "upromis"
 debug : "on"
 
 
-@Screen
+@App
 
 Contract : 
 {
-	List <- ViewModel.Contract : {},
-	Edit <- ViewModel.Contract : {},
+	List <- Microservice.Contract.DTO.Contract,
+	Edit <- Microservice.Contract.DTO.Contract,
 	Tabs : {
-		Payment : {Title : "Payments", JSONName : "payment", Model : <- Viewmodel.Payments {} }
+		Payment : {
+			Title : "Payments", 
+			JSONName : "payment", 
+			Model <- Microservice.Contract.DTO.Contract.Children.ContractPaymentInfo 
+		},
+		Team : {
+			Title : "Team members", 
+			JSONName : "team", 
+			Model <- Microservice.Contract.DTO.Contract.Children.ContractTeamComposition 
+		}
 	},
 	Actions : {
 		Action1 : { Name: "copy", Title: "Copy"},
 		Action2 : { Name: "close", Title: "Close"}
+	},
+	Attachments: true,
+	APIUrl: "contract"
+}
+
+Proposal : 
+{
+	List <- Microservice.Contract.DTO.Proposal,
+	Edit <- Microservice.Contract.DTO.Proposal,
+	Tabs : {
+		Payment : {
+			Title : "Payments", 
+			JSONName : "payment", 
+			Model <- Microservice.Contract.DTO.Proposal.Children.ProposalPaymentInfo 
+		},
+		Team : {
+			Title : "Team members", 
+			JSONName : "team", 
+			Model <- Microservice.Contract.DTO.Proposal.Children.ProposalTeamComposition 
+		}
+	},
+	Actions : {
+		Action1 : { Name: "copy", Title: "Copy"},
+		Action2 : { Name: "close", Title: "Close"}
+	},
+	Attachments: true,
+	APIUrl: "proposal"
+}
+
+Request : 
+{
+	List <- Microservice.Contract.DTO.Request,
+	Edit <- Microservice.Contract.DTO.Request,
+	Tabs : {
+		Team : {
+			Title : "Team members", 
+			JSONName : "team", 
+			Model <- Microservice.Contract.DTO.Request.Children.RequestTeamComposition 
+		}
+	},
+	Actions : {
+		Action1 : { Name: "copy", Title: "Copy"},
+		Action2 : { Name: "close", Title: "Close"}
+	},
+	Attachments: true,
+	APIUrl: "request"
+}
+
+@Microservice
+
+Contract : {
+	Namespace: "contract",
+	Controllers: {
+		AccountInfo : {
+			Namespace: "accountinfo",
+			Export <- Microservice.Contract.DTO.AccountInfo,
+			DTO <- Microservice.Contract.DTO.AccountInfo,
+			ClaimInfo: { ClaimList : "Teammembers", ClaimField : "AccountInfoMemberType" },
+			Model <- Microservice.Contract.Models.AccountInfo
+		},
+		Contract: {
+			Namespace: "contract",
+			Export <- Microservice.Contract.DTO.Contract,
+			DTO <- Microservice.Contract.DTO.Contract,
+			ClaimInfo: { ClaimList : "Teammembers", ClaimField : "ContractMemberType" },
+			Model <- Microservice.Contract.Models.Contract
+		},
+		Request: {
+			Namespace: "request",
+			Export <- Microservice.Contract.DTO.Request,
+			DTO <- Microservice.Contract.DTO.Request,
+			ClaimInfo: { ClaimList : "Teammembers", ClaimField : "RequestMemberType" },
+			Model <- Microservice.Contract.Models.Request
+		},
+		Proposal: {
+			Namespace: "proposal",
+			Export <- Microservice.Contract.DTO.Proposal,
+			DTO <- Microservice.Contract.DTO.Proposal,
+			ClaimInfo: { ClaimList : "Teammembers", ClaimField : "ProposalMemberType" },
+			Model <- Microservice.Contract.Models.Proposal
+		}
+	},
+	Models: {
+		AccountInfo : {
+			SetName : "Accounts",
+			Properties <- Entities.AccountInfo,
+			Children : {
+				AccountField  : { 
+					Properties <- Entities.AccountField, 
+					SetName: "AccountFields", 
+					Lazy: false 
+				},
+				AccountTeamComposition : { 
+					Properties <- Entities.AccountTeamComposition, 
+					SetName: "Teammembers", 
+					Lazy: false 
+				},
+				Contract : { 
+					Properties <-Entities.Contract, 
+					SetName: "Contracts", 
+					Lazy: true 
+				},
+				Proposal : { 
+					Properties <-Entities.Proposal, 
+					SetName: "Proposals", 
+					Lazy: true 
+				},
+				Request : { 
+					Properties <- Entities.Request, 
+					SetName: "Requests", 
+					Lazy: true 
+				}
+			}
+		},
+		Contract : {
+			SetName : "Contracts",
+			Properties <- Entities.Contract,
+			Children : {
+				ContractPaymentInfo : { 
+					Properties <- Entities.ContractPaymentInfo, 
+					SetName: "Payments", 
+					Lazy: false 
+				},
+				ContractTeamComposition : { 
+					Properties <- Entities.ContractTeamComposition, 
+					SetName: "Teammembers", 
+					Lazy: false 
+				}
+			}
+		},
+		Request : {
+			SetName : "Requests",
+			Properties <- Entities.Request,
+			Children : {
+				RequestTeamComposition : { 
+					Properties <- Entities.RequestTeamComposition, 
+					SetName: "Teammembers", 
+					Lazy: false 
+				}
+			}
+		},
+		Proposal : {
+			SetName : "Proposals",
+			Properties <- Entities.Proposal,
+			Children : {
+				ProposalPaymentInfo : { 
+					Properties <- Entities.ProposalPaymentInfo, 
+					SetName: "Payments", 
+					Lazy: false 
+				},
+				ProposalTeamComposition : { 
+					Properties <- Entities.ProposalTeamComposition, 
+					SetName: "Teammembers", 
+					Lazy: false 
+				}
+			}
+		}
+	},
+	DTO: {
+		AccountInfo <- Microservice.Contract.Models.AccountInfo : {
+			Properties : {
+				-ExternalID
+			}
+		},
+		Contract <- Microservice.Contract.Models.Contract : {
+			Properties : {
+				-ExternalID
+			},
+			Children: {
+				ContractPaymentInfo: {
+					Properties: {
+						-ExternalID
+					}
+				},
+				ContractTeamComposition: {
+					Properties: {
+						-ExternalID
+					}
+				}
+			}
+		},
+		Request <- Microservice.Contract.Models.Request : {
+			Properties : {
+				-ExternalID
+			}
+		},
+		Proposal <- Microservice.Contract.Models.Proposal : {
+			Properties : {
+				-ExternalID
+			}
+		}
 	}
 }
 
-@ViewModel
-Contract <- Datamodel.Contract : {},
-Payments <- Datamodel.Payments : {}
 
-@DTO // data transfer objects
-Contract <- Datamodel.Contract : {}
+@Entities // non-structured flat objects
 
+AccountInfo <- Definitions.DefaultMainObject : {
 
-@Datamodel
+}
 
-Contract <- Definitions.DefaultObject : {
-	+Budget <- DataDictionary.AmountField : { Name : "Budget", Title : "Budget" },
-	+Status <- DataDictionary.StatusField : {
-		Values : {
+AccountField <- Definitions.DefaultObject : {
+	+Name <- DataDictionary.DescriptionField,
+	+Value <- DataDictionary.DescriptionField : { Length: 100 }
+}
+
+AccountTeamComposition <- Definitions.DefaultObject : {
+	+TeamMember <- DataDictionary.GuidField : { Title: "Team member", Nullable: false },
+	+AccountInfoMemberType <- DataDictionary.TeamMemberTypeField
+}
+
+Contract <- Definitions.DefaultTimeboundObject : {
+	+Budget <- DataDictionary.AmountField : { Name : "Budget", Title : "Budget", JSONName : "budget" },
+	+ContractStatus <- DataDictionary.StatusField : {
+		+Values : {
 			Planned : "1 - Planned",
 			Open : "2 - Open",
 			Closed : "3 - Closed",
 			Cancelled : "9 - Cancelled"
-		}
+		}, 
+		JSONName : "contractStatus",
+		Title: "Status",
+		Nullable: false
+	},
+	+ContractType <- DataDictionary.StatusField : {
+		+Values : {
+			FixedPrice : "1 - Fixed Price",
+			TandM : "2 - Time & Means",
+			QTM : "3 - Quoted Time & Means",
+			FrameContract: "4 - Frame Contract"
+		}, 
+		JSONName : "contractType",
+		Title: "Contract type",
+		Nullable: false
+	},
+	+ProposalId <- DataDictionary.ReferenceField : {
+		ReferenceType : "Proposal",
+		ReferenceSet : "Proposals",
+		ReferenceObjectName: "Proposal",
+		-ReferenceDBContext,
+		Title : "Proposal",
+		Type : "int?",
+		JSONName : "proposal",
+		Nullable: true
 	}
-},
+	/ ID, Code, Title, Description, ContractType, ContractStatus, Startdate, Enddate, Budget 
+}
 
-Payments : {
-   	ID: <- DataDictionary.IDField : {},
-    Description: <- DataDictionary.DescriptionField : {},
-    PlannedInvoiceDate: <- DataDictionary.DateField : {},
-    ActualInvoiceDate: <- DataDictionary.DateField : {},
-    Amount: <- DataDictionary.AmountField : {}
+ContractPaymentInfo <- Definitions.DefaultObject: {
+    +Description <- DataDictionary.DescriptionField,
+    +PlannedInvoiceDate <- DataDictionary.DateField: {JSONName: "plannedInvoiceDate", Title: "Planned Invoice date"},
+    +ActualInvoiceDate <- DataDictionary.DateField: {JSONName: "actualInvoiceDate", Title: "Actual Invoice date"},
+    +Amount <- DataDictionary.AmountField
+}
+
+ContractTeamComposition <- Definitions.DefaultObject : {
+	+TeamMember <- DataDictionary.GuidField : { Name: "TeammemberID", Title: "Team member", JSONName: "teammemberID", Nullable: false },
+	+ContractMemberType <- DataDictionary.TeamMemberTypeField
+}
+
+Proposal <- Definitions.DefaultTimeboundObject : {
+	+ProposalStatus <- DataDictionary.StatusField : {
+		+Values : {
+			Planned : "1 - Planned",
+			Open : "2 - Open",
+			Closed : "3 - Closed",
+			Cancelled : "9 - Cancelled"
+		}, 
+		JSONName : "proposalStatus",
+		Title: "Status",
+		Nullable: false
+	},
+	+ProposalType <- DataDictionary.StatusField : {
+		+Values : {
+			FixedPrice : "1 - Fixed Price",
+			TandM : "2 - Time & Means",
+			QTM : "3 - Quoted Time & Means",
+			FrameContract: "4 - Frame Contract"
+		}, 
+		JSONName : "proposalType",
+		Title: "Proposal type",
+		Nullable: false
+	}
+
+}
+
+ProposalPaymentInfo <- Definitions.DefaultObject : {
+    +Description <- DataDictionary.DescriptionField,
+    +PlannedInvoiceDate <- DataDictionary.DateField: {JSONName: "plannedInvoiceDate", Title: "Planned Invoice date"},
+    +Amount <- DataDictionary.AmountField
+}
+
+ProposalTeamComposition <- Definitions.DefaultObject : {
+	+TeamMember <- DataDictionary.GuidField : { Name: "TeammemberID", Title: "Team member", JSONName: "teammemberID", Nullable: false },
+	+ProposalMemberType <- DataDictionary.TeamMemberTypeField
+}
+
+Request <- Definitions.DefaultTimeboundObject : {
+	+RequestStatus <- DataDictionary.StatusField : {
+		+Values : {
+			Planned : "1 - Planned",
+			Open : "2 - Open",
+			Closed : "3 - Closed",
+			Cancelled : "9 - Cancelled"
+		}, 
+		JSONName : "requestStatus",
+		Title: "Status",
+		Nullable: false
+	},
+	+RequestType <- DataDictionary.StatusField : {
+		+Values : {
+			FixedPrice : "1 - Fixed Price",
+			TandM : "2 - Time & Means",
+			QTM : "3 - Quoted Time & Means",
+			FrameContract: "4 - Frame Contract"
+		}, 
+		JSONName : "requestType",
+		Title: "Request type",
+		Nullable: false
+	}
+	
+}
+
+RequestTeamComposition <- Definitions.DefaultObject : {
+	+TeamMember <- DataDictionary.GuidField : { Name: "TeammemberID", Title: "Team member", JSONName: "teammemberID", Nullable: false },
+	+RequestMemberType <- DataDictionary.TeamMemberTypeField
 }
 
 @Definitions
 
-DefaultObject : {
-	ID <- DataDictionary.IDField : {},
-	Code <- DataDictionary.CodeField : {},
-	Description <- DataDictionary.DescriptionField : {},
-	Startdate <- DataDictionary.DateField :  { Name : "Startdate", Title : "Startdate" }, 
-	Enddate <- DataDictionary.DateField : { Name : "Enddate", Title : "Enddate" }
+DefaultObject :{
+	ID <- DataDictionary.IDField,
+	ExternalID <- DataDictionary.GuidField
 }
 
+DefaultMainObject <- Definitions.DefaultObject: {
+	+Code <- DataDictionary.CodeField,
+	+Title <- DataDictionary.DescriptionField : { Name: "Title", Title: "Title", JSONName: "title", Length: 100, Nullable: false, Show: true },
+	+Description <- DataDictionary.DescriptionField
+}
+
+DefaultTimeboundObject <- Definitions.DefaultMainObject : {
+	+Startdate <- DataDictionary.DateField :  { Name : "Startdate", Title : "Start date", JSONName : "startDate" }, 
+	+Enddate <- DataDictionary.DateField : { Name : "Enddate", Title : "End date", JSONName : "endDate" }
+}
 
 // Include some basic definitions
 
 @DataDictionary
 IDField : {
 	Type:"int", 
+	JSONType: "number",
+	YupType: "number",
+	JSONDefault: "0",
 	Name:"ID",
 	JSONName: "id", 
-	Title:"Unique ID", 
+	Title:"ID",
+	UIControl: "Input name='[JSONName]' label='[Title]' disabled",
+	UIROControl: "Input name='[JSONName]' label='[Title]' disabled",
 	Nullable:false,
-	Show:false
+	Show:false,
+	Key: true
 }
 
 CodeField : {
 	Type:"string", 
+	JSONType: "string",
+	YupType: "string",
+	JSONDefault: "''",
 	Name:"Code", 
 	JSONName: "code", 
 	Title:"Code", 
+	UIControl: "Input name='[JSONName]' label='[Title]' ",
+	UIROControl: "Input name='[JSONName]' label='[Title]' disabled",
 	Length:50, 
 	Nullable:false,
-	Show:true
+	Show:true,
+	Lookup: false
 }
 
-DescriptionField <- DataDictionary.CodeField : {
+DescriptionField : {
+	Type:"string", 
+	JSONType: "string",
+	YupType: "string",
+	JSONDefault: "''",
 	Name:"Description", 
 	Title:"Description", 
 	JSONName: "description", 
-	Length : -1, 
+	UIControl: "Textarea name='[JSONName]' label='[Title]' ",
+	UIROControl: "Textarea name='[JSONName]' label='[Title]' disbabled ",
+	Length : "unlimited", 
 	Nullable:true,
-	Show:true
+	Show:false
 }
 
 DateField : {
-	Type:"date", 
+	Type:"DateTime", 
+	JSONType: "Date",
+	YupType: "date",
+	JSONDefault: "new Date()",
+	Default: "DateTime.Now",
 	Name:"Date", 
 	JSONName: "date", 
 	Title:"Date", 
+	UIControl: "Datepicker name='[JSONName]' label='[Title]' ",
+	UIROControl: "Datepicker name='[JSONName]' label='[Title]' disabled ",
 	Format : "MM/DD/YYYY",
+	Nullable:true,
 	Show:true
 }
 
 DateTimeField : {
 	Type:"datetime", 
+	JSONType: "Date",
+	YupType: "date",
+	JSONDefault: "new Date()",
+	Default: "DateTime.Now",
 	Name:"DateTime", 
 	JSONName: "datetime", 
 	Title:"Date/Time", 
+	UIControl: "Datepicker name='[JSONName]' label='[Title]' ",
+	UIROControl: "Datepicker name='[JSONName]' label='[Title]' disabled ",
 	Format : "MM/DD/YYYY hh:mm",
+	Nullable:true,
+	Show:true
+}
+
+DateRange : {
+	Type:"daterange", 
+	JSONType: "Date",
+	YupType: "date",
+	JSONDefault: "new Date()",
+	Default: "DateTime.Now",
+	Name:"DateRange", 
+	JSONName: "datetime", 
+	Title:"Date/Time", 
+	UIControl: "div className='w3-cell-row'> <div className='w3-cell'> <Datepicker name='[Fromdate]' label='[Title]'  /> </div> <div className='w3-cell'><Datepicker name='[Todate]'  /></div></div>",
+	UIROControl: "div className='w3-cell-row'> <div className='w3-cell'> <Datepicker name='[Fromdate]' label='[Title]' disabled /> </div> <div className='w3-cell'><Datepicker name='[Todate]' disabled /></div></div>",
+	Format : "MM/DD/YYYY",
+	Nullable:true,
 	Show:true
 }
 
 StatusField <- DataDictionary.CodeField : {
-	Type: "code"
+	Type: "string",
+	JSONType: "string",
+	YupType: "string",
+	JSONDefault: "''",
 	Name:"Status", 
 	JSONName: "status", 
 	Title:"Status", 
+	UIControl: "Select name='[JSONName]' label='[Title]' options={this.props.[JSONName]values}",
+	UIROControl: "Input name='[JSONName]Label' label='[Title]' disabled ",
 	Nullable : true,
-	Show:true
+	Show:true,
+	Lookup: true
+}
+
+ReferenceField <- DataDictionary.StatusField : {
+	Reference : true,
+	ReferenceSet : "referenced table set",
+	ReferenctType : "",
+	ReferenceObjectName: "",
+	ReferenceDBContext : "if different from the normale one",
+	ReferenceID : "ID",
+	ReferenceTitle : "Title",
+	Type: "int",
+	JSONType: "number",
+	YupType: "number",
+	JSONDefault: "0",
+	-Length
 }
 
 AmountField : {
 	Type:"double", 
+	JSONType: "number",
+	YupType: "number",
+	JSONDefault: "0.0",
 	Name:"Amount", 
 	JSONName: "amount", 
 	Title:"Amount",
+	UIControl: "Input name='[JSONName]' label='[Title]' type='number' step='0.01'",
+	UIROControl: "Input name='[JSONName]' label='[Title]' type='number' step='0.01' disabled ",
+	Nullable:true,
 	Show:true
+}
+
+GuidField : {
+	Type:"Guid", 
+	JSONType: "string",
+	YupType: "string",
+	JSONDefault: "''",
+	Default: "Guid.NewGuid()",
+	Name:"ExternalID", 
+	JSONName: "externalId", 
+	Title:"External ID",
+	UIControl: "Input name='[JSONName]' label='[Title]' disabled",
+	UIROControl: "Input name='[JSONName]' label='[Title]' disabled",
+	Nullable:false,
+	Show:false
+}
+
+TeamMemberTypeField : {
+	Type:"string", 
+	JSONType: "string",
+	YupType: "string",
+	JSONDefault: "'Reader'",
+	Name:"MemberType", 
+	JSONName: "memberType", 
+	Title:"Member Type",
+	UIControl: "Select name='[JSONName]' label='[Title]' options={this.props.[JSONName]values}",
+	UIROControl: "Input name='[JSONName]' label='[Title]' disabled ",
+	Nullable:false,
+	Show:true,
+	Lookup: true,
+Values : {
+			Owner : "Owner",
+			Administrator : "Administrator",
+			Member : "Member",
+			Participant: "Participant",
+			Reader: "Reader"
+	}
 }

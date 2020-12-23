@@ -10,8 +10,8 @@ import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import ReactTable from 'react-table';
 import { Utils } from '../Utils';
 
-import { IContractData, IPayments } from './ContractTypes';
-import ContractPaymentForm from './ContractPaymentForm';
+import { IContractData, ITeammembers } from './ContractTypes';
+import ContractTeamForm from './ContractTeamForm';
 
 import { ISelectValue } from '../GeneralTypes';
 import { ContractAPI } from './ContractAPI';
@@ -19,18 +19,19 @@ import { UserContext } from '../../context/UserContext';
 
 interface IProps {
     currentData: IContractData;
-    updatePaymentline: (values: IPayments, isAdding: boolean, currentIndex?: number) => void;
+    updateTeamline: (values: ITeammembers, isAdding: boolean, currentIndex?: number) => void;
 }
 
 interface IState {
     modalAddIsOpen: boolean,
     modalEditIsOpen: boolean,
     modalDeleteIsOpen: boolean,
-    currentPaymentRecord: IPayments | null,
+    currentTeamRecord: ITeammembers | null,
+    memberTypevalues : ISelectValue[], 
     currentIndex?: number
 }
 
-class ContractPayment extends React.Component<IProps, IState> {
+class ContractTeam extends React.Component<IProps, IState> {
 
     static contextType = UserContext;
 
@@ -40,12 +41,19 @@ class ContractPayment extends React.Component<IProps, IState> {
             modalAddIsOpen: false,
             modalEditIsOpen: false,
             modalDeleteIsOpen: false,
-            currentPaymentRecord: null,
+            currentTeamRecord: null,
+            memberTypevalues : [], 
         };
 
     }
 
     componentDidMount() {
+        ContractAPI.loadDropdownValues("ContractMemberType", this.context!.access_token)
+            .then(res => {
+                this.setState({ memberTypevalues: res.data });
+            }
+            );
+
 
     }
 
@@ -53,12 +61,11 @@ class ContractPayment extends React.Component<IProps, IState> {
     private openAddModal = () => {
         this.setState({
             modalAddIsOpen: true,
-            currentPaymentRecord: { 
+            currentTeamRecord: { 
                 id : 0,
-                description : '',
-                plannedInvoiceDate : new Date(),
-                actualInvoiceDate : new Date(),
-                amount : 0.0,
+                teammemberID : '',
+                memberType : 'Reader',
+                memberTypeLabel: '',
             modifier: "Unchanged" }
         });
     }
@@ -66,14 +73,14 @@ class ContractPayment extends React.Component<IProps, IState> {
     private closeAddModalNoSave = () => {
         this.setState({
             modalAddIsOpen: false,
-            currentPaymentRecord: null
+            currentTeamRecord: null
         });
     }
 
     private openEditModal = (row: { row: { _index: number; }; }) => {
-        if (this.props.currentData.Payments) {
+        if (this.props.currentData.Teammembers) {
             this.setState({
-                currentPaymentRecord: ((this.props.currentData.Payments[row.row._index]) as IPayments),
+                currentTeamRecord: ((this.props.currentData.Teammembers[row.row._index]) as ITeammembers),
                 modalEditIsOpen: true,
                 currentIndex: row.row._index
             })
@@ -83,14 +90,14 @@ class ContractPayment extends React.Component<IProps, IState> {
     private closeEditModalNoSave = () => {
         this.setState({
             modalEditIsOpen: false,
-            currentPaymentRecord: null
+            currentTeamRecord: null
         });
     }
 
     private openDeleteModal = (row: { row: { _index: number; }; }) => {
-        if (this.props.currentData.Payments) {
+        if (this.props.currentData.Teammembers) {
             this.setState({
-                currentPaymentRecord: ((this.props.currentData.Payments[row.row._index]) as IPayments),
+                currentTeamRecord: ((this.props.currentData.Teammembers[row.row._index]) as ITeammembers),
                 modalDeleteIsOpen: true,
                 currentIndex: row.row._index
             })
@@ -100,47 +107,47 @@ class ContractPayment extends React.Component<IProps, IState> {
     private closeDeleteModalNoSave = () => {
         this.setState({
             modalDeleteIsOpen: false,
-            currentPaymentRecord: null
+            currentTeamRecord: null
         });
     }
 
-    private updatePaymentLine = (values: IPayments) => {
+    private updateTeamLine = (values: ITeammembers) => {
         // update the record
         if (values.modifier !== "Added") {
             values.modifier = "Modified";
         }
-        this.props.updatePaymentline(values, false, this.state.currentIndex);
+        this.props.updateTeamline(values, false, this.state.currentIndex);
 
         this.setState({
             modalEditIsOpen: false,
-            currentPaymentRecord: null
+            currentTeamRecord: null
         });
     }
 
-    private addPaymentLine = (values: IPayments) => {
+    private addTeamLine = (values: ITeammembers) => {
         // add the record
         values.modifier = "Added";
-        this.props.updatePaymentline(values, true, this.state.currentIndex);
+        this.props.updateTeamline(values, true, this.state.currentIndex);
 
         this.setState({
             modalAddIsOpen: false,
-            currentPaymentRecord: null
+            currentTeamRecord: null
         });
     }
 
-    private deletePaymentLine = (values: IPayments) => {
+    private deleteTeamLine = (values: ITeammembers) => {
         // add the record
         values.modifier = "Deleted";
-        this.props.updatePaymentline(values, false, this.state.currentIndex);
+        this.props.updateTeamline(values, false, this.state.currentIndex);
 
         this.setState({
             modalDeleteIsOpen: false,
-            currentPaymentRecord: null
+            currentTeamRecord: null
         });
     }
 
     render() {
-        const paymentcolumns = [
+        const teamcolumns = [
             {
                 Header: 'Actions',
                 Cell: (row: { row: { _index: number; }; }) => (
@@ -161,34 +168,19 @@ class ContractPayment extends React.Component<IProps, IState> {
                 id: 'id',
                 show: false
             } ,             {
-                Header: 'Description',
-				accessor: 'description',
-                id: 'description',
+                Header: 'Team member',
+				accessor: 'teammemberID',
+                id: 'teammemberID',
                 show: false
             } ,             {
-                Header: 'Planned Invoice date',
-                accessor: (d: IPayments) => Utils.formatDate(d.plannedInvoiceDate),
-                // date sorting
-                sortMethod: Utils.dateSorter,
-                id: 'plannedInvoiceDate',
-                show: true
-            } ,             {
-                Header: 'Actual Invoice date',
-                accessor: (d: IPayments) => Utils.formatDate(d.actualInvoiceDate),
-                // date sorting
-                sortMethod: Utils.dateSorter,
-                id: 'actualInvoiceDate',
-                show: true
-            } ,             {
-                Header: 'Amount',
-				accessor: (d: IPayments) => Utils.formatAmount(d.amount),
-				style: { 'textAlign': "right" },
-                id: 'amount',
+                Header: 'Member Type',
+				accessor: 'memberTypeLabel',
+                id: 'memberType',
                 show: true
             }         ];
 
-        const tabledata = this.props.currentData.Payments as IPayments[];
-        //).filter(r => r.modifier != "Deleted") : this.props.currentData.Payments as IPayments[];
+        const tabledata = this.props.currentData.Teammembers as ITeammembers[];
+        //).filter(r => r.modifier != "Deleted") : this.props.currentData.Teammembers as ITeammembers[];
 
         return (
             <div>
@@ -199,28 +191,31 @@ class ContractPayment extends React.Component<IProps, IState> {
                     <ReactTable className="-striped"
                         data={tabledata}
                         minRows={1}
-                        columns={paymentcolumns}
+                        columns={teamcolumns}
                     />)
                 }
                 <Modal isOpen={this.state.modalEditIsOpen} >
-                    <ModalHeader toggle={this.closeEditModalNoSave} charCode="&times;" >Edit Payment</ModalHeader>
+                    <ModalHeader toggle={this.closeEditModalNoSave} charCode="&times;" >Edit Team</ModalHeader>
                     <ModalBody>
-                        <ContractPaymentForm buttonText="Save" currentData={this.state.currentPaymentRecord as IPayments} updateValues={this.updatePaymentLine} 
+                        <ContractTeamForm buttonText="Save" currentData={this.state.currentTeamRecord as ITeammembers} updateValues={this.updateTeamLine} 
+                            memberTypevalues = {this.state.memberTypevalues} 
                         
                         />
                     </ModalBody>
                 </Modal>
                 <Modal isOpen={this.state.modalAddIsOpen} >
-                    <ModalHeader toggle={this.closeAddModalNoSave} charCode="&times;" >Add Payment</ModalHeader>
+                    <ModalHeader toggle={this.closeAddModalNoSave} charCode="&times;" >Add Team</ModalHeader>
                     <ModalBody>
-                        <ContractPaymentForm buttonText="Add" currentData={this.state.currentPaymentRecord as IPayments} updateValues={this.addPaymentLine} 
+                        <ContractTeamForm buttonText="Add" currentData={this.state.currentTeamRecord as ITeammembers} updateValues={this.addTeamLine} 
+                            memberTypevalues = {this.state.memberTypevalues} 
                         />
                     </ModalBody>
                 </Modal>
                 <Modal isOpen={this.state.modalDeleteIsOpen} >
-                    <ModalHeader toggle={this.closeDeleteModalNoSave} charCode="&times;" >Delete Payment</ModalHeader>
+                    <ModalHeader toggle={this.closeDeleteModalNoSave} charCode="&times;" >Delete Team</ModalHeader>
                     <ModalBody>
-                        <ContractPaymentForm buttonText="Delete" currentData={this.state.currentPaymentRecord as IPayments} updateValues={this.deletePaymentLine} 
+                        <ContractTeamForm buttonText="Delete" currentData={this.state.currentTeamRecord as ITeammembers} updateValues={this.deleteTeamLine} 
+                            memberTypevalues = {this.state.memberTypevalues} 
                         />
                     </ModalBody>
                 </Modal>
@@ -229,5 +224,5 @@ class ContractPayment extends React.Component<IProps, IState> {
     }
 };
 
-export default ContractPayment;
+export default ContractTeam;
 
