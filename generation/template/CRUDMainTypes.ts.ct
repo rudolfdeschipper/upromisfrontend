@@ -17,7 +17,9 @@ export interface I=<App.$>Data {
 %Loop:App.Edit.Children
     =<SetName>: I=<SetName>[] | null,
 %/Loop:App.Edit.Children
-
+%If:App.Attachments=true
+    externalId: string,
+%EndIf
     modifier: "Unchanged" | "Added" | "Modified" | "Deleted"
 }
 

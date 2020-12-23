@@ -68,7 +68,9 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
 %Loop:Tabs
                     =<Model.SetName>: [],
 %/Loop:Tabs
-
+%If:App.Attachments=true
+                    externalId: '',
+%EndIf
                     modifier: "Unchanged"
                 },
 %Loop:Edit.Properties
@@ -97,7 +99,9 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
 %Loop:Tabs
                     =<Model.SetName>: [],
 %/Loop:Tabs
-
+%If:App.Attachments=true
+                    externalId: '',
+%EndIf
                     modifier: "Added"
                     
                 },
@@ -243,8 +247,8 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
 %If:App.Attachments=true
                     <Tab eventKey="attachments" title="Attachments">
                         {
-                            this.state.id === 0 ? <p>You shoud save the new =<App.$> before adding attachments</p> :
-                                <Attachment parentItem='00000000-0000-0000-0000-000000000000' uploadedBy={this.context!.profile.name} />
+                            this.state.currentData.id === 0 ? <p>You shoud save the new =<App.$> before adding attachments</p> :
+                                <Attachment parentItem={this.state.currentData.externalId} uploadedBy={this.context!.profile.name} />
                         }
                     </Tab>
 %EndIf
