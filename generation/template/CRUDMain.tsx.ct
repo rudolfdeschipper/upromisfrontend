@@ -20,6 +20,11 @@ import =<App.$>DeleteForm from './=<App.$>DeleteForm';
 import { I=<App.$>Data } from './=<App.$>Types';
 import { =<App.$>API } from './=<App.$>API';
 
+%Loop:App.Actions
+import { =<App.$>Action=<Name> } from './=<App.$>Action=<Name>';
+%/Loop:App.Actions
+
+
 class =<App.$> extends React.Component<RouteComponentProps<{}>, IListState<I=<App.$>Data>> {
     static displayName = =<App.$>.name;
 
@@ -214,10 +219,18 @@ class =<App.$> extends React.Component<RouteComponentProps<{}>, IListState<I=<Ap
     }
 
 %Loop:App.Actions
-    performAction=<Name> = (row: { row: { id: any; _index: number; }; }) => {
+    performAction=<Name> = async (row: { row: { id: any; _index: number; }; }) => {
         // alert("perform Action 1: on " + JSON.stringify(this.state.data[row.row._index]));
-        this.saveOneRecord("=<Title>", this.state.data[row.row._index]);
+        await =<App.$>Action=<Name>.perform(row.row.id,this.context!.access_token)
+        .then( value => {
+            this.saveOneRecord(value.subaction, value.dataSubject);
+            this.loadData({ page: 0, pageSize: this.state.pageSize, sorted: this.state.currentSort, filtered: this.state.currentFilter });
+        })
+        .catch( ex => 
+            this.setState({ popupVisible: true, popupMessage: "Action failed: " + ex.message, popupStyle: "error" })
+        );
     }
+    
 %/Loop:App.Actions
 }
 
@@ -225,3 +238,40 @@ class =<App.$> extends React.Component<RouteComponentProps<{}>, IListState<I=<Ap
 export default =<App.$>;
 
 %/File
+
+%Loop:App.Actions
+%FileCreate:components\=<App.$>\=<App.$>Action=<Name>.ts
+/*
+** Implementation of action =<Title> (=<Name>) for =<App.$>
+** This file is only generated once; you may change it as needed.
+** In case you want to re-generate it, simply delete it an re-run the code generator.
+** Do not change the method's name or signature as this wil break the calling code.
+**
+*/
+import { ILoadResult, IListInfo, ISaveMessage, IAPIResult, ISelectValueList } from '../GeneralTypes';
+import { http } from '../http';
+import { Utils } from '../Utils';
+import { I=<App.$>Data } from './=<App.$>Types';
+import {=<App.$>API} from './=<App.$>API';
+
+export class =<App.$>Action=<Name> {
+    static perform = async (id: number, token: string): Promise<ISaveMessage<I=<App.$>Data>> => {
+        try {
+            // get the record from the backend
+            var recAPIResult = await =<App.$>API.loadOneRecord(id, token);
+            var rec : I=<App.$>Data = recAPIResult.dataSubject!;
+
+            // perform action on the record
+            // TODO
+            // send the updated record back to the caller for saving
+            var saveMessage : ISaveMessage<I=<App.$>Data> =  { id: id, dataSubject : rec, action: "Save", subaction: "=<Title>", additionalData: [] };
+
+            return saveMessage;
+        } catch (ex) {
+            console.error(ex);
+            throw ex;
+        }
+    }
+}
+%/File
+%/Loop:App.Actions
