@@ -223,7 +223,10 @@ class =<App.$> extends React.Component<RouteComponentProps<{}>, IListState<I=<Ap
         // alert("perform Action 1: on " + JSON.stringify(this.state.data[row.row._index]));
         await =<App.$>Action=<Name>.perform(row.row.id,this.context!.access_token)
         .then( value => {
-            this.saveOneRecord(value.subaction, value.dataSubject);
+            // if action is not set to Save, don't Save here
+            if(value.action === "Save") {
+                this.saveOneRecord(value.subaction, value.dataSubject);
+            }
             this.loadData({ page: 0, pageSize: this.state.pageSize, sorted: this.state.currentSort, filtered: this.state.currentFilter });
         })
         .catch( ex => 

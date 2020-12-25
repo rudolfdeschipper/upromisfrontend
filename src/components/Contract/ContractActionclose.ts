@@ -19,8 +19,7 @@ export class ContractActionclose {
             var rec : IContractData = recAPIResult.dataSubject!;
 
             // perform action on the record
-            // set status to Closed:
-            rec.contractStatus = "Closed";
+            // TODO
             // send the updated record back to the caller for saving
             var saveMessage : ISaveMessage<IContractData> =  { id: id, dataSubject : rec, action: "Save", subaction: "Close", additionalData: [] };
 
