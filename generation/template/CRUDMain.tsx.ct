@@ -251,7 +251,7 @@ export default =<App.$>;
 ** Do not change the method's name or signature as this wil break the calling code.
 **
 */
-import { ILoadResult, IListInfo, ISaveMessage, IAPIResult, ISelectValueList } from '../GeneralTypes';
+import { ILoadResult, ISaveMessage, IAPIResult } from '../GeneralTypes';
 import { http } from '../http';
 import { Utils } from '../Utils';
 import { I=<App.$>Data } from './=<App.$>Types';
