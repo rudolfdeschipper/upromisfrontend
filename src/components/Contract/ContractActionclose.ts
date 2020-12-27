@@ -17,12 +17,20 @@ export class ContractActionclose {
             // get the record from the backend
             var recAPIResult = await ContractAPI.loadOneRecord(id, token);
             var rec : IContractData = recAPIResult.dataSubject!;
+            var saveMessage : ISaveMessage<IContractData>;
 
             // perform action on the record
-            // TODO
+            if( rec.contractStatus === "Closed")
+            {
+                alert("Contract is already Closed, no change was made");
+                saveMessage =  { id: id, dataSubject : rec, action: "None", subaction: "", additionalData: [] };
+            } else
+            {
+                rec.contractStatus = "Closed";
+                // send the updated record back to the caller for saving
+                saveMessage =  { id: id, dataSubject : rec, action: "Save", subaction: "Close", additionalData: [] };
+            }
             // send the updated record back to the caller for saving
-            var saveMessage : ISaveMessage<IContractData> =  { id: id, dataSubject : rec, action: "Save", subaction: "Close", additionalData: [] };
-
             return saveMessage;
         } catch (ex) {
             console.error(ex);
