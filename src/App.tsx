@@ -38,12 +38,12 @@ class App extends React.Component<IProps, IState> {
     }
 
     render() {
-        const contract = React.lazy(() => import("./components/Contract/Contract"));
-        const contractdetails = React.lazy(() => import("./components/Contract/ContractDetails"));
-        const request = React.lazy(() => import("./components/Request/Request"));
-        const requestdetails = React.lazy(() => import("./components/Request/RequestDetails"));
-        const proposal = React.lazy(() => import("./components/Proposal/Proposal"));
-        const proposaldetails = React.lazy(() => import("./components/Proposal/ProposalDetails"));
+        const contract = React.lazy(() => import("./components/Contract/generated/Contract"));
+        const contractdetails = React.lazy(() => import("./components/Contract/generated/ContractDetails"));
+        const request = React.lazy(() => import("./components/Request/generated/Request"));
+        const requestdetails = React.lazy(() => import("./components/Request/generated/RequestDetails"));
+        const proposal = React.lazy(() => import("./components/Proposal/generated/Proposal"));
+        const proposaldetails = React.lazy(() => import("./components/Proposal/generated/ProposalDetails"));
 
         return (
             <Layout User={this.state._user}>
