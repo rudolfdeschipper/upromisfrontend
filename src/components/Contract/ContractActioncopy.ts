@@ -5,11 +5,11 @@
 ** Do not change the method's name or signature as this wil break the calling code.
 **
 */
-import { ILoadResult, IListInfo, ISaveMessage, IAPIResult, ISelectValueList } from '../GeneralTypes';
+import { ILoadResult, ISaveMessage, IAPIResult } from '../GeneralTypes';
 import { http } from '../http';
 import { Utils } from '../Utils';
-import { IContractData } from './ContractTypes';
-import {ContractAPI} from './ContractAPI';
+import { IContractData } from './generated/ContractTypes';
+import {ContractAPI} from './generated/ContractAPI';
 
 export class ContractActioncopy {
     static perform = async (id: number, token: string): Promise<ISaveMessage<IContractData>> => {

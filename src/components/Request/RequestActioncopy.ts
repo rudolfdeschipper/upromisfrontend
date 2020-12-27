@@ -5,11 +5,11 @@
 ** Do not change the method's name or signature as this wil break the calling code.
 **
 */
-import { ILoadResult, IListInfo, ISaveMessage, IAPIResult, ISelectValueList } from '../GeneralTypes';
+import { ILoadResult, ISaveMessage, IAPIResult } from '../GeneralTypes';
 import { http } from '../http';
 import { Utils } from '../Utils';
-import { IRequestData } from './RequestTypes';
-import {RequestAPI} from './RequestAPI';
+import { IRequestData } from './generated/RequestTypes';
+import {RequestAPI} from './generated/RequestAPI';
 
 export class RequestActioncopy {
     static perform = async (id: number, token: string): Promise<ISaveMessage<IRequestData>> => {

@@ -5,11 +5,11 @@
 ** Do not change the method's name or signature as this wil break the calling code.
 **
 */
-import { ILoadResult, IListInfo, ISaveMessage, IAPIResult, ISelectValueList } from '../GeneralTypes';
+import { ILoadResult, ISaveMessage, IAPIResult } from '../GeneralTypes';
 import { http } from '../http';
 import { Utils } from '../Utils';
-import { IProposalData } from './ProposalTypes';
-import {ProposalAPI} from './ProposalAPI';
+import { IProposalData } from './generated/ProposalTypes';
+import {ProposalAPI} from './generated/ProposalAPI';
 
 export class ProposalActionclose {
     static perform = async (id: number, token: string): Promise<ISaveMessage<IProposalData>> => {
