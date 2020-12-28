@@ -225,9 +225,11 @@ class =<App.$> extends React.Component<RouteComponentProps<{}>, IListState<I=<Ap
         .then( value => {
             // if action is not set to Save, don't Save here
             if(value.action === "Save") {
-                this.saveOneRecord(value.subaction, value.dataSubject);
+                this.saveOneRecord(value.subaction, value.dataSubject)
+                .then( _ =>
+                    this.loadData({ page: 0, pageSize: this.state.pageSize, sorted: this.state.currentSort, filtered: this.state.currentFilter })
+                );
             }
-            this.loadData({ page: 0, pageSize: this.state.pageSize, sorted: this.state.currentSort, filtered: this.state.currentFilter });
         })
         .catch( ex => 
             this.setState({ popupVisible: true, popupMessage: "Action failed: " + ex.message, popupStyle: "error" })
