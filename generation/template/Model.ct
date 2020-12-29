@@ -100,7 +100,9 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
                                 if(strings.Contains(item.id))
                                 {
                                     whereClause = whereClause + item.id + ".Contains(\"" + item.value + "\") &&";
-                                } else {
+                                }
+                                else
+                                {
                                     whereClause = whereClause + item.id + ".ToString().Contains(\"" + item.value + "\") &&";
                                 }
                         }
