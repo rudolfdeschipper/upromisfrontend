@@ -81,6 +81,14 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 
             if (sentModel != null)
             {
+                string[] strings = {
+%Loop:Properties
+%If:Type=string
+                        "=<JSONName>",
+%EndIf
+%/Loop
+                        ""
+                };
                 // filtering
                 // column search is handled here:0
                 if (sentModel.filtered != null)
@@ -89,7 +97,12 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
                     {
                         if (!String.IsNullOrEmpty(item.value))
                         {
-                            whereClause = whereClause + item.id + ".ToString().Contains(\"" + item.value + "\") &&";
+                                if(strings.Contains(item.id))
+                                {
+                                    whereClause = whereClause + item.id + ".Contains(\"" + item.value + "\") &&";
+                                } else {
+                                    whereClause = whereClause + item.id + ".ToString().Contains(\"" + item.value + "\") &&";
+                                }
                         }
                     }
                     if (!string.IsNullOrEmpty(whereClause))
