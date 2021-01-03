@@ -3,7 +3,7 @@ appName : "uProMIS App"
 nameSpace : "upromisfrontend"
 msNameSpace : "upromis"
 debug : "on"
-
+APIDebug : true
 
 @App
 
@@ -215,6 +215,18 @@ Contract : {
 		Proposal <- Microservice.Contract.Models.Proposal : {
 			Properties : {
 				-ExternalID
+			},
+			Children: {
+				ProposalPaymentInfo: {
+					Properties: {
+						-ExternalID
+					}
+				},
+				ProposalTeamComposition: {
+					Properties: {
+						-ExternalID
+					}
+				}
 			}
 		}
 	}
