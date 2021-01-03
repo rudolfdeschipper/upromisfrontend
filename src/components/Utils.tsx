@@ -27,7 +27,7 @@ export class Utils {
         return "\u20AC " + s.substr(0, i + 3) + r + (d ? '.' + d : '');
     }
 
-    static dateSorter(a: any, b: any, desc: boolean) {
+    static dateSorter(a: any, b: any) : number {
         // force null and undefined to the bottom
         a = a === null || a === undefined ? -Infinity : a
         b = b === null || b === undefined ? -Infinity : b
@@ -35,14 +35,14 @@ export class Utils {
         let aDate = new Date(a)
         let bDate = new Date(b)
 
-        if (aDate > bDate) {
-            return desc ? -1 : 1
+        if (aDate.getTime() >= bDate.getTime()) {
+            return 1
         }
-        if (aDate < bDate) {
-            return desc ? 1 : -1
+        else {
+            return -1
         }
         // returning 0 or undefined will use any subsequent column sorting methods or the row index as a tiebreaker
-        return 0
+        //return 0
     }
 
 }
