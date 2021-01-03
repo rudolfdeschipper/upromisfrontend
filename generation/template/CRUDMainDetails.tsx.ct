@@ -12,7 +12,7 @@ import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import { ISaveMessage, ISelectValue } from '../../GeneralTypes';
+import { IBusinessRuleResult, ISaveMessage, ISelectValue } from '../../GeneralTypes';
 import { UserContext } from '../../../context/UserContext';
 
 import =<App.$>Form from './=<App.$>Form';
@@ -42,6 +42,7 @@ interface IState {
     // popup stuff
     popupStyle: string,
     popupMessage: string,
+    popupErrorList?: IBusinessRuleResult[],
     popupVisible: boolean;
 }
 
@@ -79,6 +80,7 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
 
                 popupStyle: "",
                 popupMessage: "",
+                popupErrorList: [],
                 popupVisible: false
             };
         } else {
@@ -109,6 +111,7 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
 
                 popupStyle: "",
                 popupMessage: "",
+                popupErrorList: [],
                 popupVisible: false
             };
 
@@ -172,16 +175,20 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
                 if (result.success) {
                     this.setState({ ...this.state, id: result.dataSubject!.id, currentData: result.dataSubject! })
                     // put a toast here
-                    this.setState({ popupVisible: true, popupMessage: "Save result: " + result.message, popupStyle: "success" });
-                    //alert("Save result: " + result.message)
+                    this.setState({ popupVisible: true, popupMessage: "Save result: " + result.message, popupErrorList: result.additionalInfo, popupStyle: "success" });
+                    console.log("Save result: " + result.message)
                 } else {
                     // put a toast here
-                    //alert("Save failed " + result.message)
-                    this.setState({ popupVisible: true, popupMessage: "Save failed: " + result.message, popupStyle: "danger" });
+                    console.error("Save failed " + JSON.stringify(result))
+                    this.setState({ popupVisible: true, popupMessage: "Save failed: " + result.message, popupErrorList: result.additionalInfo, popupStyle: "danger" });
                 }
             }
             )
-            .catch(e => this.setState({ popupVisible: true, popupMessage: "Save failed: " + e, popupStyle: "danger" }))
+            .catch(e => {
+                console.error("saveRecord exception:");
+                console.exception(e);
+                this.setState({ popupVisible: true, popupMessage: "Save failed: " + e, popupErrorList: [], popupStyle: "danger" })
+            })
             document!.getElementById('top')!.scrollIntoView();
     }
 
@@ -211,7 +218,7 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
                 }
             }
         }
-        this.setState({ popupVisible: true, popupMessage: (isAdding ? "Added" : values.modifier) + " =<Tabs.$> line", popupStyle: "info" });
+        this.setState({ popupVisible: true, popupMessage: (isAdding ? "Added" : values.modifier) + " =<Tabs.$> line", popupErrorList: [],popupStyle: "info" });
         // alert("update=<Tabs.$>line " + (isAdding ? "Added" : values.modifier) + " " + JSON.stringify(this.state.currentData, null, 2));
     }
 %/Loop:Tabs
@@ -224,7 +231,7 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
                 </Link>
                 <h5>=<App.$> details for {this.state.currentData.title}</h5>
                 <hr/>
-                <Popup visible={this.state.popupVisible} message={this.state.popupMessage} style={this.state.popupStyle} onDismiss={() => { this.setState({ popupVisible: false }) }} />
+                <Popup visible={this.state.popupVisible} message={this.state.popupMessage} style={this.state.popupStyle} onDismiss={() => { this.setState({ popupVisible: false }) }} errorList={this.state.popupErrorList}/>
                 <Tabs defaultActiveKey='details' id='detailstab'>
                     <Tab eventKey='details' title='Details'>
                         <=<App.$>Form buttonText="Save" currentData={this.state.currentData} 

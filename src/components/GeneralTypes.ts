@@ -14,6 +14,7 @@ export interface IListState<T> {
     // popup stuff
     popupStyle: string,
     popupMessage: string,
+    popupErrorList?: IBusinessRuleResult[],
     popupVisible: boolean;}
 
 export interface ILoadResult<T>
@@ -36,6 +37,7 @@ export interface IAPIResult<T> {
     dataSubject: T | undefined;
     success: boolean;
     message: string;
+    additionalInfo?: IBusinessRuleResult[];
 }
 
 export interface IListInfo {
@@ -56,3 +58,8 @@ export interface ISelectValueList {
     data: ISelectValue[],
 }
 
+export interface IBusinessRuleResult {
+    property: string,
+    message: string,
+    severity: 0 | 1 | 2
+}

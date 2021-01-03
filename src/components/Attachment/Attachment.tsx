@@ -50,6 +50,7 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
             // popup stuff
             popupStyle: "",
             popupMessage: "",
+            popupErrorList: [],
             popupVisible: false
         };
 
@@ -146,6 +147,7 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
             .then(result => {
                 this.setState({
                     popupVisible: true, popupMessage: "Attachment deleted ", popupStyle: "success",
+                    popupErrorList: [],
                     data: this.state.data.filter(d => d.id !== result.id),
                     modalDeleteIsOpen: false
                 });
@@ -154,6 +156,7 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
                 this.setState({
                     popupVisible: true,
                     popupMessage: "Error while deleting " + error, popupStyle: "danger",
+                    popupErrorList: [],
                     modalDeleteIsOpen: false, currentRecord: undefined
                 });
             });
@@ -231,7 +234,7 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
 
         return (
             <div className="upromisContent">
-                <Popup visible={this.state.popupVisible} message={this.state.popupMessage} style={this.state.popupStyle} onDismiss={() => { this.setState({ popupVisible: false }) }} />
+                <Popup visible={this.state.popupVisible} message={this.state.popupMessage} errorList={this.state.popupErrorList} style={this.state.popupStyle} onDismiss={() => { this.setState({ popupVisible: false }) }} />
                 <div className="Upload">
                     <span className="Title">Upload Files</span>
                     <div className="Content">

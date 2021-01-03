@@ -45,7 +45,7 @@ class =<App.$>=<Tabs.$>Form extends React.Component<IProps, IState> {
                 initialValues={this.props.currentData as any}
                 enableReinitialize={true}
                 onSubmit={(values, { setSubmitting }) => {
-                    this.props.updateValues({...values});
+                    this.props.updateValues(values);
                     setSubmitting(false);
                 }}
                 validationSchema={Yup.object({
