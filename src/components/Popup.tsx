@@ -23,7 +23,7 @@ export class Popup extends React.Component<IProps> {
     if(this.props.errorList != undefined) { 
       errormessages = this.props.errorList?.filter(e => e.severity == 2).length > 0 ? (
         <div>
-        <h3>Errors</h3>
+        <h5>Errors</h5>
         <ul>
           {
             this.props.errorList?.filter(e => e.severity == 2).map(e => (
@@ -34,7 +34,7 @@ export class Popup extends React.Component<IProps> {
       ) : undefined;
       warnmessages = this.props.errorList?.filter(e => e.severity == 1).length > 0 ? (
         <div>
-        <h3>Warnings</h3>
+        <h5>Warnings</h5>
         <ul>
           {
             this.props.errorList?.filter(e => e.severity == 1).map(e => (
@@ -45,7 +45,7 @@ export class Popup extends React.Component<IProps> {
       ) : undefined;
       infomessages = this.props.errorList?.filter(e => e.severity == 0).length > 0 ? (
         <div>
-        <h3>Information</h3>
+        <h5>Information</h5>
         <ul>
           {
             this.props.errorList?.filter(e => e.severity == 0).map(e => (
