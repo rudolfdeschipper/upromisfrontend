@@ -8,6 +8,7 @@
 
 import React from 'react';
 import ReactTable from 'react-table';
+import { withRouter } from 'react-router';
 import "react-table/react-table.css";
 import { Utils } from '../../Utils';
 import { Link, RouteComponentProps } from 'react-router-dom';
@@ -231,6 +232,11 @@ class =<App.$> extends React.Component<RouteComponentProps<{}>, IListState<I=<Ap
                     this.loadData({ page: 0, pageSize: this.state.pageSize, sorted: this.state.currentSort, filtered: this.state.currentFilter })
                 );
             }
+            if(value.action === "Navigate")
+            {
+                console.log("navigate" )
+                this.props.history.push(value.subaction, value.dataSubject);
+            }
         })
         .catch( ex => 
             this.setState({ popupVisible: true, popupMessage: "Action failed: " + ex.message, popupErrorList: [], popupStyle: "error" })
@@ -241,7 +247,7 @@ class =<App.$> extends React.Component<RouteComponentProps<{}>, IListState<I=<Ap
 }
 
 // required to have lazy loading
-export default =<App.$>;
+export default withRouter(=<App.$>);
 
 %/File
 

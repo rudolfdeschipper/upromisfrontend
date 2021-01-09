@@ -8,7 +8,7 @@
 
 import React from 'react';
 import "react-table/react-table.css";
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
@@ -88,8 +88,10 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
             this.state =
             {
                 id: 0,
-                currentData: { 
-                    //id: 0, code: "", description: "", title: "", startdate: new Date(), enddate: new Date(), status: "", value: 0.0, paymentInfo: [], modifier: "Added" 
+                currentData: 
+                    this.props.history.location.state ? 
+                    this.props.history.location.state as I=<App.$>Data 
+                    : { 
 %Loop:App.Edit.Properties
                     =<JSONName>: =<JSONDefault>,
 %If:Lookup?=true
@@ -264,6 +266,6 @@ class =<App.$>Details extends React.Component<RouteComponentProps<{ id?: string 
 }
 
 // required to have lazy loading
-export default =<App.$>Details;
+export default withRouter(=<App.$>Details);
 
 %/File

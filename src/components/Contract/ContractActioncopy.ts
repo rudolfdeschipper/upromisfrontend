@@ -21,8 +21,13 @@ export class ContractActioncopy {
             // perform action on the record
             // TODO
             // send the updated record back to the caller for saving
-            var saveMessage : ISaveMessage<IContractData> =  { id: id, dataSubject : rec, action: "Save", subaction: "Copy", additionalData: [] };
+            // create copy
+            rec = {...rec, id:0, modifier:"Added"};
+            // reset children:
+            rec.Payments?.forEach(p => {p.id = 0; p.modifier = "Added"} );
+            rec.Teammembers?.forEach(p => {p.id = 0; p.modifier = "Added"} );
 
+            var saveMessage : ISaveMessage<IContractData> =  { id: 0, dataSubject : rec, action: "Navigate", subaction: "/contractdetails/add", additionalData: [] };
             return saveMessage;
         } catch (ex) {
             console.error(ex);
