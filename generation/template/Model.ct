@@ -184,11 +184,6 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %Loop:Children
                 .Include( p => p.=<SetName>)
 %/Loop:Children
-%Loop:Properties
-%If:Reference?=true
-                .Include(p => p.=<ReferenceObjectName>)
-%EndIf
-%/Loop:Properties
                 .FirstOrDefaultAsync();
 
             if (record == null)
