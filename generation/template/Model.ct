@@ -180,14 +180,23 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 
         public async Task<bool> Delete(=<$> rec)
         {
-            var ctr = Context.=<SetName>.FirstOrDefault(c => c.ID == rec.ID);
+            var record = await Context.=<SetName>.Where(c => c.ID == rec.ID)
+%Loop:Children
+                .Include( p => p.=<SetName>)
+%/Loop:Children
+%Loop:Properties
+%If:Reference?=true
+                .Include(p => p.=<ReferenceObjectName>)
+%EndIf
+%/Loop:Properties
+                .FirstOrDefaultAsync();
 
-            if (ctr == null)
+            if (record == null)
             {
                 return false;
             }
 
-            Context.=<SetName>.Remove(ctr);
+            Context.=<SetName>.Remove(record);
 
             await Context.SaveChangesAsync();
 
