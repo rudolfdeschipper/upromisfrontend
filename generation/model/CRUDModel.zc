@@ -1,7 +1,8 @@
 #Parameters
 appName : "uProMIS App"
 nameSpace : "upromisfrontend"
-msNameSpace : "upromis"
+beNameSpace : "uPromis"
+msNameSpace : "uPromis.Microservice."
 debug : "on"
 APIDebug : true
 
@@ -77,31 +78,31 @@ Request :
 @Microservice
 
 Contract : {
-	Namespace: "contract",
+	Namespace: "ContractAPI",
 	Controllers: {
 		AccountInfo : {
-			Namespace: "accountinfo",
+			Namespace: "Accountinfo",
 			Export <- Microservice.Contract.DTO.AccountInfo,
 			DTO <- Microservice.Contract.DTO.AccountInfo,
 			ClaimInfo: { ClaimList : "Teammembers", ClaimField : "AccountInfoMemberType" },
 			Model <- Microservice.Contract.Models.AccountInfo
 		},
 		Contract: {
-			Namespace: "contract",
+			Namespace: "Contract",
 			Export <- Microservice.Contract.DTO.Contract,
 			DTO <- Microservice.Contract.DTO.Contract,
 			ClaimInfo: { ClaimList : "Teammembers", ClaimField : "ContractMemberType" },
 			Model <- Microservice.Contract.Models.Contract
 		},
 		Request: {
-			Namespace: "request",
+			Namespace: "Request",
 			Export <- Microservice.Contract.DTO.Request,
 			DTO <- Microservice.Contract.DTO.Request,
 			ClaimInfo: { ClaimList : "Teammembers", ClaimField : "RequestMemberType" },
 			Model <- Microservice.Contract.Models.Request
 		},
 		Proposal: {
-			Namespace: "proposal",
+			Namespace: "Proposal",
 			Export <- Microservice.Contract.DTO.Proposal,
 			DTO <- Microservice.Contract.DTO.Proposal,
 			ClaimInfo: { ClaimList : "Teammembers", ClaimField : "ProposalMemberType" },
