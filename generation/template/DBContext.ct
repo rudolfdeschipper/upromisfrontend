@@ -1,4 +1,4 @@
-%FileOverwrite:Data\=<$>DBContext.cs
+%FileOverwrite:Data\generated\=<$>DBContext.cs
 %Log:Microservice DB Context =<$>
 /*
 **             ------ IMPORTANT ------

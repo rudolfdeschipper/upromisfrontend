@@ -1,5 +1,5 @@
 %Loop:Models
-%FileOverwrite:Models\I=<$>Repository.cs
+%FileOverwrite:Models\generated\I=<$>Repository.cs
 %Log:IRepository =<$>
 /*
 **             ------ IMPORTANT ------
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 {
-    public interface I=<$>Repository : IRepository<=<$>DTO, =<$>>
+    public interface I=<$>Repository : IRepository<=<$>>
     {
 %Loop:Properties
 %If:Reference?=true
@@ -32,7 +32,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 }
 %/File
 
-%FileOverwrite:Models\=<$>Repository.cs
+%FileOverwrite:Models\generated\=<$>Repository.cs
 %Log:Repository =<$>
 /*
 **             ------ IMPORTANT ------
@@ -46,6 +46,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Linq.Dynamic.Core;
 
 namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 {
@@ -67,13 +68,87 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %/Loop:Properties
         ;
 
-        public async Task<=<$>DTO> Post(SaveMessage<=<$>DTO> rec)
+        public async Task<(List<=<$>>, double)> FilteredAndSortedList(SortAndFilterInformation sortAndFilterInfo, bool paging)
         {
+            return await DoSortFilterAndPaging(sortAndFilterInfo, paging);
+        }
+
+        private async Task<(List<=<$>>, double)> DoSortFilterAndPaging(SortAndFilterInformation sentModel, bool doPaging)
+        {
+            string whereClause = String.Empty;
+            var records = List;
+            int filteredCount = records.Count();
+
+            if (sentModel != null)
+            {
+                string[] strings = {
+%Loop:Properties
+%If:Type=string
+                        "=<JSONName>",
+%EndIf
+%/Loop
+                        ""
+                };
+                // filtering
+                // column search is handled here:0
+                if (sentModel.filtered != null)
+                {
+                    foreach (var item in sentModel.filtered)
+                    {
+                        if (!String.IsNullOrEmpty(item.value))
+                        {
+                                if(strings.Contains(item.id))
+                                {
+                                    whereClause = whereClause + item.id + ".Contains(\"" + item.value + "\") &&";
+                                }
+                                else
+                                {
+                                    whereClause = whereClause + item.id + ".ToString().Contains(\"" + item.value + "\") &&";
+                                }
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(whereClause))
+                    {
+                        whereClause = whereClause[0..^2];
+                        records = records.Where(whereClause);
+                        filteredCount = await records.CountAsync();
+                    }
+                }
+                // ordering
+                if (sentModel.sorted != null)
+                {
+                    string orderBy = "";
+                    foreach (var o in sentModel.sorted)
+                    {
+                        orderBy += " " + o.id + (o.desc ? " DESC" : " ASC") + ",";
+                    }
+                    if (orderBy.EndsWith(','))
+                    {
+                        orderBy = orderBy[0..^1];
+                    }
+                    if (!string.IsNullOrEmpty(orderBy))
+                    {
+                        records = records.OrderBy(orderBy);
+                    }
+                }
+
+                // paging:
+                if (doPaging)
+                {
+                    records = records
+                        .Skip(sentModel.page * sentModel.pageSize)
+                        .Take(sentModel.pageSize);
+                }
+            }
+            return (await records.ToListAsync(), sentModel?.pageSize != 0 ? Math.Ceiling((double)(filteredCount / sentModel.pageSize)) : 1.0);
+        }
+
+
+        public async Task<=<$>> Post(=<$> rec)
+        {
+            var record = rec;
             // TODO: add validations
             // TODO: check for new users to create in the team composition list
-
-            =<$> record = Transformers.Transform(rec.DataSubject, new =<$>()) as =<$>;
-
 %Loop:Children
 %If:!Lazy
             record.=<SetName>.ForEach(pi =>
@@ -91,51 +166,39 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 
             await Context.SaveChangesAsync();
 
-            return Transformers.Transform(record, new =<$>DTO());
+            return record;
         }
 
-        public async Task<=<$>DTO> Put(SaveMessage<=<$>DTO> rec)
+        public async Task<=<$>> Put(=<$> rec)
         {
-            var ctr = await Context.=<SetName>.Where(c => c.ID == rec.ID)
-%Loop:Children
-                .Include( p => p.=<SetName>)
-%/Loop:Children
-%Loop:Properties
-%If:Reference?=true
-                .Include(p => p.=<ReferenceObjectName>)
-%EndIf
-%/Loop:Properties
-                .FirstOrDefaultAsync();
-
-            if (ctr == null)
-            {
-                return null;
-            }
-
-            ctr = Transformers.Transform(rec.DataSubject, ctr);
+            Context.=<SetName>.Attach(rec);
 
             await Context.SaveChangesAsync();
 
-            return Transformers.Transform(ctr, new =<$>DTO());
+            return rec;
         }
 
-        public async Task<bool> Delete(SaveMessage<=<$>DTO> rec)
+        public async Task<bool> Delete(=<$> rec)
         {
-            var ctr = Context.=<SetName>.FirstOrDefault(c => c.ID == rec.ID);
+            var record = await Context.=<SetName>.Where(c => c.ID == rec.ID)
+%Loop:Children
+                .Include( p => p.=<SetName>)
+%/Loop:Children
+                .FirstOrDefaultAsync();
 
-            if (ctr == null)
+            if (record == null)
             {
                 return false;
             }
 
-            Context.=<SetName>.Remove(ctr);
+            Context.=<SetName>.Remove(record);
 
             await Context.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<=<$>DTO> Get(int id)
+        public async Task<=<$>> Get(int id)
         {
             var record = await Context.=<SetName>.Where(c => c.ID == id)
 %Loop:Children
@@ -147,10 +210,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %EndIf
 %/Loop:Properties
                 .FirstOrDefaultAsync();
-
-            var ctr = Transformers.Transform(record, new =<$>DTO() { Modifier = "Unchanged" });
-
-            return ctr;
+            return record;
         }
 %Loop:Properties
 %If:Reference?=true
@@ -199,7 +259,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 }
 %/File
 
-%FileOverwrite:Models\=<$>.cs
+%FileOverwrite:Models\generated\=<$>.cs
 %Log:Model =<$>
 /*
 **             ------ IMPORTANT ------
@@ -278,7 +338,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %If:!Lazy?=true
 
 %Log:Model =<$>
-%FileOverwrite:Models\=<$>.cs
+%FileOverwrite:Models\generated\=<$>.cs
 /*
 **             ------ IMPORTANT ------
 ** This file was generated by ZeroCode2 on =<DateStamp>
@@ -354,7 +414,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %EndIf
 %/Loop:Children
 
-%FileOverwrite:Models\=<$>DTO.cs
+%FileOverwrite:Models\generated\=<$>DTO.cs
 %Log:DTO =<$>
 /*
 **             ------ IMPORTANT ------
@@ -422,7 +482,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %Loop:Children
 %If:!Lazy?=true
 %Log:DTO =<$>
-%FileOverwrite:Models\=<$>DTO.cs
+%FileOverwrite:Models\generated\=<$>DTO.cs
 /*
 **             ------ IMPORTANT ------
 ** This file was generated by ZeroCode2 on =<DateStamp>
@@ -490,7 +550,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 %/Loop:Models
 
 %Log:Transformers
-%FileOverwrite:Models\Transformers.cs
+%FileOverwrite:Models\generated\Transformers.cs
 /*
 **             ------ IMPORTANT ------
 ** This file was generated by ZeroCode2 on =<DateStamp>
@@ -566,6 +626,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 
 %Loop:Children
 %If:!Lazy
+
         public static =<$> Transform(=<$>DTO from, =<$> to)
         {
 %Loop:Properties

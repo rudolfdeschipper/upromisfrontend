@@ -1,5 +1,5 @@
 %Loop:Controllers
-%FileOverwrite:Controllers\=<$>Controller.cs
+%FileOverwrite:Controllers\generated\=<$>Controller.cs
 %Log:Microservice Controller =<$>
 /*
 **             ------ IMPORTANT ------
@@ -30,66 +30,14 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
     {
         private readonly I=<$>Repository Repository;
         private readonly ILogger Logger;
+        private readonly Business.I=<$>BusinessRules BusinessRules;
 
-        public =<$>Controller(I=<$>Repository repo, ILoggerProvider loggerProvider)
+        public =<$>Controller(I=<$>Repository repo, ILoggerProvider loggerProvider,
+            Business.I=<$>BusinessRules businessRules)
         {
             Repository = repo;
             Logger = loggerProvider.CreateLogger("=<$>Controller");
-        }
-
-        [NonAction]
-        private (IQueryable<T>, double) DoSortFilterAndPaging<T>(IQueryable<T> records, DataTableAjaxPostModel sentModel, bool doPaging)
-        {
-            string whereClause = String.Empty;
-            int filteredCount = records.Count();
-
-            if (sentModel != null)
-            {
-                // filtering
-                // column search is handled here:0
-                if (sentModel.filtered != null)
-                {
-                    foreach (var item in sentModel.filtered)
-                    {
-                        if (!String.IsNullOrEmpty(item.value))
-                        {
-                            whereClause = whereClause + item.id + ".ToString().Contains(\"" + item.value + "\") &&";
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(whereClause))
-                    {
-                        whereClause = whereClause[0..^2];
-                        records = records.Where(whereClause);
-                        filteredCount = records.Count();
-                    }
-                }
-                // ordering
-                if (sentModel.sorted != null)
-                {
-                    string orderBy = "";
-                    foreach (var o in sentModel.sorted)
-                    {
-                        orderBy += " " + o.id + (o.desc ? " DESC" : " ASC") + ",";
-                    }
-                    if (orderBy.EndsWith(','))
-                    {
-                        orderBy = orderBy[0..^1];
-                    }
-                    if (!string.IsNullOrEmpty(orderBy))
-                    {
-                        records = records.OrderBy(orderBy);
-                    }
-                }
-
-                // paging:
-                if (doPaging)
-                {
-                    records = records
-                        .Skip(sentModel.page * sentModel.pageSize)
-                        .Take(sentModel.pageSize);
-                }
-            }
-            return (records, sentModel?.pageSize != 0 ? Math.Ceiling((double)(filteredCount / sentModel.pageSize)) : 1.0);
+            BusinessRules = businessRules;
         }
 
         [HttpGet("{id}")]
@@ -102,7 +50,9 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
                 return NotFound(new APIResult<=<$>DTO>() { ID = id, DataSubject = null, Message = "Get failed" });
             }
 
-            return Ok(new APIResult<=<$>DTO>() { ID = id, DataSubject = res, Message = "Get was performed" });
+            var record = Transformers.Transform(res, new =<$>DTO() { Modifier = "Unchanged" });
+
+            return Ok(new APIResult<=<$>DTO>() { ID = id, DataSubject = record, Message = "Get was performed" });
         }
 
         [HttpPost()]
@@ -114,15 +64,24 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
 
             try
             {
-                res = await Repository.Post(rec);
+                =<$> record = Transformers.Transform(rec.DataSubject, new =<$>()) as =<$>;
+
+                BusinessRules.ApplyBusinessRules(record, rec.DataSubject, Repository);
+
+                if (BusinessRules.HasErrors())
+                {
+                    return UnprocessableEntity(new APIResult<ContractDTO>() { ID = 0, DataSubject = null, Message = "Validation failed", AdditionalInfo = BusinessRules.Result.ToArray() });
+                }
+                record = await Repository.Post(record);
+                res = Transformers.Transform(record, new =<$>DTO());
             }
             catch (Exception ex)
             {
-                return this.Problem(ex.Message, GetType().Name, 500, "Error");
+                return this.BadRequest(new APIResult<=<$>DTO>() { ID = 0, DataSubject = null, Message = ex.Message });
             }
 
             // return posted values
-            return Ok(new APIResult<=<$>DTO>() { ID = res.ID, DataSubject = res, Message = "New =<$> was created." });
+            return Ok(new APIResult<=<$>DTO>() { ID = res.ID, DataSubject = res, Message = "New =<$> was created.", AdditionalInfo = BusinessRules.Result.ToArray() });
         }
 
         [HttpPut()]
@@ -134,19 +93,34 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
 
             try
             {
-                res = await Repository.Put(rec);
-                if (res == null)
+                =<$> originalRecord = await Repository.Get(rec.ID);
+
+                if (originalRecord == null)
                 {
                     return NotFound(new APIResult<=<$>DTO>() { ID = rec.ID, DataSubject = null, Message = "Put failed - record is not found" });
                 }
+
+                =<$> record = Transformers.Transform(rec.DataSubject, originalRecord) as =<$>;
+
+                BusinessRules.ApplyBusinessRules(record, rec.DataSubject, Repository);
+
+                if (BusinessRules.HasErrors())
+                {
+                    return UnprocessableEntity(new APIResult<ContractDTO>() { ID = 0, DataSubject = null, Message = "Validation failed", AdditionalInfo = BusinessRules.Result.ToArray() });
+                }
+
+                record = await Repository.Put(record);
+
+                res = Transformers.Transform(record, new =<$>DTO());
+
             }
             catch (Exception ex)
             {
-                return this.Problem(ex.Message, GetType().Name, 500, "Error");
+                return this.BadRequest(new APIResult<ContractDTO>() { ID = 0, DataSubject = null, Message = ex.Message });
             }
 
             // return posted values
-            return Ok(new APIResult<=<$>DTO>() { ID = res.ID, DataSubject = res, Message = "=<$> was saved." });
+            return Ok(new APIResult<=<$>DTO>() { ID = res.ID, DataSubject = res, Message = "=<$> was saved.", AdditionalInfo = BusinessRules.Result.ToArray() });
         }
 
         [HttpDelete()]
@@ -158,7 +132,10 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
 
             try
             {
-                res = await Repository.Delete(rec);
+                =<$> record = Transformers.Transform(rec.DataSubject, new =<$>()) as =<$>;
+
+                res = await Repository.Delete(record);
+
                 if (res == false)
                 {
                     return NotFound(new APIResult<=<$>DTO>() { ID = rec.ID, DataSubject = null, Message = "Delete failed - record not found" });
@@ -166,7 +143,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
             }
             catch (Exception ex)
             {
-                return this.Problem(ex.Message, GetType().Name, 500, "Error");
+                return this.BadRequest(new APIResult<ContractDTO>() { ID = 0, DataSubject = null, Message = ex.Message });
             }
 
             // return 
@@ -175,17 +152,18 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
 
         // TODO: transform into a get with a body (this is possible)
         [HttpPost("getlist")]
-        public async Task<ActionResult> GetList([FromBody] DataTableAjaxPostModel sentModel)
+        public async Task<ActionResult> GetList([FromBody] SortAndFilterInformation sentModel)
         {
-            var records = DoSortFilterAndPaging(Repository.List, sentModel, true);
+            var records = await Repository.FilteredAndSortedList(sentModel, true);
+
             var recordsDTO = records.Item1.Select(c => Transformers.Transform(c, new =<$>DTO() { Modifier = "Unchanged" }));
 
-            return Ok(new LoadResult<=<$>DTO>() { Data = await recordsDTO.ToArrayAsync(), Pages = records.Item2, Message = "" });
+            return Ok(new LoadResult<=<$>DTO>() { Data = recordsDTO.ToArray(), Pages = records.Item2, Message = "" });
         }
 
         // TODO: this can be a normal "get", with a filter on the header " 'Content-Type': 'application/excel' or something
         [HttpPost("getforexport")]
-        public async Task<IActionResult> GetForExport([FromBody] DataTableAjaxPostModel sentModel)
+        public async Task<IActionResult> GetForExport([FromBody] SortAndFilterInformation sentModel)
         {
             using ExcelPackage package = new ExcelPackage();
             ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("=<$> List");
@@ -198,7 +176,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
 %/Loop:Export.Properties
             worksheet.Cells[1, 1, 1, col].Style.Font.Bold = true;
 
-            var records = DoSortFilterAndPaging(Repository.List, sentModel, false).Item1;
+            var records = (await Repository.FilteredAndSortedList(sentModel, true)).Item1;
 
             foreach (var item in records)
             {
@@ -227,19 +205,22 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
             //var EnumProducer = new SelectValueFromEnumProducer();
             List<ListValue> list = new List<ListValue>();
 
-            // provide empty value in the dropdown:
-            list.Add(new ListValue() { Value = "", Label = "" });
-
             switch (info.ValueType)
             {
 %Loop:Model.Properties
 %If:Lookup?=true
 %If:Reference?=true
                 case "=<$>Reference" :
+                    // provide empty value in the dropdown:
+                    list.Add(new ListValue() { Value = 0, Label = "" });
+
                     list.AddRange(await this.Repository.Get=<$>Reference());
                     break;
 %Else
                 case "=<$>" :
+                    // provide empty value in the dropdown:
+                    list.Add(new ListValue() { Value = "", Label = "" });
+
                      list.AddRange( Models.=<Controllers.$>.=<$>Values);
                     break;
 %EndIf
@@ -250,10 +231,16 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
 %If:Lookup?=true
 %If:Reference?=true
                 case "=<$>Reference" :
+                    // provide empty value in the dropdown:
+                    list.Add(new ListValue() { Value = 0, Label = "" });
+
                     list.AddRange(await this.Repository.Get=<$>Reference());
                     break;
 %Else
                 case "=<$>" :
+                    // provide empty value in the dropdown:
+                    list.Add(new ListValue() { Value = "", Label = "" });
+
                      list.AddRange( Models.=<Model.Children.$>.=<$>Values);
                     break;
 %EndIf
@@ -283,4 +270,84 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
     }
 }
 %/File
+
+%FileOverwrite:Business\generated\I=<$>BusinessRules.cs
+%Log:Business Rule classes for =<$>
+/*
+**             ------ IMPORTANT ------
+** This file was generated by ZeroCode2 on =<DateStamp>
+** DO NOT MODIFY IT, as it can be regenerated at any moment.
+** If you need this file changed, change the underlying model or its template.
+*/
+using System;
+using System.Collections.Generic;
+using upromiscontractapi.Models;
+
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Business
+{
+    public interface I=<$>BusinessRules : IBusinessRules<=<$>, =<$>DTO>
+    {
+
+    }
+}
+%/File
+
+%FileOverwrite:Business\generated\=<$>BusinessRules.cs
+/*
+**             ------ IMPORTANT ------
+** This file was generated by ZeroCode2 on =<DateStamp>
+** DO NOT MODIFY IT, as it can be regenerated at any moment.
+** If you need this file changed, change the underlying model or its template.
+*/
+using System;
+using System.Collections.Generic;
+using upromiscontractapi.Models;
+
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Business
+{
+    public partial class =<$>BusinessRules : I=<$>BusinessRules
+    {
+        readonly List<BusinessRuleResult> results = new List<BusinessRuleResult>();
+
+        public List<BusinessRuleResult> Result { get => results; }
+
+        public void ApplyBusinessRules(=<$> Record, =<$>DTO DTORecord, IRepository<=<$>> Repository)
+        {
+            OnApplyBusinessRules(Record, DTORecord, Repository);
+        }
+
+        partial void OnApplyBusinessRules(=<$> Record, =<$>DTO DTORecord, IRepository<=<$>> Repository);
+
+        public bool HasErrors() => results.Exists(r => r.Severity == BusinessRuleResultSeverity.Error);
+
+        public bool HasWarnings() => HasErrors() || results.Exists(r => r.Severity == BusinessRuleResultSeverity.Warning);
+
+        public bool AllOk() => !HasWarnings();
+    }
+}
+%/File
+
+%FileCreate:Business\=<$>BusinessRules.cs
+/*
+**             ------ IMPORTANT ------
+** This file was generated by ZeroCode2 on =<DateStamp>
+** YOU CAN MODIFY IT, as it will not be regenerated.
+** If you want to regenrate this file simply delete it.
+*/
+using System;
+using System.Collections.Generic;
+using upromiscontractapi.Models;
+
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Business
+{
+    partial class =<$>BusinessRules : I=<$>BusinessRules
+    {
+        partial void OnApplyBusinessRules(=<$> Record, =<$>DTO DTORecord, IRepository<=<$>> Repository)
+        {
+
+        }
+    }
+}
+%/File
+
 %/Loop:Controllers
