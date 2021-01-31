@@ -7,11 +7,11 @@
 ** DO NOT MODIFY IT, as it can be regenerated at any moment.
 ** If you need this file changed, change the underlying model or its template.
 */
-using APIUtils.APIMessaging;
+using =<#Parameters.beNameSpace>.APIUtils.APIMessaging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>.Models
 {
     public interface I=<$>Repository : IRepository<=<$>>
     {
@@ -40,7 +40,7 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
 ** DO NOT MODIFY IT, as it can be regenerated at any moment.
 ** If you need this file changed, change the underlying model or its template.
 */
-using APIUtils.APIMessaging;
+using =<#Parameters.beNameSpace>.APIUtils.APIMessaging;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -48,7 +48,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Linq.Dynamic.Core;
 
-namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>.Models
 {
 
     public class =<$>Repository : I=<$>Repository
@@ -273,9 +273,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using APIUtils.APIMessaging;
+using =<#Parameters.beNameSpace>.APIUtils.APIMessaging;
 
-namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>.Models
 {
 
     public class =<$>
@@ -351,9 +351,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using APIUtils.APIMessaging;
+using =<#Parameters.beNameSpace>.APIUtils.APIMessaging;
 
-namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>.Models
 {
 
     public class =<$>
@@ -429,7 +429,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>.Models
 {
 
 
@@ -496,7 +496,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>.Models
 {
 
 
@@ -562,7 +562,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>.Models
 {
 
     public class Transformers

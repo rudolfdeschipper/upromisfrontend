@@ -7,9 +7,9 @@
 ** If you need this file changed, change the underlying model or its template.
 */
 using Microsoft.EntityFrameworkCore;
-using =<#Parameters.msNameSpace>=<Namespace>api.Models;
+using =<#Parameters.msNameSpace>=<Namespace>.Models;
 
-namespace =<#Parameters.msNameSpace>=<Namespace>api
+namespace =<#Parameters.msNameSpace>=<Namespace>
 {
     public class =<$>DbContext : DbContext
     {
@@ -18,7 +18,7 @@ namespace =<#Parameters.msNameSpace>=<Namespace>api
         }
 
 %Loop:Models
-        public DbSet<=<$>> =<SetName> { get; set; }
+        public DbSet<Models.=<$>> =<SetName> { get; set; }
 %/Loop
     }
 }                   

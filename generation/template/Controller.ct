@@ -13,15 +13,15 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using System.Linq.Dynamic.Core;
-using =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Models;
+using =<#Parameters.msNameSpace>=<Microservice.Namespace>.Models;
 using Microsoft.Extensions.Logging;
-using APIUtils;
-using APIUtils.APIMessaging;
+using =<#Parameters.beNameSpace>.APIUtils;
+using =<#Parameters.beNameSpace>.APIUtils.APIMessaging;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -281,11 +281,11 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Controllers
 */
 using System;
 using System.Collections.Generic;
-using upromiscontractapi.Models;
+using =<#Parameters.msNameSpace>=<Microservice.Namespace>.Models;
 
-namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Business
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>.Business
 {
-    public interface I=<$>BusinessRules : IBusinessRules<=<$>, =<$>DTO>
+    public interface I=<$>BusinessRules : IBusinessRules<Models.=<$>, Models.=<$>DTO>
     {
 
     }
@@ -301,9 +301,9 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Business
 */
 using System;
 using System.Collections.Generic;
-using upromiscontractapi.Models;
+using =<#Parameters.msNameSpace>=<Microservice.Namespace>.Models;
 
-namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Business
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>.Business
 {
     public partial class =<$>BusinessRules : I=<$>BusinessRules
     {
@@ -311,12 +311,12 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Business
 
         public List<BusinessRuleResult> Result { get => results; }
 
-        public void ApplyBusinessRules(=<$> Record, =<$>DTO DTORecord, IRepository<=<$>> Repository)
+        public void ApplyBusinessRules(Models.=<$> Record, Models.=<$>DTO DTORecord, IRepository<Models.=<$>> Repository)
         {
             OnApplyBusinessRules(Record, DTORecord, Repository);
         }
 
-        partial void OnApplyBusinessRules(=<$> Record, =<$>DTO DTORecord, IRepository<=<$>> Repository);
+        partial void OnApplyBusinessRules(Models.=<$> Record, Models.=<$>DTO DTORecord, IRepository<Models.=<$>> Repository);
 
         public bool HasErrors() => results.Exists(r => r.Severity == BusinessRuleResultSeverity.Error);
 
@@ -336,13 +336,13 @@ namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Business
 */
 using System;
 using System.Collections.Generic;
-using upromiscontractapi.Models;
+using =<#Parameters.msNameSpace>=<Microservice.Namespace>.Models;
 
-namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>api.Business
+namespace =<#Parameters.msNameSpace>=<Microservice.Namespace>.Business
 {
     partial class =<$>BusinessRules : I=<$>BusinessRules
     {
-        partial void OnApplyBusinessRules(=<$> Record, =<$>DTO DTORecord, IRepository<=<$>> Repository)
+        partial void OnApplyBusinessRules(Models.=<$> Record, Models.=<$>DTO DTORecord, IRepository<Models.=<$>> Repository)
         {
 
         }
