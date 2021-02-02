@@ -7,6 +7,8 @@ export class AttachmentAPI {
 
     //private url: string = 'http://localhost:5011/api/attachment/';
     static webAPIUrl: string = 'http://localhost:5011/api';
+    static debug : boolean = true;
+
 
     static loadList = async (parentItem: string, page: number, pageSize: number, token: string) : Promise<ILoadResult<IAttachmentData>> => {
         try {
@@ -25,6 +27,29 @@ export class AttachmentAPI {
         } catch (ex) {
             console.error(ex);
             return { data: [], pages: 0, message: ex };
+        }
+    }
+
+    static downloadAttachment = async (id: string, fileName: string, token: string)  : Promise<void> => 
+    {
+        try {
+            const result = await http<any, any>(
+                AttachmentAPI.webAPIUrl,
+                {
+                    path: `/attachment/download/${encodeURIComponent(id)}`,
+                    accessToken: token
+                }
+            )
+            result.blob().then(blob => {
+                    let url = window.URL.createObjectURL(blob);
+                    let a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    a.click();
+                    a.remove();
+                });
+        } catch (ex) {
+            if(AttachmentAPI.debug) console.error(ex);
         }
     }
 

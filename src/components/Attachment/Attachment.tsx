@@ -162,6 +162,10 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
             });
     }
 
+    private downloadAttachment = (row: { row: { _index: number, id: string, fileName: string } }) => {
+        AttachmentAPI.downloadAttachment(row.row.id, row.row.fileName, this.context!.access_token);
+    }
+
     private loadData = (state: any) => {
         // show the loading overlay
         this.setState({ loading: true });
@@ -197,10 +201,13 @@ class Attachment extends React.Component<IAttachmentKey, IListState<IAttachmentD
         const columns = [
             {
                 Header: 'Actions',
-                Cell: (row: { row: { id: any, _index: number; }; }) => (
+                Cell: (row: { row: { id: any, _index: number, fileName: string; }; }) => (
                     <div className="w3-bar">
                         <button onClick={() => { this.openDeleteModal(row); }} className="w3-bar-item w3-button" title="Delete" >
                             <i className="fa fa-trash-o" ></i>
+                        </button>
+                        <button onClick={() => { this.downloadAttachment(row); }} className="w3-bar-item w3-button" title="Download" >
+                            <i className="fa fa-download" ></i>
                         </button>
                     </div>
                 ),
